@@ -133,20 +133,23 @@ const HomePage = () => {
           </div>
         ) : filteredRooms && filteredRooms.length > 0 ? (
           <div className="grid grid-cols-2 gap-3">
-            {filteredRooms.map((room) => (
-              <RoomCard
-                key={room.id}
-                id={room.id}
-                name={room.room_name}
-                host="Host"
-                hostAvatar=""
-                listeners={room.listener_count}
-                speakers={0}
-                isLive={room.is_live}
-                isPrivate={room.privacy_type === "private"}
-                tags={[room.category]}
-              />
-            ))}
+            {filteredRooms.map((room) => {
+              const hostProfile = room.profiles as any;
+              return (
+                <RoomCard
+                  key={room.id}
+                  id={room.id}
+                  name={room.room_name}
+                  host={hostProfile?.display_name ?? hostProfile?.username ?? "Host"}
+                  hostAvatar={hostProfile?.avatar_url ?? ""}
+                  listeners={room.listener_count}
+                  speakers={0}
+                  isLive={room.is_live}
+                  isPrivate={room.privacy_type === "private"}
+                  tags={[room.category]}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12">

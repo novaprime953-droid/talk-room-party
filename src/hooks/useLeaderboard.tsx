@@ -8,7 +8,7 @@ export const useLeaderboard = (type: 'gifters' | 'receivers' | 'hosts') => {
       if (type === 'hosts') {
         const { data, error } = await supabase
           .from('hosts')
-          .select('*, profiles!hosts_user_id_fkey(username, display_name, avatar_url, level)')
+          .select('*, profiles:profiles!inner(username, display_name, avatar_url, level)')
           .order('total_earnings', { ascending: false })
           .limit(50);
         if (error) throw error;
