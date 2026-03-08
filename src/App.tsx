@@ -104,7 +104,7 @@ const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-
+const AppRoutes = () => {
   const { user } = useAuth();
   return (
     <div className="min-h-screen relative">
@@ -156,6 +156,13 @@ const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
         <Route path="/bizdev/partnerships" element={<BizDevRoute><BizDevPartnerships /></BizDevRoute>} />
         <Route path="/bizdev/events" element={<BizDevRoute><BizDevEvents /></BizDevRoute>} />
         <Route path="/bizdev/revenue" element={<BizDevRoute><BizDevRevenue /></BizDevRoute>} />
+
+        {/* Owner routes */}
+        <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
+        <Route path="/owner/admins" element={<OwnerRoute><OwnerAdmins /></OwnerRoute>} />
+        <Route path="/owner/analytics" element={<OwnerRoute><OwnerAnalytics /></OwnerRoute>} />
+        <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />
+        <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
