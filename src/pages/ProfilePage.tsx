@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut } from "lucide-react";
+import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut, Banknote } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
