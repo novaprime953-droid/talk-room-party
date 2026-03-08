@@ -88,7 +88,7 @@ const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-
+const AppRoutes = () => {
   const { user } = useAuth();
   return (
     <div className="min-h-screen relative">
