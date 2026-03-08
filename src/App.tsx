@@ -115,6 +115,14 @@ const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const HostRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <HostLayout>{children}</HostLayout>
+    </ProtectedRoute>
+  );
+};
+
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
