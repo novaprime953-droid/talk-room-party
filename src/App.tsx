@@ -133,6 +133,14 @@ const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
         <Route path="/agency/earnings" element={<AgencyRoute><AgencyEarnings /></AgencyRoute>} />
         <Route path="/agency/commissions" element={<AgencyRoute><AgencyCommissions /></AgencyRoute>} />
 
+        {/* BizDev routes */}
+        <Route path="/bizdev" element={<BizDevRoute><BizDevDashboard /></BizDevRoute>} />
+        <Route path="/bizdev/promotions" element={<BizDevRoute><BizDevPromotions /></BizDevRoute>} />
+        <Route path="/bizdev/campaigns" element={<BizDevRoute><BizDevCampaigns /></BizDevRoute>} />
+        <Route path="/bizdev/partnerships" element={<BizDevRoute><BizDevPartnerships /></BizDevRoute>} />
+        <Route path="/bizdev/events" element={<BizDevRoute><BizDevEvents /></BizDevRoute>} />
+        <Route path="/bizdev/revenue" element={<BizDevRoute><BizDevRevenue /></BizDevRoute>} />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       {user && <BottomNav />}
