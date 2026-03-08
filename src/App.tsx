@@ -33,6 +33,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminLeaderboards from "./pages/admin/AdminLeaderboards";
 import AdminEvents from "./pages/admin/AdminEvents";
+import AdminCompetitions from "./pages/admin/AdminCompetitions";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
