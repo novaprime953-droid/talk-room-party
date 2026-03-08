@@ -81,6 +81,9 @@ import SellerSendCoins from "./pages/seller/SellerSendCoins";
 import SellerRecharges from "./pages/seller/SellerRecharges";
 import SellerVerify from "./pages/seller/SellerVerify";
 import SellerHistory from "./pages/seller/SellerHistory";
+import SellerPaymentMethods from "./pages/seller/SellerPaymentMethods";
+import SellerWalletSearch from "./pages/seller/SellerWalletSearch";
+import SellerPackages from "./pages/seller/SellerPackages";
 
 const queryClient = new QueryClient();
 
@@ -215,6 +218,9 @@ const AppRoutes = () => {
         <Route path="/seller/recharges" element={<SellerRoute><SellerRecharges /></SellerRoute>} />
         <Route path="/seller/verify" element={<SellerRoute><SellerVerify /></SellerRoute>} />
         <Route path="/seller/history" element={<SellerRoute><SellerHistory /></SellerRoute>} />
+        <Route path="/seller/payments" element={<SellerRoute><SellerPaymentMethods /></SellerRoute>} />
+        <Route path="/seller/wallets" element={<SellerRoute><SellerWalletSearch /></SellerRoute>} />
+        <Route path="/seller/packages" element={<SellerRoute><SellerPackages /></SellerRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
