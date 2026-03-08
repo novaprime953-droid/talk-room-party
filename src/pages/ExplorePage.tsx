@@ -92,8 +92,8 @@ const ExplorePage = () => {
                 key={room.id}
                 id={room.id}
                 name={room.room_name}
-                host={room.profiles?.display_name ?? room.profiles?.username ?? "Host"}
-                hostAvatar={room.profiles?.avatar_url ?? ""}
+                host="Host"
+                hostAvatar=""
                 listeners={room.listener_count}
                 speakers={0}
                 isLive={room.is_live}
