@@ -38,6 +38,14 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminLogs from "./pages/admin/AdminLogs";
 
+// Agency pages
+import AgencyLayout from "./components/agency/AgencyLayout";
+import AgencyDashboard from "./pages/agency/AgencyDashboard";
+import AgencyRecruit from "./pages/agency/AgencyRecruit";
+import AgencyHosts from "./pages/agency/AgencyHosts";
+import AgencyEarnings from "./pages/agency/AgencyEarnings";
+import AgencyCommissions from "./pages/agency/AgencyCommissions";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -51,6 +59,14 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute>
       <AdminLayout>{children}</AdminLayout>
+    </ProtectedRoute>
+  );
+};
+
+const AgencyRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <AgencyLayout>{children}</AgencyLayout>
     </ProtectedRoute>
   );
 };
@@ -92,6 +108,13 @@ const AppRoutes = () => {
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
         <Route path="/admin/logs" element={<AdminRoute><AdminLogs /></AdminRoute>} />
+
+        {/* Agency routes */}
+        <Route path="/agency" element={<AgencyRoute><AgencyDashboard /></AgencyRoute>} />
+        <Route path="/agency/recruit" element={<AgencyRoute><AgencyRecruit /></AgencyRoute>} />
+        <Route path="/agency/hosts" element={<AgencyRoute><AgencyHosts /></AgencyRoute>} />
+        <Route path="/agency/earnings" element={<AgencyRoute><AgencyEarnings /></AgencyRoute>} />
+        <Route path="/agency/commissions" element={<AgencyRoute><AgencyCommissions /></AgencyRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
