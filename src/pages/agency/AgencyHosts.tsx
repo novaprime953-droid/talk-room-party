@@ -29,7 +29,7 @@ const AgencyHosts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hosts")
-        .select("*, profiles!hosts_user_id_fkey(username, display_name, avatar_url, email, is_online, level as user_level, coins_balance)")
+        .select("*, profiles!hosts_user_id_fkey(username, display_name, avatar_url, email, is_online, level, coins_balance)")
         .eq("agency_id", agency!.id);
       if (error) throw error;
       return data;
