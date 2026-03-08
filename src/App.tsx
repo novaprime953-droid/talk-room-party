@@ -80,7 +80,15 @@ const AgencyRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const AppRoutes = () => {
+const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <BizDevLayout>{children}</BizDevLayout>
+    </ProtectedRoute>
+  );
+};
+
+
   const { user } = useAuth();
   return (
     <div className="min-h-screen relative">
