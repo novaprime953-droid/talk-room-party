@@ -55,6 +55,14 @@ import BizDevPartnerships from "./pages/bizdev/BizDevPartnerships";
 import BizDevEvents from "./pages/bizdev/BizDevEvents";
 import BizDevRevenue from "./pages/bizdev/BizDevRevenue";
 
+// Owner pages
+import OwnerLayout from "./components/owner/OwnerLayout";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import OwnerAdmins from "./pages/owner/OwnerAdmins";
+import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
+import OwnerRevenue from "./pages/owner/OwnerRevenue";
+import OwnerSettings from "./pages/owner/OwnerSettings";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
