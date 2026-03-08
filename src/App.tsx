@@ -81,6 +81,9 @@ import SellerSendCoins from "./pages/seller/SellerSendCoins";
 import SellerRecharges from "./pages/seller/SellerRecharges";
 import SellerVerify from "./pages/seller/SellerVerify";
 import SellerHistory from "./pages/seller/SellerHistory";
+import SellerPaymentMethods from "./pages/seller/SellerPaymentMethods";
+import SellerWalletSearch from "./pages/seller/SellerWalletSearch";
+import SellerPackages from "./pages/seller/SellerPackages";
 
 const queryClient = new QueryClient();
 
