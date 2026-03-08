@@ -65,6 +65,15 @@ import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 
+// Host Center pages
+import HostLayout from "./components/host/HostLayout";
+import HostDashboard from "./pages/host/HostDashboard";
+import HostEarnings from "./pages/host/HostEarnings";
+import HostGifts from "./pages/host/HostGifts";
+import HostWithdrawals from "./pages/host/HostWithdrawals";
+import HostRooms from "./pages/host/HostRooms";
+import HostLevel from "./pages/host/HostLevel";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
