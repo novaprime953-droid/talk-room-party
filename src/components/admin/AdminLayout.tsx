@@ -111,8 +111,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Logo */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-border/50">
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <span className="font-display font-bold text-foreground">Admin Panel</span>
+            <Crown className="w-5 h-5 text-warning" />
+            <span className="font-display font-bold text-foreground">Owner Panel</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-muted-foreground">
             <X className="w-5 h-5" />
