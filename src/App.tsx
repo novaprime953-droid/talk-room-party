@@ -131,6 +131,14 @@ const HostRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const SellerRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <CoinSellerLayout>{children}</CoinSellerLayout>
+    </ProtectedRoute>
+  );
+};
+
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
