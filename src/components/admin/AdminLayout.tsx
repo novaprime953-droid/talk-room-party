@@ -74,7 +74,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         <Shield className="w-16 h-16 text-muted-foreground mb-4" />
         <h2 className="font-display font-bold text-xl text-foreground mb-2">Access Denied</h2>
         <p className="text-sm text-muted-foreground text-center mb-4">
-          You don't have permission to access the admin panel.
+          You don't have permission to access the Owner Panel.
         </p>
         <motion.button
           whileTap={{ scale: 0.95 }}

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Users, DoorOpen, FileText, Coins, TrendingUp, Activity, Gift, Building } from "lucide-react";
+import { Users, DoorOpen, FileText, Coins, TrendingUp, Activity, Gift, Building, Mic, Crown, DollarSign } from "lucide-react";
 import { useAdminStats } from "@/hooks/useAdmin";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,17 +10,28 @@ const AdminDashboard = () => {
   const { data: extraStats } = useQuery({
     queryKey: ["admin-extra-stats"],
     queryFn: async () => {
-      const [hosts, agencies, gifts, recharges] = await Promise.all([
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const [hosts, activeHosts, agencies, coinTx, dailyRecharges, recentGifts] = await Promise.all([
         supabase.from("hosts").select("id", { count: "exact", head: true }),
+        supabase.from("hosts").select("id", { count: "exact", head: true }).eq("status", "active"),
         supabase.from("agencies").select("id", { count: "exact", head: true }),
-        supabase.from("gift_transactions").select("id", { count: "exact", head: true }),
-        supabase.from("recharge_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("coin_transactions").select("id", { count: "exact", head: true }),
+        supabase.from("recharge_requests").select("amount").eq("status", "approved").gte("created_at", today.toISOString()),
+        supabase.from("gift_transactions").select("coins_spent"),
       ]);
+
+      const dailyRevenue = dailyRecharges.data?.reduce((s, r) => s + Number(r.amount), 0) ?? 0;
+      const totalGiftVolume = recentGifts.data?.reduce((s, g) => s + g.coins_spent, 0) ?? 0;
+
       return {
         totalHosts: hosts.count ?? 0,
+        activeHosts: activeHosts.count ?? 0,
         totalAgencies: agencies.count ?? 0,
-        totalGiftTx: gifts.count ?? 0,
-        pendingRecharges: recharges.count ?? 0,
+        totalCoinTx: coinTx.count ?? 0,
+        dailyRevenue,
+        totalGiftVolume,
       };
     },
   });
@@ -39,18 +50,24 @@ const AdminDashboard = () => {
 
   const statCards = [
     { icon: Users, label: "Total Users", value: stats?.totalUsers ?? 0, color: "text-primary" },
-    { icon: DoorOpen, label: "Active Rooms", value: stats?.activeRooms ?? 0, color: "text-online" },
+    { icon: DoorOpen, label: "Active Voice Rooms", value: stats?.activeRooms ?? 0, color: "text-online" },
+    { icon: Mic, label: "Total Hosts", value: extraStats?.totalHosts ?? 0, color: "text-accent" },
+    { icon: Building, label: "Total Agencies", value: extraStats?.totalAgencies ?? 0, color: "text-info" },
+    { icon: Coins, label: "Total Coin Transactions", value: (extraStats?.totalCoinTx ?? 0).toLocaleString(), color: "text-warning" },
+    { icon: DollarSign, label: "Daily Revenue", value: `$${(extraStats?.dailyRevenue ?? 0).toFixed(2)}`, color: "text-online" },
+    { icon: Activity, label: "Active Hosts", value: extraStats?.activeHosts ?? 0, color: "text-secondary" },
     { icon: FileText, label: "Pending Reports", value: stats?.pendingReports ?? 0, color: "text-destructive" },
-    { icon: Users, label: "Total Hosts", value: extraStats?.totalHosts ?? 0, color: "text-accent" },
-    { icon: Building, label: "Agencies", value: extraStats?.totalAgencies ?? 0, color: "text-info" },
-    { icon: Gift, label: "Gift Transactions", value: extraStats?.totalGiftTx ?? 0, color: "text-secondary" },
-    { icon: Coins, label: "Pending Recharges", value: extraStats?.pendingRecharges ?? 0, color: "text-warning" },
-    { icon: TrendingUp, label: "Revenue", value: "$0", color: "text-online" },
   ];
 
   return (
     <div>
-      <h1 className="font-display font-bold text-2xl text-foreground mb-6">Dashboard</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <Crown className="w-7 h-7 text-warning" />
+        <div>
+          <h1 className="font-display font-bold text-2xl text-foreground">Owner Panel Dashboard</h1>
+          <p className="text-xs text-muted-foreground">Main control center • Full system overview</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {statCards.map((stat, i) => (
