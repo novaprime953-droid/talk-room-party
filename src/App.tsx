@@ -33,6 +33,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminLeaderboards from "./pages/admin/AdminLeaderboards";
 import AdminEvents from "./pages/admin/AdminEvents";
+import AdminCompetitions from "./pages/admin/AdminCompetitions";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
@@ -137,6 +138,7 @@ const AppRoutes = () => {
         <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
         <Route path="/admin/notifications" element={<AdminRoute><AdminNotifications /></AdminRoute>} />
         <Route path="/admin/leaderboards" element={<AdminRoute><AdminLeaderboards /></AdminRoute>} />
+        <Route path="/admin/competitions" element={<AdminRoute><AdminCompetitions /></AdminRoute>} />
         <Route path="/admin/events" element={<AdminRoute><AdminEvents /></AdminRoute>} />
         <Route path="/admin/promotions" element={<AdminRoute><AdminPromotions /></AdminRoute>} />
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />

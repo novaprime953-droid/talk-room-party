@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  LayoutDashboard, Users, Mic, Building, DoorOpen, Gift, Coins, CreditCard,
+  LayoutDashboard, Users, Mic, Building, DoorOpen, Gift, Coins, CreditCard, Swords,
   ArrowUpRight, FileText, Bell, Trophy, Calendar, Megaphone, Settings,
   BarChart3, Activity, ChevronLeft, ChevronRight, Shield, Menu, X, LogOut,
 } from "lucide-react";
@@ -46,6 +46,7 @@ const menuSections = [
     label: "Engagement",
     items: [
       { icon: Trophy, label: "Leaderboards", path: "/admin/leaderboards" },
+      { icon: Swords, label: "Competitions", path: "/admin/competitions" },
       { icon: Calendar, label: "Events", path: "/admin/events" },
       { icon: Megaphone, label: "Promotions", path: "/admin/promotions" },
     ],
