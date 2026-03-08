@@ -1,0 +1,2 @@
+ALTER TABLE public.coin_transactions DROP CONSTRAINT coin_transactions_type_check;
+ALTER TABLE public.coin_transactions ADD CONSTRAINT coin_transactions_type_check CHECK (type = ANY (ARRAY['recharge','gift_sent','gift_received','withdrawal','reward','admin_adjust','seller_transfer','owner_gift']));
