@@ -9,6 +9,7 @@ import { useUserRoles } from "@/hooks/useAdmin";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/owner" },
+  { label: "Room Management", icon: DoorOpen, path: "/owner/rooms" },
   { label: "Admin Management", icon: Shield, path: "/owner/admins" },
   { label: "System Analytics", icon: BarChart3, path: "/owner/analytics" },
   { label: "Revenue", icon: DollarSign, path: "/owner/revenue" },
