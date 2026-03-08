@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Mic, Building, DoorOpen, Gift, Coins, CreditCard, Swords,
   ArrowUpRight, FileText, Bell, Trophy, Calendar, Megaphone, Settings,
-  BarChart3, Activity, ChevronLeft, ChevronRight, Shield, Menu, X, LogOut,
+  BarChart3, Activity, ChevronLeft, ChevronRight, Shield, Menu, X, LogOut, Crown,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserRoles } from "@/hooks/useAdmin";
