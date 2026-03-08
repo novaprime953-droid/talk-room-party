@@ -43,8 +43,16 @@ const quickLinks = [
 const OwnerLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
-  const { data: roles } = useUserRoles();
+  const { data: roles, isLoading } = useUserRoles();
   const isOwner = roles?.includes("owner");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!isOwner) {
     return (
