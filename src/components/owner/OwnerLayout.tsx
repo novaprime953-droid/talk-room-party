@@ -2,24 +2,42 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
-  Menu, X, ArrowLeft, Building, Mic, Target, Coins, Key, DoorOpen,
+  Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
+  CreditCard, ArrowUpRight, Bell, FileText, Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
 
-const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/owner" },
-  { label: "Room Management", icon: DoorOpen, path: "/owner/rooms" },
-  { label: "Admin Management", icon: Shield, path: "/owner/admins" },
-  { label: "System Analytics", icon: BarChart3, path: "/owner/analytics" },
-  { label: "Revenue", icon: DollarSign, path: "/owner/revenue" },
-  { label: "Global Settings", icon: Settings, path: "/owner/settings" },
+const navSections = [
+  {
+    label: "Overview",
+    items: [
+      { label: "Dashboard", icon: LayoutDashboard, path: "/owner" },
+      { label: "System Analytics", icon: BarChart3, path: "/owner/analytics" },
+      { label: "Revenue", icon: DollarSign, path: "/owner/revenue" },
+    ],
+  },
+  {
+    label: "Management",
+    items: [
+      { label: "Admin Management", icon: Shield, path: "/owner/admins" },
+      { label: "Room Management", icon: DoorOpen, path: "/owner/rooms" },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { label: "Global Settings", icon: Settings, path: "/owner/settings" },
+    ],
+  },
 ];
 
 const quickLinks = [
   { label: "Admin Panel", icon: Shield, path: "/admin" },
   { label: "Agency Panel", icon: Building, path: "/agency" },
   { label: "BizDev Panel", icon: Target, path: "/bizdev" },
+  { label: "Host Center", icon: Mic, path: "/host" },
+  { label: "Coins Seller", icon: Coins, path: "/seller" },
 ];
 
 const OwnerLayout = ({ children }: { children: React.ReactNode }) => {
@@ -61,42 +79,43 @@ const OwnerLayout = ({ children }: { children: React.ReactNode }) => {
           <Crown className="w-5 h-5 text-warning" />
           <span className="font-display font-bold text-foreground">Owner Panel</span>
         </div>
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-1">Main</p>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                location.pathname === item.path
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </Link>
+        <nav className="flex-1 p-3 space-y-4 overflow-y-auto no-scrollbar">
+          {navSections.map((section) => (
+            <div key={section.label}>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-1">{section.label}</p>
+              <div className="space-y-0.5">
+                {section.items.map((item) => (
+                  <Link key={item.path} to={item.path} onClick={() => setOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
+                      location.pathname === item.path
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}>
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
 
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mt-4 mb-1">Quick Access</p>
-          {quickLinks.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            >
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </Link>
-          ))}
+          <div>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider px-3 mb-1">Quick Access</p>
+            <div className="space-y-0.5">
+              {quickLinks.map((item) => (
+                <Link key={item.path} to={item.path} onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                  <item.icon className="w-4 h-4" />
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </nav>
         <div className="p-3 border-t border-border">
           <Link to="/" className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-xl hover:bg-muted">
-            <ArrowLeft className="w-4 h-4" />
-            Back to App
+            <ArrowLeft className="w-4 h-4" /> Back to App
           </Link>
         </div>
       </aside>
