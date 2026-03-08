@@ -55,6 +55,14 @@ import BizDevPartnerships from "./pages/bizdev/BizDevPartnerships";
 import BizDevEvents from "./pages/bizdev/BizDevEvents";
 import BizDevRevenue from "./pages/bizdev/BizDevRevenue";
 
+// Owner pages
+import OwnerLayout from "./components/owner/OwnerLayout";
+import OwnerDashboard from "./pages/owner/OwnerDashboard";
+import OwnerAdmins from "./pages/owner/OwnerAdmins";
+import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
+import OwnerRevenue from "./pages/owner/OwnerRevenue";
+import OwnerSettings from "./pages/owner/OwnerSettings";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -84,6 +92,14 @@ const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute>
       <BizDevLayout>{children}</BizDevLayout>
+    </ProtectedRoute>
+  );
+};
+
+const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <OwnerLayout>{children}</OwnerLayout>
     </ProtectedRoute>
   );
 };
@@ -140,6 +156,13 @@ const AppRoutes = () => {
         <Route path="/bizdev/partnerships" element={<BizDevRoute><BizDevPartnerships /></BizDevRoute>} />
         <Route path="/bizdev/events" element={<BizDevRoute><BizDevEvents /></BizDevRoute>} />
         <Route path="/bizdev/revenue" element={<BizDevRoute><BizDevRevenue /></BizDevRoute>} />
+
+        {/* Owner routes */}
+        <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
+        <Route path="/owner/admins" element={<OwnerRoute><OwnerAdmins /></OwnerRoute>} />
+        <Route path="/owner/analytics" element={<OwnerRoute><OwnerAnalytics /></OwnerRoute>} />
+        <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />
+        <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
