@@ -65,6 +65,15 @@ import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 
+// Host Center pages
+import HostLayout from "./components/host/HostLayout";
+import HostDashboard from "./pages/host/HostDashboard";
+import HostEarnings from "./pages/host/HostEarnings";
+import HostGifts from "./pages/host/HostGifts";
+import HostWithdrawals from "./pages/host/HostWithdrawals";
+import HostRooms from "./pages/host/HostRooms";
+import HostLevel from "./pages/host/HostLevel";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -102,6 +111,14 @@ const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute>
       <OwnerLayout>{children}</OwnerLayout>
+    </ProtectedRoute>
+  );
+};
+
+const HostRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <HostLayout>{children}</HostLayout>
     </ProtectedRoute>
   );
 };
@@ -167,6 +184,14 @@ const AppRoutes = () => {
         <Route path="/owner/analytics" element={<OwnerRoute><OwnerAnalytics /></OwnerRoute>} />
         <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />
         <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
+
+        {/* Host Center routes */}
+        <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
+        <Route path="/host/earnings" element={<HostRoute><HostEarnings /></HostRoute>} />
+        <Route path="/host/gifts" element={<HostRoute><HostGifts /></HostRoute>} />
+        <Route path="/host/withdrawals" element={<HostRoute><HostWithdrawals /></HostRoute>} />
+        <Route path="/host/rooms" element={<HostRoute><HostRooms /></HostRoute>} />
+        <Route path="/host/level" element={<HostRoute><HostLevel /></HostRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
