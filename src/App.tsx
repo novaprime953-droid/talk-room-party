@@ -62,6 +62,7 @@ import OwnerAdmins from "./pages/owner/OwnerAdmins";
 import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
 import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
+import OwnerRooms from "./pages/owner/OwnerRooms";
 
 const queryClient = new QueryClient();
 
@@ -159,6 +160,7 @@ const AppRoutes = () => {
 
         {/* Owner routes */}
         <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
+        <Route path="/owner/rooms" element={<OwnerRoute><OwnerRooms /></OwnerRoute>} />
         <Route path="/owner/admins" element={<OwnerRoute><OwnerAdmins /></OwnerRoute>} />
         <Route path="/owner/analytics" element={<OwnerRoute><OwnerAnalytics /></OwnerRoute>} />
         <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />

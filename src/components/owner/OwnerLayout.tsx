@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
-  Menu, X, ArrowLeft, Building, Mic, Target, Coins, Key,
+  Menu, X, ArrowLeft, Building, Mic, Target, Coins, Key, DoorOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/owner" },
+  { label: "Room Management", icon: DoorOpen, path: "/owner/rooms" },
   { label: "Admin Management", icon: Shield, path: "/owner/admins" },
   { label: "System Analytics", icon: BarChart3, path: "/owner/analytics" },
   { label: "Revenue", icon: DollarSign, path: "/owner/revenue" },
