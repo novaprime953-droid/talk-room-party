@@ -96,7 +96,15 @@ const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const AppRoutes = () => {
+const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <OwnerLayout>{children}</OwnerLayout>
+    </ProtectedRoute>
+  );
+};
+
+
   const { user } = useAuth();
   return (
     <div className="min-h-screen relative">
