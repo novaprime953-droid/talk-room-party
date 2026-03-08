@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard, Users, Mic, Building, DoorOpen, Gift, Coins, CreditCard, Swords,
   ArrowUpRight, FileText, Bell, Trophy, Calendar, Megaphone, Settings,
-  BarChart3, Activity, ChevronLeft, ChevronRight, Shield, Menu, X, LogOut,
+  BarChart3, Activity, ChevronLeft, ChevronRight, Shield, Menu, X, LogOut, Crown,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserRoles } from "@/hooks/useAdmin";
@@ -74,7 +74,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         <Shield className="w-16 h-16 text-muted-foreground mb-4" />
         <h2 className="font-display font-bold text-xl text-foreground mb-2">Access Denied</h2>
         <p className="text-sm text-muted-foreground text-center mb-4">
-          You don't have permission to access the admin panel.
+          You don't have permission to access the Owner Panel.
         </p>
         <motion.button
           whileTap={{ scale: 0.95 }}
@@ -111,8 +111,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Logo */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-border/50">
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-primary" />
-            <span className="font-display font-bold text-foreground">Admin Panel</span>
+            <Crown className="w-5 h-5 text-warning" />
+            <span className="font-display font-bold text-foreground">Owner Panel</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 text-muted-foreground">
             <X className="w-5 h-5" />
