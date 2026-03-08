@@ -1,9 +1,18 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Crown, Users, DoorOpen, DollarSign, Shield, TrendingUp, Activity, Building } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Crown, Users, DoorOpen, DollarSign, Shield, TrendingUp, Activity, Building, Send, Coins } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const OwnerDashboard = () => {
+  const { user } = useAuth();
+  const [coinSearch, setCoinSearch] = useState("");
+  const [coinAmount, setCoinAmount] = useState("");
+  const [coinNote, setCoinNote] = useState("");
+
   const { data: stats } = useQuery({
     queryKey: ["owner-stats"],
     queryFn: async () => {
@@ -30,6 +39,32 @@ const OwnerDashboard = () => {
     },
   });
 
+  const { data: searchUsers } = useQuery({
+    queryKey: ["owner-coin-search", coinSearch],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("profiles")
+        .select("user_id, username, display_name, avatar_url, coins_balance")
+        .or(`username.ilike.%${coinSearch}%,display_name.ilike.%${coinSearch}%`)
+        .limit(10);
+      if (error) throw error;
+      return data;
+    },
+    enabled: coinSearch.length >= 2,
+  });
+
+  const sendCoins = async (targetId: string, targetName: string) => {
+    const amount = parseInt(coinAmount);
+    if (!amount || amount < 1) { toast.error("Enter a valid amount (min 1)"); return; }
+    const { data, error } = await supabase.rpc("owner_send_coins", {
+      p_owner_id: user!.id,
+      p_target_id: targetId,
+      p_amount: amount,
+      p_description: coinNote || `Owner sent ${amount} coins`,
+    });
+    if (error) toast.error(error.message);
+    else { toast.success(`Sent ${amount.toLocaleString()} coins to ${targetName}!`); setCoinAmount(""); setCoinNote(""); }
+  };
+
   const cards = [
     { label: "Total Users", value: stats?.totalUsers ?? 0, icon: Users, color: "text-primary" },
     { label: "Live Rooms", value: stats?.liveRooms ?? 0, icon: DoorOpen, color: "text-online" },
@@ -52,7 +87,7 @@ const OwnerDashboard = () => {
         <Crown className="w-6 h-6 text-warning" />
         <div>
           <h1 className="font-display font-bold text-2xl text-foreground">Owner Dashboard</h1>
-          <p className="text-xs text-muted-foreground">Full system overview and control</p>
+          <p className="text-xs text-muted-foreground">Full system overview and control • Unlimited coins</p>
         </div>
       </div>
 
@@ -66,6 +101,38 @@ const OwnerDashboard = () => {
             <p className="text-xl font-bold text-foreground">{c.value}</p>
           </div>
         ))}
+      </div>
+
+      {/* Send Coins Section */}
+      <div className="bg-card rounded-2xl p-4 shadow-card mb-6">
+        <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+          <Coins className="w-4 h-4 text-accent" /> Send Coins to User (Unlimited)
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+          <Input placeholder="Search user..." value={coinSearch} onChange={(e) => setCoinSearch(e.target.value)} />
+          <Input type="number" placeholder="Amount (1 - 999,999,999)" min="1" max="999999999" value={coinAmount} onChange={(e) => setCoinAmount(e.target.value)} />
+          <Input placeholder="Note (optional)" value={coinNote} onChange={(e) => setCoinNote(e.target.value)} />
+        </div>
+        {searchUsers && searchUsers.length > 0 && (
+          <div className="divide-y divide-border/30 rounded-xl border border-border/50 overflow-hidden">
+            {searchUsers.map((p) => (
+              <div key={p.user_id} className="flex items-center justify-between px-4 py-2.5 hover:bg-muted/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                    {p.avatar_url ? <img src={p.avatar_url} alt="" className="w-full h-full object-cover" /> : <span className="text-[10px] font-bold">{(p.display_name ?? "U")[0]}</span>}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{p.display_name ?? p.username}</p>
+                    <p className="text-[10px] text-muted-foreground">Balance: {p.coins_balance?.toLocaleString()} coins</p>
+                  </div>
+                </div>
+                <button onClick={() => sendCoins(p.user_id, p.display_name ?? p.username ?? "User")} className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-accent/10 text-accent text-xs font-bold hover:bg-accent/20">
+                  <Send className="w-3.5 h-3.5" /> Send
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <h3 className="font-semibold text-foreground mb-3">Quick Access to Panels</h3>
