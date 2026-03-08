@@ -21,6 +21,18 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (isSignUp) {
+        if (username.trim()) {
+          const { data: existing } = await supabase
+            .from("profiles")
+            .select("user_id")
+            .eq("username", username.trim())
+            .maybeSingle();
+          if (existing) {
+            toast.error("Username already taken. Choose another.");
+            setLoading(false);
+            return;
+          }
+        }
         await signUp(email, password, username);
         toast.success("Account created! Check your email to verify.");
       } else {
