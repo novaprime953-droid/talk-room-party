@@ -135,6 +135,57 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (path === "/create-user" && req.method === "POST") {
+      const isOwner = userRoles.includes("owner");
+      if (!isOwner) {
+        return new Response(JSON.stringify({ error: "Only the owner can create users with roles" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { email, password, username, phone, role, display_name } = body;
+      if (!email || !password || !role) {
+        return new Response(JSON.stringify({ error: "Email, password, and role are required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Create user via admin API
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { username: username || email.split("@")[0], display_name: display_name || username || email.split("@")[0] },
+      });
+
+      if (createError) {
+        return new Response(JSON.stringify({ error: createError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Update profile with phone if provided
+      if (phone && newUser.user) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", newUser.user.id);
+      }
+
+      // Assign the requested role (the trigger already assigns 'user')
+      if (newUser.user && role !== "user") {
+        await supabase.from("user_roles").insert({
+          user_id: newUser.user.id,
+          role,
+          granted_by: user.id,
+        });
+      }
+
+      return new Response(JSON.stringify({ success: true, user_id: newUser.user?.id }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (path === "/assign-role" && req.method === "POST") {
       const isOwnerOrSuperAdmin = userRoles.some((r: string) =>
         ["owner", "super_admin"].includes(r)

@@ -2,19 +2,38 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Crown, Users, DoorOpen, DollarSign, Shield, TrendingUp, Activity, Building, Send, Coins, Gift, Mic, CreditCard, Bell, BarChart3 } from "lucide-react";
+import { Crown, Users, DoorOpen, DollarSign, Shield, TrendingUp, Activity, Building, Send, Coins, Gift, Mic, CreditCard, Bell, BarChart3, Plus, UserPlus, Target, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+
+type RoleType = "super_admin" | "admin" | "business_dev" | "coins_seller";
+
+const roleButtons: { label: string; role: RoleType; icon: typeof Shield; color: string }[] = [
+  { label: "Add Super Admin", role: "super_admin", icon: Shield, color: "bg-destructive/10 text-destructive border-destructive/20" },
+  { label: "Add Admin", role: "admin", icon: Shield, color: "bg-primary/10 text-primary border-primary/20" },
+  { label: "Add BD", role: "business_dev", icon: Target, color: "bg-accent/20 text-accent-foreground border-accent/30" },
+  { label: "Add Coins Seller", role: "coins_seller", icon: Coins, color: "bg-warning/10 text-warning border-warning/20" },
+];
 
 const OwnerDashboard = () => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [coinSearch, setCoinSearch] = useState("");
   const [coinAmount, setCoinAmount] = useState("");
   const [coinNote, setCoinNote] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  // Role creation dialog state
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [createRole, setCreateRole] = useState<RoleType>("admin");
+  const [formData, setFormData] = useState({ username: "", email: "", password: "", phone: "", status: "active" });
+  const [creating, setCreating] = useState(false);
 
   const { data: stats } = useQuery({
     queryKey: ["owner-stats"],
@@ -95,6 +114,64 @@ const OwnerDashboard = () => {
     }
   };
 
+  const openCreateDialog = (role: RoleType) => {
+    setCreateRole(role);
+    setFormData({ username: "", email: "", password: "", phone: "", status: "active" });
+    setCreateDialogOpen(true);
+  };
+
+  const handleCreateUser = async () => {
+    if (!formData.email || !formData.password) {
+      toast.error("Email and password are required");
+      return;
+    }
+    if (formData.password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api/create-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            email: formData.email.trim(),
+            password: formData.password,
+            username: formData.username.trim() || undefined,
+            display_name: formData.username.trim() || undefined,
+            phone: formData.phone.trim() || undefined,
+            role: createRole,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Failed to create user");
+
+      toast.success(`${roleLabels[createRole]} created successfully!`);
+      setCreateDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["owner-stats"] });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const roleLabels: Record<RoleType, string> = {
+    super_admin: "Super Admin",
+    admin: "Admin",
+    business_dev: "Business Developer",
+    coins_seller: "Coins Seller",
+  };
+
   const cards = [
     { label: "Total Users", value: stats?.totalUsers ?? 0, icon: Users, color: "text-primary" },
     { label: "Active Rooms", value: `${stats?.liveRooms ?? 0} / ${stats?.totalRooms ?? 0}`, icon: DoorOpen, color: "text-online" },
@@ -122,6 +199,23 @@ const OwnerDashboard = () => {
           <h1 className="font-display font-bold text-2xl text-foreground">Owner Dashboard</h1>
           <p className="text-xs text-muted-foreground">Full system overview • Unlimited coins • All privileges</p>
         </div>
+      </div>
+
+      {/* Role Creation Buttons */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        {roleButtons.map((rb) => (
+          <motion.button
+            key={rb.role}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => openCreateDialog(rb.role)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl border font-semibold text-sm transition-colors ${rb.color} hover:opacity-90`}
+          >
+            <div className="w-8 h-8 rounded-xl bg-background/50 flex items-center justify-center">
+              <UserPlus className="w-4 h-4" />
+            </div>
+            <span>{rb.label}</span>
+          </motion.button>
+        ))}
       </div>
 
       {/* Stats */}
@@ -215,6 +309,88 @@ const OwnerDashboard = () => {
           </Link>
         ))}
       </div>
+
+      {/* Create User Dialog */}
+      <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+        <DialogContent className="sm:max-w-md bg-card border-border">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-foreground">
+              <UserPlus className="w-5 h-5 text-primary" />
+              Create {roleLabels[createRole]}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Username</Label>
+              <Input
+                placeholder="Enter username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Email *</Label>
+              <Input
+                type="email"
+                placeholder="Enter email address"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Password *</Label>
+              <Input
+                type="password"
+                placeholder="Minimum 6 characters"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Phone</Label>
+              <Input
+                type="tel"
+                placeholder="Phone number (optional)"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Assigned Role</Label>
+              <div className="px-3 py-2 rounded-xl bg-muted/30 border border-border/50 text-sm text-foreground font-medium">
+                {roleLabels[createRole]}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-muted-foreground text-xs">Status</Label>
+              <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="disabled">Disabled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              onClick={handleCreateUser}
+              disabled={creating}
+              className="gradient-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-bold w-full flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {creating ? (
+                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <UserPlus className="w-4 h-4" /> Create {roleLabels[createRole]}
+                </>
+              )}
+            </motion.button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
