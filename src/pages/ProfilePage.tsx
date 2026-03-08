@@ -38,6 +38,12 @@ const ProfilePage = () => {
     ...(hasAdminAccess
       ? [{ icon: Shield, label: "Admin Panel", desc: "Management tools", color: "text-destructive", path: "/admin" }]
       : []),
+    ...(hasCoinsSeller
+      ? [{ icon: Banknote, label: "Coins Seller Panel", desc: "Sell & manage coins", color: "text-online", path: "/seller" }]
+      : []),
+    ...(isOwner
+      ? [{ icon: Crown, label: "Owner Panel", desc: "System control center", color: "text-warning", path: "/owner" }]
+      : []),
     { icon: Heart, label: "Favorites", desc: "Saved rooms & users", color: "text-primary", path: "/favorites" },
     { icon: Settings, label: "Settings", desc: "App preferences", color: "text-muted-foreground", path: "/settings" },
   ];
