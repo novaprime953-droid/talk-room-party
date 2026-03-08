@@ -119,6 +119,101 @@ export type Database = {
         }
         Relationships: []
       }
+      competition_entries: {
+        Row: {
+          competition_id: string
+          created_at: string
+          id: string
+          rank: number | null
+          reward_amount: number | null
+          reward_claimed: boolean
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string
+          id?: string
+          rank?: number | null
+          reward_amount?: number | null
+          reward_claimed?: boolean
+          score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string
+          id?: string
+          rank?: number | null
+          reward_amount?: number | null
+          reward_claimed?: boolean
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_entries_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          banner_url: string | null
+          competition_type: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string
+          id: string
+          metric: string
+          min_participants: number | null
+          rewards: Json | null
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          competition_type?: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date: string
+          id?: string
+          metric?: string
+          min_participants?: number | null
+          rewards?: Json | null
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          competition_type?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          metric?: string
+          min_participants?: number | null
+          rewards?: Json | null
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           banner_url: string | null
