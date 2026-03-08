@@ -46,6 +46,15 @@ import AgencyHosts from "./pages/agency/AgencyHosts";
 import AgencyEarnings from "./pages/agency/AgencyEarnings";
 import AgencyCommissions from "./pages/agency/AgencyCommissions";
 
+// BizDev pages
+import BizDevLayout from "./components/bizdev/BizDevLayout";
+import BizDevDashboard from "./pages/bizdev/BizDevDashboard";
+import BizDevPromotions from "./pages/bizdev/BizDevPromotions";
+import BizDevCampaigns from "./pages/bizdev/BizDevCampaigns";
+import BizDevPartnerships from "./pages/bizdev/BizDevPartnerships";
+import BizDevEvents from "./pages/bizdev/BizDevEvents";
+import BizDevRevenue from "./pages/bizdev/BizDevRevenue";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -67,6 +76,14 @@ const AgencyRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute>
       <AgencyLayout>{children}</AgencyLayout>
+    </ProtectedRoute>
+  );
+};
+
+const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <BizDevLayout>{children}</BizDevLayout>
     </ProtectedRoute>
   );
 };
@@ -115,6 +132,14 @@ const AppRoutes = () => {
         <Route path="/agency/hosts" element={<AgencyRoute><AgencyHosts /></AgencyRoute>} />
         <Route path="/agency/earnings" element={<AgencyRoute><AgencyEarnings /></AgencyRoute>} />
         <Route path="/agency/commissions" element={<AgencyRoute><AgencyCommissions /></AgencyRoute>} />
+
+        {/* BizDev routes */}
+        <Route path="/bizdev" element={<BizDevRoute><BizDevDashboard /></BizDevRoute>} />
+        <Route path="/bizdev/promotions" element={<BizDevRoute><BizDevPromotions /></BizDevRoute>} />
+        <Route path="/bizdev/campaigns" element={<BizDevRoute><BizDevCampaigns /></BizDevRoute>} />
+        <Route path="/bizdev/partnerships" element={<BizDevRoute><BizDevPartnerships /></BizDevRoute>} />
+        <Route path="/bizdev/events" element={<BizDevRoute><BizDevEvents /></BizDevRoute>} />
+        <Route path="/bizdev/revenue" element={<BizDevRoute><BizDevRevenue /></BizDevRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
