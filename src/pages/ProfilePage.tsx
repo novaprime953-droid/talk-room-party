@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut } from "lucide-react";
+import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut, Banknote } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,6 +15,10 @@ const ProfilePage = () => {
   const hasAdminAccess = roles?.some((r) =>
     ["admin", "super_admin", "owner", "manager", "business_dev"].includes(r)
   );
+  const hasCoinsSeller = roles?.some((r) =>
+    ["coins_seller", "owner", "super_admin", "admin"].includes(r)
+  );
+  const isOwner = roles?.includes("owner");
 
   const handleSignOut = async () => {
     try {
@@ -33,6 +37,12 @@ const ProfilePage = () => {
     { icon: Users, label: "My Agency", desc: "Agency dashboard", color: "text-info", path: "/agency" },
     ...(hasAdminAccess
       ? [{ icon: Shield, label: "Admin Panel", desc: "Management tools", color: "text-destructive", path: "/admin" }]
+      : []),
+    ...(hasCoinsSeller
+      ? [{ icon: Banknote, label: "Coins Seller Panel", desc: "Sell & manage coins", color: "text-online", path: "/seller" }]
+      : []),
+    ...(isOwner
+      ? [{ icon: Crown, label: "Owner Panel", desc: "System control center", color: "text-warning", path: "/owner" }]
       : []),
     { icon: Heart, label: "Favorites", desc: "Saved rooms & users", color: "text-primary", path: "/favorites" },
     { icon: Settings, label: "Settings", desc: "App preferences", color: "text-muted-foreground", path: "/settings" },
