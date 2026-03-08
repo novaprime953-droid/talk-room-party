@@ -46,6 +46,7 @@ const menuSections = [
     label: "Engagement",
     items: [
       { icon: Trophy, label: "Leaderboards", path: "/admin/leaderboards" },
+      { icon: Swords, label: "Competitions", path: "/admin/competitions" },
       { icon: Calendar, label: "Events", path: "/admin/events" },
       { icon: Megaphone, label: "Promotions", path: "/admin/promotions" },
     ],
