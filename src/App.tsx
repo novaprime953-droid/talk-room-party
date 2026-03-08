@@ -74,6 +74,14 @@ import HostWithdrawals from "./pages/host/HostWithdrawals";
 import HostRooms from "./pages/host/HostRooms";
 import HostLevel from "./pages/host/HostLevel";
 
+// Coins Seller pages
+import CoinSellerLayout from "./components/seller/CoinSellerLayout";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerSendCoins from "./pages/seller/SellerSendCoins";
+import SellerRecharges from "./pages/seller/SellerRecharges";
+import SellerVerify from "./pages/seller/SellerVerify";
+import SellerHistory from "./pages/seller/SellerHistory";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
