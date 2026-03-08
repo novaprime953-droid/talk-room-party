@@ -19,7 +19,9 @@ export const useUserRoles = () => {
   });
 };
 
-export const useHasRole = (role: string) => {
+type AppRole = 'admin' | 'agency_owner' | 'business_dev' | 'coins_seller' | 'host' | 'manager' | 'owner' | 'super_admin' | 'user';
+
+export const useHasRole = (role: AppRole) => {
   const { data: roles } = useUserRoles();
   return roles?.includes(role) ?? false;
 };
