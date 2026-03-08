@@ -145,45 +145,95 @@ Deno.serve(async (req) => {
       }
 
       const { email, password, username, phone, role, display_name } = body;
-      if (!email || !password || !role) {
-        return new Response(JSON.stringify({ error: "Email, password, and role are required" }), {
+      if (!email || !role) {
+        return new Response(JSON.stringify({ error: "Email and role are required" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      // Create user via admin API
+      const normalizedEmail = String(email).trim().toLowerCase();
+
+      // Create user via admin API when this is a brand-new email
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-        email,
+        email: normalizedEmail,
         password,
         email_confirm: true,
-        user_metadata: { username: username || email.split("@")[0], display_name: display_name || username || email.split("@")[0] },
+        user_metadata: {
+          username: username || normalizedEmail.split("@")[0],
+          display_name: display_name || username || normalizedEmail.split("@")[0],
+        },
       });
 
+      let targetUserId = newUser.user?.id;
+
+      // If user already exists, reuse that account and continue with role assignment
       if (createError) {
-        return new Response(JSON.stringify({ error: createError.message }), {
-          status: 400,
+        const isDuplicateEmail = createError.message
+          ?.toLowerCase()
+          .includes("already been registered");
+
+        if (!isDuplicateEmail) {
+          return new Response(JSON.stringify({ error: createError.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        const { data: existingProfile, error: profileError } = await supabase
+          .from("profiles")
+          .select("user_id")
+          .ilike("email", normalizedEmail)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        if (!existingProfile?.user_id) {
+          return new Response(JSON.stringify({ error: "User already exists but profile was not found" }), {
+            status: 409,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        targetUserId = existingProfile.user_id;
+      }
+
+      if (!targetUserId) {
+        return new Response(JSON.stringify({ error: "Failed to resolve target user" }), {
+          status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
       // Update profile with phone if provided
-      if (phone && newUser.user) {
-        await supabase.from("profiles").update({ phone }).eq("user_id", newUser.user.id);
+      if (phone) {
+        await supabase.from("profiles").update({ phone }).eq("user_id", targetUserId);
       }
 
-      // Assign the requested role (the trigger already assigns 'user')
-      if (newUser.user && role !== "user") {
-        await supabase.from("user_roles").insert({
-          user_id: newUser.user.id,
-          role,
-          granted_by: user.id,
-        });
+      // Assign requested role idempotently (the trigger already assigns 'user' for new signups)
+      if (role !== "user") {
+        const { error: roleError } = await supabase.from("user_roles").upsert(
+          {
+            user_id: targetUserId,
+            role,
+            granted_by: user.id,
+          },
+          { onConflict: "user_id,role" }
+        );
+
+        if (roleError) throw roleError;
       }
 
-      return new Response(JSON.stringify({ success: true, user_id: newUser.user?.id }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          success: true,
+          user_id: targetUserId,
+          reused_existing_user: Boolean(createError),
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     if (path === "/assign-role" && req.method === "POST") {
