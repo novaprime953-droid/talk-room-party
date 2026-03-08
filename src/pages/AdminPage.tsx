@@ -2,6 +2,10 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Users, Shield, Crown, BarChart3, Settings, Ban, Coins, Gift, Building, FileText, Bell, Activity, ChevronRight, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAdminStats, useAdminUsers, useReports, useUserRoles } from "@/hooks/useAdmin";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 type Panel = "owner" | "superadmin" | "admin" | "manage" | "business" | "agency" | "host" | "seller";
 
@@ -16,23 +20,45 @@ const panels: { id: Panel; label: string; icon: any; color: string; desc: string
   { id: "seller", label: "Coins Seller", icon: Coins, color: "text-accent", desc: "Coin sales & recharge" },
 ];
 
-const adminStats = [
-  { label: "Total Users", value: "145.2K", change: "+2.3%" },
-  { label: "Active Rooms", value: "1,234", change: "+12%" },
-  { label: "Revenue", value: "$45.8K", change: "+8.5%" },
-  { label: "Reports", value: "23", change: "-15%" },
-];
-
-const quickActions = [
-  { icon: Ban, label: "Ban User", color: "text-destructive" },
-  { icon: Gift, label: "Send Gift", color: "text-primary" },
-  { icon: Bell, label: "Broadcast", color: "text-info" },
-  { icon: FileText, label: "Reports", color: "text-warning" },
-];
-
 const AdminPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activePanel, setActivePanel] = useState<Panel>("owner");
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data: stats } = useAdminStats();
+  const { data: users } = useAdminUsers(searchTerm || undefined);
+  const { data: reports } = useReports("pending");
+  const { data: roles } = useUserRoles();
+
+  const hasAccess = roles?.some((r) =>
+    ["admin", "super_admin", "owner", "manager", "business_dev", "coins_seller"].includes(r)
+  );
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <Shield className="w-16 h-16 text-muted-foreground mb-4" />
+        <h2 className="font-display font-bold text-xl text-foreground mb-2">Access Denied</h2>
+        <p className="text-sm text-muted-foreground text-center mb-4">
+          You don't have permission to access the admin panel.
+        </p>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate("/")}
+          className="gradient-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold"
+        >
+          Go Home
+        </motion.button>
+      </div>
+    );
+  }
+
+  const adminStats = [
+    { label: "Total Users", value: stats?.totalUsers?.toLocaleString() ?? "0" },
+    { label: "Active Rooms", value: stats?.activeRooms?.toLocaleString() ?? "0" },
+    { label: "Pending Reports", value: stats?.pendingReports?.toLocaleString() ?? "0" },
+    { label: "Revenue", value: "$0" },
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -69,25 +95,7 @@ const AdminPage = () => {
             <div key={stat.label} className="bg-card rounded-2xl p-4 shadow-card">
               <p className="text-[10px] text-muted-foreground mb-1">{stat.label}</p>
               <p className="text-xl font-display font-bold text-foreground">{stat.value}</p>
-              <span className={`text-[10px] font-bold ${stat.change.startsWith("+") ? "text-online" : "text-destructive"}`}>
-                {stat.change}
-              </span>
             </div>
-          ))}
-        </div>
-
-        {/* Quick Actions */}
-        <h2 className="font-display font-bold text-sm text-foreground mb-3">Quick Actions</h2>
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          {quickActions.map((action) => (
-            <motion.button
-              key={action.label}
-              whileTap={{ scale: 0.95 }}
-              className="bg-card rounded-2xl p-3 flex flex-col items-center gap-2 shadow-card"
-            >
-              <action.icon className={`w-5 h-5 ${action.color}`} />
-              <span className="text-[10px] font-semibold text-foreground">{action.label}</span>
-            </motion.button>
           ))}
         </div>
 
@@ -96,22 +104,88 @@ const AdminPage = () => {
           <Search className="w-4 h-4 text-muted-foreground" />
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search users, rooms, reports..."
             className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
           />
         </div>
 
+        {/* Users list */}
+        {users && users.length > 0 && (
+          <>
+            <h2 className="font-display font-bold text-sm text-foreground mb-3">Users</h2>
+            <div className="space-y-2 mb-6">
+              {users.slice(0, 10).map((u: any) => (
+                <div key={u.id} className="flex items-center gap-3 bg-card rounded-xl p-3 shadow-card">
+                  <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center overflow-hidden">
+                    {u.avatar_url ? (
+                      <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-sm font-bold text-foreground">
+                        {(u.display_name ?? u.username ?? "U").charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">
+                      {u.display_name ?? u.username ?? "User"}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">{u.email} · Lv.{u.level}</p>
+                  </div>
+                  <div className="flex gap-1 flex-wrap">
+                    {u.user_roles?.map((r: any) => (
+                      <span key={r.role} className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">
+                        {r.role}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Pending Reports */}
+        {reports && reports.length > 0 && (
+          <>
+            <h2 className="font-display font-bold text-sm text-foreground mb-3">
+              Pending Reports ({reports.length})
+            </h2>
+            <div className="space-y-2 mb-6">
+              {reports.slice(0, 5).map((r: any) => (
+                <div key={r.id} className="bg-card rounded-xl p-3 shadow-card">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{r.reason}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        By {r.reporter?.username ?? "Unknown"} → {r.reported?.username ?? "Unknown"}
+                      </p>
+                    </div>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-warning/10 text-warning font-bold">
+                      {r.status}
+                    </span>
+                  </div>
+                  {r.description && (
+                    <p className="text-xs text-muted-foreground mt-2">{r.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Management Sections */}
         <h2 className="font-display font-bold text-sm text-foreground mb-3">Management</h2>
         <div className="space-y-2">
           {[
-            { icon: Users, label: "User Management", count: "145.2K users" },
-            { icon: Activity, label: "Live Rooms Monitor", count: "1,234 active" },
-            { icon: Coins, label: "Transactions", count: "3,456 today" },
-            { icon: Gift, label: "Gift Management", count: "89 gifts" },
-            { icon: Building, label: "Agency Management", count: "34 agencies" },
-            { icon: FileText, label: "Reports & Appeals", count: "23 pending" },
-            { icon: Ban, label: "Banned Users", count: "156 banned" },
+            { icon: Users, label: "User Management", count: `${stats?.totalUsers ?? 0} users` },
+            { icon: Activity, label: "Live Rooms Monitor", count: `${stats?.activeRooms ?? 0} active` },
+            { icon: Coins, label: "Transactions", count: "" },
+            { icon: Gift, label: "Gift Management", count: "" },
+            { icon: Building, label: "Agency Management", count: "" },
+            { icon: FileText, label: "Reports & Appeals", count: `${stats?.pendingReports ?? 0} pending` },
+            { icon: Ban, label: "Banned Users", count: "" },
             { icon: Settings, label: "App Settings", count: "" },
           ].map((item) => (
             <motion.button

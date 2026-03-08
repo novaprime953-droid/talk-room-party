@@ -1,23 +1,23 @@
 import { motion } from "framer-motion";
 import { Search, TrendingUp, Users, Globe } from "lucide-react";
+import { useState } from "react";
 import RoomCard from "@/components/RoomCard";
-
-const trendingRooms = [
-  { id: "10", name: "🎤 Karaoke Night - Sing Along!", host: "VocalStar", hostAvatar: "", listeners: 890, speakers: 6, isLive: true, tags: ["Karaoke"] },
-  { id: "11", name: "🧠 Trivia Challenge: Science Edition", host: "QuizMaster", hostAvatar: "", listeners: 340, speakers: 4, isLive: true, tags: ["Trivia"] },
-  { id: "12", name: "🎧 Lo-Fi Study Room", host: "ChillBeats", hostAvatar: "", listeners: 1200, speakers: 1, isLive: true, tags: ["Study", "Music"] },
-  { id: "13", name: "💪 Motivation Monday Talk", host: "CoachMax", hostAvatar: "", listeners: 456, speakers: 3, isLive: true, tags: ["Motivation"] },
-];
-
-const topHosts = [
-  { name: "DJ Luna", followers: "12.5K", avatar: "🎵" },
-  { name: "Sarah K", followers: "8.3K", avatar: "💬" },
-  { name: "GamerX", followers: "15.1K", avatar: "🎮" },
-  { name: "Ahmed", followers: "9.7K", avatar: "🌍" },
-  { name: "CoachMax", followers: "6.2K", avatar: "💪" },
-];
+import { useLiveRooms } from "@/hooks/useRooms";
+import { useLeaderboard } from "@/hooks/useLeaderboard";
+import { useNavigate } from "react-router-dom";
 
 const ExplorePage = () => {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const { data: rooms } = useLiveRooms();
+  const { data: topHosts } = useLeaderboard("hosts");
+
+  const filteredRooms = rooms?.filter((r) =>
+    !search || r.room_name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const liveCount = rooms?.length ?? 0;
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="px-4 pt-4 pb-3">
@@ -27,6 +27,8 @@ const ExplorePage = () => {
           <Search className="w-4 h-4 text-muted-foreground" />
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search rooms, hosts, topics..."
             className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
           />
@@ -35,9 +37,9 @@ const ExplorePage = () => {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { icon: Globe, label: "Rooms Live", value: "1,234", color: "text-primary" },
-            { icon: Users, label: "Online Now", value: "45.6K", color: "text-online" },
-            { icon: TrendingUp, label: "Trending", value: "89", color: "text-accent" },
+            { icon: Globe, label: "Rooms Live", value: liveCount.toLocaleString(), color: "text-primary" },
+            { icon: Users, label: "Top Hosts", value: (topHosts?.length ?? 0).toString(), color: "text-online" },
+            { icon: TrendingUp, label: "Trending", value: Math.min(liveCount, 10).toString(), color: "text-accent" },
           ].map((stat) => (
             <div key={stat.label} className="bg-card rounded-2xl p-3 text-center shadow-card">
               <stat.icon className={`w-5 h-5 mx-auto mb-1 ${stat.color}`} />
@@ -48,34 +50,61 @@ const ExplorePage = () => {
         </div>
 
         {/* Top Hosts */}
-        <h2 className="font-display font-bold text-lg text-foreground mb-3">🌟 Top Hosts</h2>
-        <div className="flex gap-4 overflow-x-auto no-scrollbar mb-6">
-          {topHosts.map((host, i) => (
-            <motion.div
-              key={host.name}
-              whileTap={{ scale: 0.95 }}
-              className="flex flex-col items-center gap-1.5 min-w-[70px]"
-            >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl ${
-                i === 0 ? "ring-2 ring-accent glow-gold" : "ring-1 ring-border"
-              } bg-muted/50`}>
-                {host.avatar}
-              </div>
-              <span className="text-[11px] font-semibold text-foreground truncate w-full text-center">
-                {host.name}
-              </span>
-              <span className="text-[10px] text-muted-foreground">{host.followers}</span>
-            </motion.div>
-          ))}
-        </div>
+        {topHosts && topHosts.length > 0 && (
+          <>
+            <h2 className="font-display font-bold text-lg text-foreground mb-3">🌟 Top Hosts</h2>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar mb-6">
+              {topHosts.slice(0, 10).map((host: any, i: number) => (
+                <motion.div
+                  key={host.id}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex flex-col items-center gap-1.5 min-w-[70px]"
+                >
+                  <div
+                    className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold ${
+                      i === 0 ? "ring-2 ring-accent glow-gold" : "ring-1 ring-border"
+                    } bg-muted/50 overflow-hidden`}
+                  >
+                    {host.profiles?.avatar_url ? (
+                      <img src={host.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-foreground">
+                        {(host.profiles?.display_name ?? "H").charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[11px] font-semibold text-foreground truncate w-full text-center">
+                    {host.profiles?.display_name ?? host.profiles?.username ?? "Host"}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">Lv.{host.level}</span>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
 
-        {/* Trending Rooms */}
+        {/* Rooms */}
         <h2 className="font-display font-bold text-lg text-foreground mb-3">🔥 Trending</h2>
-        <div className="grid grid-cols-2 gap-3">
-          {trendingRooms.map((room) => (
-            <RoomCard key={room.id} {...room} />
-          ))}
-        </div>
+        {filteredRooms && filteredRooms.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {filteredRooms.map((room) => (
+              <RoomCard
+                key={room.id}
+                id={room.id}
+                name={room.room_name}
+                host={room.profiles?.display_name ?? room.profiles?.username ?? "Host"}
+                hostAvatar={room.profiles?.avatar_url ?? ""}
+                listeners={room.listener_count}
+                speakers={0}
+                isLive={room.is_live}
+                isPrivate={room.privacy_type === "private"}
+                tags={[room.category]}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-muted-foreground text-sm py-8">No live rooms right now</p>
+        )}
       </div>
     </div>
   );

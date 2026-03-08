@@ -1,20 +1,43 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { X, Globe, Lock, Mic, Image, ChevronDown } from "lucide-react";
+import { X, Globe, Lock, Mic, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCreateRoom } from "@/hooks/useRooms";
+import { toast } from "sonner";
 
 const categories = ["Chat", "Music", "Gaming", "Dating", "Education", "Language", "Comedy", "Podcast"];
 
 const CreateRoomPage = () => {
   const navigate = useNavigate();
+  const createRoom = useCreateRoom();
   const [roomName, setRoomName] = useState("");
+  const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Chat");
   const [maxSeats, setMaxSeats] = useState(8);
 
+  const handleCreate = async () => {
+    if (!roomName.trim()) {
+      toast.error("Give your room a name");
+      return;
+    }
+    try {
+      const room = await createRoom.mutateAsync({
+        room_name: roomName.trim(),
+        description: description.trim() || undefined,
+        category: selectedCategory.toLowerCase(),
+        privacy_type: isPrivate ? "private" : "public",
+        max_seats: maxSeats,
+      });
+      toast.success("Room created! 🎉");
+      navigate(`/room/${room.id}`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create room");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
       <div className="flex items-center justify-between px-4 pt-4 pb-3">
         <button onClick={() => navigate(-1)} className="p-2 text-foreground">
           <X className="w-5 h-5" />
@@ -24,7 +47,6 @@ const CreateRoomPage = () => {
       </div>
 
       <div className="px-4 space-y-6">
-        {/* Cover */}
         <motion.button
           whileTap={{ scale: 0.98 }}
           className="w-full h-32 rounded-2xl gradient-primary flex flex-col items-center justify-center gap-2 glow-primary"
@@ -33,7 +55,6 @@ const CreateRoomPage = () => {
           <span className="text-xs text-primary-foreground/70 font-semibold">Add Cover Image</span>
         </motion.button>
 
-        {/* Room Name */}
         <div>
           <label className="text-xs font-bold text-foreground mb-2 block">Room Name</label>
           <input
@@ -45,7 +66,17 @@ const CreateRoomPage = () => {
           />
         </div>
 
-        {/* Category */}
+        <div>
+          <label className="text-xs font-bold text-foreground mb-2 block">Description (optional)</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="What's your room about?"
+            rows={2}
+            className="w-full bg-card rounded-2xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary/50 border border-border/50 resize-none"
+          />
+        </div>
+
         <div>
           <label className="text-xs font-bold text-foreground mb-2 block">Category</label>
           <div className="flex gap-2 flex-wrap">
@@ -66,7 +97,6 @@ const CreateRoomPage = () => {
           </div>
         </div>
 
-        {/* Privacy */}
         <div>
           <label className="text-xs font-bold text-foreground mb-2 block">Room Type</label>
           <div className="flex gap-3">
@@ -99,7 +129,6 @@ const CreateRoomPage = () => {
           </div>
         </div>
 
-        {/* Max Seats */}
         <div>
           <label className="text-xs font-bold text-foreground mb-2 block">Max Speakers</label>
           <div className="flex gap-2">
@@ -120,14 +149,15 @@ const CreateRoomPage = () => {
           </div>
         </div>
 
-        {/* Create Button */}
         <motion.button
           whileTap={{ scale: 0.97 }}
-          className="w-full py-4 rounded-2xl gradient-primary text-primary-foreground font-display font-bold text-lg glow-primary"
+          onClick={handleCreate}
+          disabled={createRoom.isPending}
+          className="w-full py-4 rounded-2xl gradient-primary text-primary-foreground font-display font-bold text-lg glow-primary disabled:opacity-50"
         >
           <div className="flex items-center justify-center gap-2">
             <Mic className="w-5 h-5" />
-            Go Live
+            {createRoom.isPending ? "Creating..." : "Go Live"}
           </div>
         </motion.button>
       </div>
