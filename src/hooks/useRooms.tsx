@@ -8,7 +8,7 @@ export const useLiveRooms = (category?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('voice_rooms')
-        .select('*, profiles!voice_rooms_host_id_fkey(username, display_name, avatar_url)')
+        .select('*')
         .eq('is_live', true)
         .eq('status', 'active')
         .order('listener_count', { ascending: false });
@@ -30,7 +30,7 @@ export const useRoom = (roomId: string) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('voice_rooms')
-        .select('*, profiles!voice_rooms_host_id_fkey(username, display_name, avatar_url)')
+        .select('*')
         .eq('id', roomId)
         .single();
       if (error) throw error;
