@@ -63,6 +63,14 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const AgencyRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <AgencyLayout>{children}</AgencyLayout>
+    </ProtectedRoute>
+  );
+};
+
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
@@ -100,6 +108,13 @@ const AppRoutes = () => {
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
         <Route path="/admin/logs" element={<AdminRoute><AdminLogs /></AdminRoute>} />
+
+        {/* Agency routes */}
+        <Route path="/agency" element={<AgencyRoute><AgencyDashboard /></AgencyRoute>} />
+        <Route path="/agency/recruit" element={<AgencyRoute><AgencyRecruit /></AgencyRoute>} />
+        <Route path="/agency/hosts" element={<AgencyRoute><AgencyHosts /></AgencyRoute>} />
+        <Route path="/agency/earnings" element={<AgencyRoute><AgencyEarnings /></AgencyRoute>} />
+        <Route path="/agency/commissions" element={<AgencyRoute><AgencyCommissions /></AgencyRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
