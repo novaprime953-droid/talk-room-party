@@ -209,6 +209,13 @@ const AppRoutes = () => {
         <Route path="/host/rooms" element={<HostRoute><HostRooms /></HostRoute>} />
         <Route path="/host/level" element={<HostRoute><HostLevel /></HostRoute>} />
 
+        {/* Coins Seller routes */}
+        <Route path="/seller" element={<SellerRoute><SellerDashboard /></SellerRoute>} />
+        <Route path="/seller/send" element={<SellerRoute><SellerSendCoins /></SellerRoute>} />
+        <Route path="/seller/recharges" element={<SellerRoute><SellerRecharges /></SellerRoute>} />
+        <Route path="/seller/verify" element={<SellerRoute><SellerVerify /></SellerRoute>} />
+        <Route path="/seller/history" element={<SellerRoute><SellerHistory /></SellerRoute>} />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       {user && <BottomNav />}
