@@ -46,6 +46,15 @@ import AgencyHosts from "./pages/agency/AgencyHosts";
 import AgencyEarnings from "./pages/agency/AgencyEarnings";
 import AgencyCommissions from "./pages/agency/AgencyCommissions";
 
+// BizDev pages
+import BizDevLayout from "./components/bizdev/BizDevLayout";
+import BizDevDashboard from "./pages/bizdev/BizDevDashboard";
+import BizDevPromotions from "./pages/bizdev/BizDevPromotions";
+import BizDevCampaigns from "./pages/bizdev/BizDevCampaigns";
+import BizDevPartnerships from "./pages/bizdev/BizDevPartnerships";
+import BizDevEvents from "./pages/bizdev/BizDevEvents";
+import BizDevRevenue from "./pages/bizdev/BizDevRevenue";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
