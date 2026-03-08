@@ -132,19 +132,6 @@ const OwnerDashboard = () => {
 
     setCreating(true);
     try {
-      const res = await supabase.functions.invoke("admin-api", {
-        body: {
-          email: formData.email.trim(),
-          password: formData.password,
-          username: formData.username.trim() || undefined,
-          display_name: formData.username.trim() || undefined,
-          phone: formData.phone.trim() || undefined,
-          role: createRole,
-        },
-        headers: { "x-action-path": "/create-user" },
-      });
-
-      // The edge function uses URL path routing, so we need to call it differently
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api/create-user`,
         {
