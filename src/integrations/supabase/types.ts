@@ -718,6 +718,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      owner_send_coins: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_owner_id: string
+          p_target_id: string
+        }
+        Returns: Json
+      }
       send_gift: {
         Args: {
           p_gift_id: string
