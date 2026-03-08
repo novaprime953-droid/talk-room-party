@@ -8,7 +8,7 @@ export const useLiveRooms = (category?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('voice_rooms')
-        .select('*')
+        .select('*, profiles!voice_rooms_host_id_fkey(username, display_name, avatar_url)')
         .eq('is_live', true)
         .eq('status', 'active')
         .order('listener_count', { ascending: false });
