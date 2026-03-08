@@ -218,6 +218,9 @@ const AppRoutes = () => {
         <Route path="/seller/recharges" element={<SellerRoute><SellerRecharges /></SellerRoute>} />
         <Route path="/seller/verify" element={<SellerRoute><SellerVerify /></SellerRoute>} />
         <Route path="/seller/history" element={<SellerRoute><SellerHistory /></SellerRoute>} />
+        <Route path="/seller/payments" element={<SellerRoute><SellerPaymentMethods /></SellerRoute>} />
+        <Route path="/seller/wallets" element={<SellerRoute><SellerWalletSearch /></SellerRoute>} />
+        <Route path="/seller/packages" element={<SellerRoute><SellerPackages /></SellerRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

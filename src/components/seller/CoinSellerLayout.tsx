@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Send, CreditCard, ShieldCheck, History, Menu, X, ArrowLeft, Coins } from "lucide-react";
+import { LayoutDashboard, Send, CreditCard, ShieldCheck, History, Menu, X, ArrowLeft, Coins, Wallet, UserSearch, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
 import { motion } from "framer-motion";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/seller" },
-  { label: "Send Coins", icon: Send, path: "/seller/send" },
   { label: "Recharge Requests", icon: CreditCard, path: "/seller/recharges" },
-  { label: "Verify Payments", icon: ShieldCheck, path: "/seller/verify" },
+  { label: "Send Coins", icon: Send, path: "/seller/send" },
   { label: "Transaction History", icon: History, path: "/seller/history" },
+  { label: "Payment Methods", icon: Wallet, path: "/seller/payments" },
+  { label: "Wallet Search", icon: UserSearch, path: "/seller/wallets" },
+  { label: "Recharge Packages", icon: Package, path: "/seller/packages" },
+  { label: "Verify Payments", icon: ShieldCheck, path: "/seller/verify" },
 ];
 
 const CoinSellerLayout = ({ children }: { children: React.ReactNode }) => {
