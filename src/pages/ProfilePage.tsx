@@ -15,6 +15,10 @@ const ProfilePage = () => {
   const hasAdminAccess = roles?.some((r) =>
     ["admin", "super_admin", "owner", "manager", "business_dev"].includes(r)
   );
+  const hasCoinsSeller = roles?.some((r) =>
+    ["coins_seller", "owner", "super_admin", "admin"].includes(r)
+  );
+  const isOwner = roles?.includes("owner");
 
   const handleSignOut = async () => {
     try {
