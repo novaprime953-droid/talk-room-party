@@ -62,6 +62,7 @@ import OwnerAdmins from "./pages/owner/OwnerAdmins";
 import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
 import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
+import OwnerRooms from "./pages/owner/OwnerRooms";
 
 const queryClient = new QueryClient();
 
