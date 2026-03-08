@@ -74,6 +74,14 @@ import HostWithdrawals from "./pages/host/HostWithdrawals";
 import HostRooms from "./pages/host/HostRooms";
 import HostLevel from "./pages/host/HostLevel";
 
+// Coins Seller pages
+import CoinSellerLayout from "./components/seller/CoinSellerLayout";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerSendCoins from "./pages/seller/SellerSendCoins";
+import SellerRecharges from "./pages/seller/SellerRecharges";
+import SellerVerify from "./pages/seller/SellerVerify";
+import SellerHistory from "./pages/seller/SellerHistory";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -119,6 +127,14 @@ const HostRoute = ({ children }: { children: React.ReactNode }) => {
   return (
     <ProtectedRoute>
       <HostLayout>{children}</HostLayout>
+    </ProtectedRoute>
+  );
+};
+
+const SellerRoute = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ProtectedRoute>
+      <CoinSellerLayout>{children}</CoinSellerLayout>
     </ProtectedRoute>
   );
 };
@@ -192,6 +208,13 @@ const AppRoutes = () => {
         <Route path="/host/withdrawals" element={<HostRoute><HostWithdrawals /></HostRoute>} />
         <Route path="/host/rooms" element={<HostRoute><HostRooms /></HostRoute>} />
         <Route path="/host/level" element={<HostRoute><HostLevel /></HostRoute>} />
+
+        {/* Coins Seller routes */}
+        <Route path="/seller" element={<SellerRoute><SellerDashboard /></SellerRoute>} />
+        <Route path="/seller/send" element={<SellerRoute><SellerSendCoins /></SellerRoute>} />
+        <Route path="/seller/recharges" element={<SellerRoute><SellerRecharges /></SellerRoute>} />
+        <Route path="/seller/verify" element={<SellerRoute><SellerVerify /></SellerRoute>} />
+        <Route path="/seller/history" element={<SellerRoute><SellerHistory /></SellerRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

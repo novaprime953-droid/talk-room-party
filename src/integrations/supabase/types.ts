@@ -822,6 +822,15 @@ export type Database = {
         }
         Returns: Json
       }
+      seller_send_coins: {
+        Args: {
+          p_amount: number
+          p_description?: string
+          p_seller_id: string
+          p_target_id: string
+        }
+        Returns: Json
+      }
       send_gift: {
         Args: {
           p_gift_id: string
