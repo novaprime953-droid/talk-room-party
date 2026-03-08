@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
-  Menu, X, ArrowLeft, Building, Mic, Target, Coins, Key,
+  Menu, X, ArrowLeft, Building, Mic, Target, Coins, Key, DoorOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
