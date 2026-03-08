@@ -185,6 +185,14 @@ const AppRoutes = () => {
         <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />
         <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
 
+        {/* Host Center routes */}
+        <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
+        <Route path="/host/earnings" element={<HostRoute><HostEarnings /></HostRoute>} />
+        <Route path="/host/gifts" element={<HostRoute><HostGifts /></HostRoute>} />
+        <Route path="/host/withdrawals" element={<HostRoute><HostWithdrawals /></HostRoute>} />
+        <Route path="/host/rooms" element={<HostRoute><HostRooms /></HostRoute>} />
+        <Route path="/host/level" element={<HostRoute><HostLevel /></HostRoute>} />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       {user && <BottomNav />}
