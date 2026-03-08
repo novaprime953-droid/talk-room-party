@@ -38,6 +38,14 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminLogs from "./pages/admin/AdminLogs";
 
+// Agency pages
+import AgencyLayout from "./components/agency/AgencyLayout";
+import AgencyDashboard from "./pages/agency/AgencyDashboard";
+import AgencyRecruit from "./pages/agency/AgencyRecruit";
+import AgencyHosts from "./pages/agency/AgencyHosts";
+import AgencyEarnings from "./pages/agency/AgencyEarnings";
+import AgencyCommissions from "./pages/agency/AgencyCommissions";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
