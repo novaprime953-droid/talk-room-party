@@ -85,7 +85,7 @@ const EventsTab = () => {
   const hasContent = (events && events.length > 0) || (competitions && competitions.length > 0);
 
   if (!hasContent) {
-    return <EmptyState title="No Events" description="Events and competitions will appear here" />;
+    return <EmptyState title="No Events" subtitle="Events and competitions will appear here" />;
   }
 
   return (

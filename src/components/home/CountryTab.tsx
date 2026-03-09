@@ -61,7 +61,7 @@ const CountryTab = () => {
             })}
           </div>
         ) : (
-          <EmptyState title="No Rooms" description={`No active rooms in ${country?.name} right now`} />
+          <EmptyState title="No Rooms" subtitle={`No active rooms in ${country?.name} right now`} />
         )}
       </div>
     );

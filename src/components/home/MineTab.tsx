@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const RoomGrid = ({ rooms, emptyMsg }: { rooms: any[] | null | undefined; emptyMsg: string }) => {
   if (!rooms || rooms.length === 0) {
-    return <EmptyState title="No Rooms" description={emptyMsg} />;
+    return <EmptyState title="No Rooms" subtitle={emptyMsg} />;
   }
   return (
     <div className="grid grid-cols-2 gap-3">

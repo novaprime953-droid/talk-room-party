@@ -69,7 +69,7 @@ const PartyTab = () => {
           })}
         </div>
       ) : (
-        <EmptyState title="No Rooms Live" description="Be the first to go live!" />
+        <EmptyState title="No Rooms Live" subtitle="Be the first to go live!" />
       )}
     </div>
   );
