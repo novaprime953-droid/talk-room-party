@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { DollarSign, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 
 const AgencyEarnings = () => {
   const { user } = useAuth();
