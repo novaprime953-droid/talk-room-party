@@ -12,7 +12,8 @@ interface RoomCardProps {
   isLive: boolean;
   isPrivate?: boolean;
   tags?: string[];
-  coverGradient?: string;
+  coverImage?: string;
+  countryFlag?: string;
 }
 
 const gradients = [
@@ -33,71 +34,81 @@ const RoomCard = ({
   isLive,
   isPrivate,
   tags = [],
-  coverGradient,
+  coverImage,
+  countryFlag,
 }: RoomCardProps) => {
   const navigate = useNavigate();
-  const gradient = coverGradient || gradients[Math.floor(Math.random() * gradients.length)];
+  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
 
   return (
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={() => navigate(`/room/${id}`)}
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} border border-border/50 p-4 cursor-pointer shadow-card`}
+      className="relative overflow-hidden rounded-2xl bg-card border border-border/50 cursor-pointer shadow-card"
     >
-      {/* Live badge */}
-      {isLive && (
-        <div className="absolute top-3 right-3 flex items-center gap-1 bg-live/90 px-2 py-0.5 rounded-full">
-          <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full animate-pulse" />
-          <span className="text-[10px] font-bold text-primary-foreground">LIVE</span>
+      {/* Room Avatar / Cover */}
+      <div className={`relative h-24 bg-gradient-to-br ${gradient} overflow-hidden`}>
+        {coverImage && (
+          <img src={coverImage} alt={name} className="w-full h-full object-cover absolute inset-0" />
+        )}
+        {/* Live badge */}
+        {isLive && (
+          <div className="absolute top-2 right-2 flex items-center gap-1 bg-live/90 px-2 py-0.5 rounded-full">
+            <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full animate-pulse" />
+            <span className="text-[9px] font-bold text-primary-foreground">LIVE</span>
+          </div>
+        )}
+        {isPrivate && (
+          <div className="absolute top-2 left-2 bg-background/60 backdrop-blur-sm rounded-full p-1">
+            <Lock className="w-3 h-3 text-accent" />
+          </div>
+        )}
+        {countryFlag && (
+          <div className="absolute bottom-2 right-2 text-lg leading-none">{countryFlag}</div>
+        )}
+        {/* Host avatar overlay */}
+        <div className="absolute -bottom-4 left-3">
+          <div className="w-10 h-10 rounded-full border-2 border-card bg-muted flex items-center justify-center overflow-hidden">
+            {hostAvatar ? (
+              <img src={hostAvatar} alt={host} className="w-full h-full object-cover" />
+            ) : (
+              <Crown className="w-4 h-4 text-accent" />
+            )}
+          </div>
         </div>
-      )}
-
-      {isPrivate && (
-        <div className="absolute top-3 left-3">
-          <Lock className="w-3.5 h-3.5 text-accent" />
-        </div>
-      )}
-
-      {/* Room name */}
-      <h3 className="font-display font-bold text-foreground text-sm mb-3 pr-14 line-clamp-2">
-        {name}
-      </h3>
-
-      {/* Tags */}
-      {tags.length > 0 && (
-        <div className="flex gap-1.5 mb-3 flex-wrap">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground font-semibold"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Host */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center text-xs font-bold text-primary-foreground overflow-hidden">
-          {hostAvatar ? (
-            <img src={hostAvatar} alt={host} className="w-full h-full object-cover" />
-          ) : (
-            <Crown className="w-4 h-4" />
-          )}
-        </div>
-        <span className="text-xs font-semibold text-foreground/80">{host}</span>
       </div>
 
-      {/* Stats */}
-      <div className="flex items-center gap-3 text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <Mic className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs font-semibold">{speakers}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Users className="w-3.5 h-3.5" />
-          <span className="text-xs font-semibold">{listeners}</span>
+      {/* Info */}
+      <div className="pt-5 pb-3 px-3">
+        <h3 className="font-display font-bold text-foreground text-xs line-clamp-1 mb-1">{name}</h3>
+        <p className="text-[10px] text-muted-foreground font-semibold mb-2 truncate">{host}</p>
+
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="flex gap-1 mb-2 flex-wrap">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted/50 text-muted-foreground font-semibold"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="flex items-center gap-3 text-muted-foreground">
+          {speakers > 0 && (
+            <div className="flex items-center gap-1">
+              <Mic className="w-3 h-3 text-primary" />
+              <span className="text-[10px] font-semibold">{speakers}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            <span className="text-[10px] font-semibold">{listeners}</span>
+          </div>
         </div>
       </div>
     </motion.div>
