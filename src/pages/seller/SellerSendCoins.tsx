@@ -175,7 +175,7 @@ const SellerSendCoins = () => {
             </div>
           ))}
           {(!recentSends || recentSends.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No transfers yet</p>
+            <EmptyState icon={Send} title="No Data Available" subtitle="Transfer records will appear here once you send coins" />
           )}
         </div>
       </div>

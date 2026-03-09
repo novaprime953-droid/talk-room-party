@@ -77,7 +77,7 @@ const AdminReports = () => {
           </div>
         ))}
         {(!reports || reports.length === 0) && (
-          <p className="text-center text-muted-foreground text-sm py-8">No reports</p>
+          <EmptyState icon={FileText} title="No Data Available" subtitle="Reports will appear here once users submit them" />
         )}
       </div>
     </div>

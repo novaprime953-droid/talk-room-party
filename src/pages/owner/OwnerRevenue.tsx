@@ -69,6 +69,9 @@ const OwnerRevenue = () => {
             </tbody>
           </table>
         </div>
+        {(!recharges || recharges.length === 0) && (
+          <EmptyState icon={DollarSign} title="No Data Available" subtitle="Recharge records will appear here once transactions are made" />
+        )}
       </div>
     </div>
   );

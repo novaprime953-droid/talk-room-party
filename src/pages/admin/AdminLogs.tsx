@@ -71,7 +71,7 @@ const AdminLogs = () => {
           </div>
         ))}
         {(!activity || activity.length === 0) && (
-          <p className="text-center text-muted-foreground text-sm py-8">No activity yet</p>
+          <EmptyState icon={Activity} title="No Data Available" subtitle="Activity logs will appear here once events are generated" />
         )}
       </div>
     </div>

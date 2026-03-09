@@ -110,7 +110,7 @@ const HostGifts = () => {
             </div>
           ))}
           {(!giftTransactions || giftTransactions.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No gifts received yet</p>
+            <EmptyState icon={Gift} title="No Data Available" subtitle="Gift records will appear here once you receive gifts" />
           )}
         </div>
       </div>

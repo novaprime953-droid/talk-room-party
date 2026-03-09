@@ -134,7 +134,7 @@ const AgencyEarnings = () => {
                 </div>
               );
             })}
-            {(!giftHistory || giftHistory.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No transactions yet</p>}
+            {(!giftHistory || giftHistory.length === 0) && <EmptyState icon={Gift} title="No Data Available" subtitle="Gift transaction records will appear here once activity is generated" />}
           </div>
         </div>
       </div>

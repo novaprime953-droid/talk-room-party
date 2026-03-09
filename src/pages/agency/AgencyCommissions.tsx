@@ -134,7 +134,7 @@ const AgencyCommissions = () => {
             </tbody>
           </table>
         </div>
-        {(!hosts || hosts.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No commission data available</p>}
+        {(!hosts || hosts.length === 0) && <EmptyState icon={PieChart} title="No Data Available" subtitle="Commission records will appear here once your hosts generate revenue" />}
       </div>
     </div>
   );

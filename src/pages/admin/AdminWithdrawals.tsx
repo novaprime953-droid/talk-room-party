@@ -217,7 +217,7 @@ const AdminWithdrawals = () => {
             </tbody>
           </table>
         </div>
-        {(!filtered || filtered.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No withdrawal requests</p>}
+        {(!filtered || filtered.length === 0) && <EmptyState icon={ArrowUpRight} title="No Data Available" subtitle="Withdrawal records will appear here once requests are submitted" />}
       </div>
     </div>
   );

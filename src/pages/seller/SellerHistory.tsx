@@ -107,7 +107,7 @@ const SellerHistory = () => {
             </div>
           ))}
           {(!filteredTransactions || filteredTransactions.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No transactions found</p>
+            <EmptyState icon={History} title="No Data Available" subtitle="Transaction records will appear here once activity is generated" />
           )}
         </div>
       </div>

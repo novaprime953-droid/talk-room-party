@@ -101,7 +101,7 @@ const HostEarnings = () => {
             </div>
           ))}
           {(!transactions || transactions.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No transactions yet</p>
+            <EmptyState icon={DollarSign} title="No Data Available" subtitle="Transaction records will appear here once activity is generated" />
           )}
         </div>
       </div>
