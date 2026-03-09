@@ -735,6 +735,7 @@ export type Database = {
       voice_rooms: {
         Row: {
           category: string
+          country: string | null
           cover_image: string | null
           created_at: string
           description: string | null
@@ -751,6 +752,7 @@ export type Database = {
         }
         Insert: {
           category?: string
+          country?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null
@@ -767,6 +769,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          country?: string | null
           cover_image?: string | null
           created_at?: string
           description?: string | null

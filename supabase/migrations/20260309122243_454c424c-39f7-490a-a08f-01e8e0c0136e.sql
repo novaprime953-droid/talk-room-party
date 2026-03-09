@@ -1,0 +1,1 @@
+ALTER TABLE public.voice_rooms ADD COLUMN IF NOT EXISTS country text DEFAULT null;
