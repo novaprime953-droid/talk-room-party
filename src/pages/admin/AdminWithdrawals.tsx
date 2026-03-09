@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const AdminWithdrawals = () => {
   const { user } = useAuth();
