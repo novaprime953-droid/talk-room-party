@@ -6,6 +6,7 @@ import { Send, Coins, Search, UserCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const SellerSendCoins = () => {
   const { user } = useAuth();
