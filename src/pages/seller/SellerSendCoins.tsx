@@ -6,6 +6,7 @@ import { Send, Coins, Search, UserCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const SellerSendCoins = () => {
   const { user } = useAuth();
@@ -174,7 +175,7 @@ const SellerSendCoins = () => {
             </div>
           ))}
           {(!recentSends || recentSends.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No transfers yet</p>
+            <EmptyState icon={Send} title="No Data Available" subtitle="Transfer records will appear here once you send coins" />
           )}
         </div>
       </div>

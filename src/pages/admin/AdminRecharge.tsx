@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const AdminRecharge = () => {
   const { user } = useAuth();
@@ -214,7 +215,7 @@ const AdminRecharge = () => {
             </tbody>
           </table>
         </div>
-        {(!filtered || filtered.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No recharge requests</p>}
+        {(!filtered || filtered.length === 0) && <EmptyState icon={CreditCard} title="No Data Available" subtitle="Recharge records will appear here once users submit requests" />}
       </div>
     </div>
   );

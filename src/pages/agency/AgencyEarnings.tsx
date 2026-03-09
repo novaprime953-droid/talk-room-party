@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { DollarSign, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { DollarSign, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight, Gift } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 
 const AgencyEarnings = () => {
   const { user } = useAuth();
@@ -109,7 +110,7 @@ const AgencyEarnings = () => {
               </tbody>
             </table>
           </div>
-          {(!hosts || hosts.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No earnings data yet</p>}
+          {(!hosts || hosts.length === 0) && <EmptyState icon={DollarSign} title="No Data Available" subtitle="Earnings data will appear here once your hosts start earning" />}
         </div>
 
         {/* Recent Transactions */}
@@ -133,7 +134,7 @@ const AgencyEarnings = () => {
                 </div>
               );
             })}
-            {(!giftHistory || giftHistory.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No transactions yet</p>}
+            {(!giftHistory || giftHistory.length === 0) && <EmptyState icon={Gift} title="No Data Available" subtitle="Gift transaction records will appear here once activity is generated" />}
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowUpRight, Coins, Plus } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -156,7 +157,7 @@ const HostWithdrawals = () => {
             </div>
           ))}
           {(!withdrawals || withdrawals.length === 0) && (
-            <p className="text-center text-muted-foreground text-sm py-8">No withdrawal requests yet</p>
+            <EmptyState icon={ArrowUpRight} title="No Data Available" subtitle="Withdrawal records will appear here once requests are submitted" />
           )}
         </div>
       </div>

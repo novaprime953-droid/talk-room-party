@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Activity, Gift, DoorOpen, Users, Ban } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 
 const AdminLogs = () => {
   // Combine recent activity from multiple tables
@@ -70,7 +71,7 @@ const AdminLogs = () => {
           </div>
         ))}
         {(!activity || activity.length === 0) && (
-          <p className="text-center text-muted-foreground text-sm py-8">No activity yet</p>
+          <EmptyState icon={Activity} title="No Data Available" subtitle="Activity logs will appear here once events are generated" />
         )}
       </div>
     </div>

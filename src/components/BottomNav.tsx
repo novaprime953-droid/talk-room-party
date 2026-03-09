@@ -14,8 +14,9 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on room and admin pages
-  if (location.pathname.startsWith("/room/") || location.pathname.startsWith("/admin")) return null;
+  // Hide on room and panel pages
+  const hiddenPrefixes = ["/room/", "/admin", "/owner", "/agency", "/bizdev", "/host", "/seller"];
+  if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) return null;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border safe-bottom">

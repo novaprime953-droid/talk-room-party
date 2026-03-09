@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { CreditCard, Check, X, Coins, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const SellerRecharges = () => {
   const { user } = useAuth();
@@ -138,7 +139,7 @@ const SellerRecharges = () => {
           </div>
         ))}
         {(!requests || requests.length === 0) && (
-          <p className="text-center text-muted-foreground text-sm py-8">No {filter !== "all" ? filter : ""} requests</p>
+          <EmptyState icon={CreditCard} title="No Data Available" subtitle="Recharge requests will appear here once users submit them" />
         )}
       </div>
     </div>
