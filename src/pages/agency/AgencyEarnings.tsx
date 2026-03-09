@@ -110,7 +110,7 @@ const AgencyEarnings = () => {
               </tbody>
             </table>
           </div>
-          {(!hosts || hosts.length === 0) && <p className="text-center text-muted-foreground text-sm py-8">No earnings data yet</p>}
+          {(!hosts || hosts.length === 0) && <EmptyState icon={DollarSign} title="No Data Available" subtitle="Earnings data will appear here once your hosts start earning" />}
         </div>
 
         {/* Recent Transactions */}
