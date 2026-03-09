@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { CreditCard, Check, X, Coins, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const SellerRecharges = () => {
   const { user } = useAuth();
