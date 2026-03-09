@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Activity, Gift, DoorOpen, Users, Ban } from "lucide-react";
+import EmptyState from "@/components/EmptyState";
 
 const AdminLogs = () => {
   // Combine recent activity from multiple tables
