@@ -180,7 +180,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-6 overflow-auto">
+        <main className="flex-1 p-4 lg:p-6 pb-24 lg:pb-6 overflow-auto">
           {children}
         </main>
       </div>

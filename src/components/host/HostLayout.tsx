@@ -80,7 +80,7 @@ const HostLayout = ({ children }: { children: React.ReactNode }) => {
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />}
 
       <main className="flex-1 lg:ml-60 pt-14 lg:pt-0">
-        <div className="p-4 lg:p-6 max-w-6xl">{children}</div>
+        <div className="p-4 lg:p-6 max-w-6xl pb-24 lg:pb-6">{children}</div>
       </main>
     </div>
   );
