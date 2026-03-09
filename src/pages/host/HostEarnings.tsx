@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { DollarSign, TrendingUp, Coins, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 
 const HostEarnings = () => {
   const { user } = useAuth();
