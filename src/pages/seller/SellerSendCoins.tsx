@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Send, Coins, Search, UserCheck } from "lucide-react";
+import { Send, Coins, Search, UserCheck, Wallet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -15,6 +15,21 @@ const SellerSendCoins = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+
+  // Seller's own balance
+  const { data: sellerProfile } = useQuery({
+    queryKey: ["seller-own-balance", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("coins_balance")
+        .eq("user_id", user!.id)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const { data: searchResults } = useQuery({
     queryKey: ["seller-search-users", search],
@@ -50,6 +65,12 @@ const SellerSendCoins = () => {
     const amt = parseInt(amount);
     if (!amt || amt < 1) { toast.error("Enter a valid amount"); return; }
 
+    const balance = sellerProfile?.coins_balance ?? 0;
+    if (amt > balance) {
+      toast.error(`Insufficient coins! Your balance: ${balance.toLocaleString()}. Request a recharge from the Owner.`);
+      return;
+    }
+
     const { data, error } = await supabase.rpc("seller_send_coins", {
       p_seller_id: user!.id,
       p_target_id: selectedUser.user_id,
@@ -65,14 +86,31 @@ const SellerSendCoins = () => {
       setDescription("");
       setSearch("");
       qc.invalidateQueries({ queryKey: ["seller-recent-sends"] });
+      qc.invalidateQueries({ queryKey: ["seller-own-balance"] });
     }
   };
+
+  const balance = sellerProfile?.coins_balance ?? 0;
 
   return (
     <div>
       <h1 className="font-display font-bold text-2xl text-foreground mb-6 flex items-center gap-2">
         <Send className="w-6 h-6 text-accent" /> Send Coins
       </h1>
+
+      {/* Wallet Balance */}
+      <div className="bg-card rounded-2xl p-4 shadow-card mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Wallet className="w-5 h-5 text-primary" />
+          <div>
+            <p className="text-xs text-muted-foreground">Your Wallet Balance</p>
+            <p className="text-xl font-bold text-foreground">{balance.toLocaleString()} coins</p>
+          </div>
+        </div>
+        {balance < 100 && (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-destructive/10 text-destructive font-bold">Low Balance</span>
+        )}
+      </div>
 
       {/* Send Form */}
       <div className="bg-card rounded-2xl p-5 shadow-card mb-6 space-y-4">
@@ -126,7 +164,6 @@ const SellerSendCoins = () => {
             <Coins className="w-4 h-4 text-accent" />
             <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter coin amount" />
           </div>
-          {/* Quick amounts */}
           <div className="flex gap-2 mt-2 flex-wrap">
             {[100, 500, 1000, 5000, 10000, 50000].map((a) => (
               <button key={a} onClick={() => setAmount(String(a))}
@@ -135,6 +172,9 @@ const SellerSendCoins = () => {
                 }`}>{a.toLocaleString()}</button>
             ))}
           </div>
+          {amount && parseInt(amount) > balance && (
+            <p className="text-xs text-destructive mt-1">⚠️ Exceeds your balance ({balance.toLocaleString()} coins)</p>
+          )}
         </div>
 
         {/* Description */}
@@ -144,7 +184,7 @@ const SellerSendCoins = () => {
         </div>
 
         <motion.button whileTap={{ scale: 0.97 }} onClick={sendCoins}
-          disabled={!selectedUser || !amount}
+          disabled={!selectedUser || !amount || parseInt(amount) > balance}
           className="gradient-primary text-primary-foreground px-6 py-3 rounded-xl text-sm font-bold w-full disabled:opacity-50 flex items-center justify-center gap-2">
           <Send className="w-4 h-4" /> Send Coins
         </motion.button>
