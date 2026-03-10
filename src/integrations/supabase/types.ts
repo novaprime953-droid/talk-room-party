@@ -681,6 +681,39 @@ export type Database = {
           },
         ]
       }
+      seller_recharge_requests: {
+        Row: {
+          coins_amount: number
+          created_at: string
+          id: string
+          note: string | null
+          processed_by: string | null
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          coins_amount: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          processed_by?: string | null
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          coins_amount?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          processed_by?: string | null
+          seller_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       system_settings: {
         Row: {
           description: string | null
