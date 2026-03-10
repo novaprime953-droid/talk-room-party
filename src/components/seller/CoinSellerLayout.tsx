@@ -7,13 +7,14 @@ import { motion } from "framer-motion";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/seller" },
-  { label: "Recharge Requests", icon: CreditCard, path: "/seller/recharges" },
   { label: "Send Coins", icon: Send, path: "/seller/send" },
+  { label: "Wallet", icon: Wallet, path: "/seller/wallet" },
+  { label: "Recharge Requests", icon: CreditCard, path: "/seller/recharges" },
+  { label: "Verify Payments", icon: ShieldCheck, path: "/seller/verify" },
   { label: "Transaction History", icon: History, path: "/seller/history" },
   { label: "Payment Methods", icon: Wallet, path: "/seller/payments" },
   { label: "Wallet Search", icon: UserSearch, path: "/seller/wallets" },
   { label: "Recharge Packages", icon: Package, path: "/seller/packages" },
-  { label: "Verify Payments", icon: ShieldCheck, path: "/seller/verify" },
 ];
 
 const CoinSellerLayout = ({ children }: { children: React.ReactNode }) => {

@@ -18,8 +18,7 @@ import EventsPage from "./pages/EventsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
-// Admin pages
-import AdminLayout from "./components/admin/AdminLayout";
+// Admin pages (reused in Owner Panel)
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminHosts from "./pages/admin/AdminHosts";
@@ -38,6 +37,9 @@ import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminLogs from "./pages/admin/AdminLogs";
+
+// Admin layout (kept for backwards compatibility)
+import AdminLayout from "./components/admin/AdminLayout";
 
 // Agency pages
 import AgencyLayout from "./components/agency/AgencyLayout";
@@ -64,6 +66,7 @@ import OwnerAnalytics from "./pages/owner/OwnerAnalytics";
 import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
+import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -84,6 +87,7 @@ import SellerHistory from "./pages/seller/SellerHistory";
 import SellerPaymentMethods from "./pages/seller/SellerPaymentMethods";
 import SellerWalletSearch from "./pages/seller/SellerWalletSearch";
 import SellerPackages from "./pages/seller/SellerPackages";
+import SellerWallet from "./pages/seller/SellerWallet";
 
 const queryClient = new QueryClient();
 
@@ -94,53 +98,29 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <AdminLayout>{children}</AdminLayout>
-    </ProtectedRoute>
-  );
-};
+const AdminRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><AdminLayout>{children}</AdminLayout></ProtectedRoute>
+);
 
-const AgencyRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <AgencyLayout>{children}</AgencyLayout>
-    </ProtectedRoute>
-  );
-};
+const AgencyRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><AgencyLayout>{children}</AgencyLayout></ProtectedRoute>
+);
 
-const BizDevRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <BizDevLayout>{children}</BizDevLayout>
-    </ProtectedRoute>
-  );
-};
+const BizDevRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><BizDevLayout>{children}</BizDevLayout></ProtectedRoute>
+);
 
-const OwnerRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <OwnerLayout>{children}</OwnerLayout>
-    </ProtectedRoute>
-  );
-};
+const OwnerRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><OwnerLayout>{children}</OwnerLayout></ProtectedRoute>
+);
 
-const HostRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <HostLayout>{children}</HostLayout>
-    </ProtectedRoute>
-  );
-};
+const HostRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><HostLayout>{children}</HostLayout></ProtectedRoute>
+);
 
-const SellerRoute = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ProtectedRoute>
-      <CoinSellerLayout>{children}</CoinSellerLayout>
-    </ProtectedRoute>
-  );
-};
+const SellerRoute = ({ children }: { children: React.ReactNode }) => (
+  <ProtectedRoute><CoinSellerLayout>{children}</CoinSellerLayout></ProtectedRoute>
+);
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -161,7 +141,7 @@ const AppRoutes = () => {
         <Route path="/events" element={<ProtectedRoute><div className="max-w-lg mx-auto"><EventsPage /></div></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SettingsPage /></div></ProtectedRoute>} />
 
-        {/* Admin routes */}
+        {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/hosts" element={<AdminRoute><AdminHosts /></AdminRoute>} />
@@ -196,13 +176,28 @@ const AppRoutes = () => {
         <Route path="/bizdev/events" element={<BizDevRoute><BizDevEvents /></BizDevRoute>} />
         <Route path="/bizdev/revenue" element={<BizDevRoute><BizDevRevenue /></BizDevRoute>} />
 
-        {/* Owner routes */}
+        {/* Owner routes - FULL admin features merged here */}
         <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
-        <Route path="/owner/rooms" element={<OwnerRoute><OwnerRooms /></OwnerRoute>} />
+        <Route path="/owner/users" element={<OwnerRoute><AdminUsers /></OwnerRoute>} />
         <Route path="/owner/admins" element={<OwnerRoute><OwnerAdmins /></OwnerRoute>} />
-        <Route path="/owner/analytics" element={<OwnerRoute><OwnerAnalytics /></OwnerRoute>} />
+        <Route path="/owner/hosts" element={<OwnerRoute><AdminHosts /></OwnerRoute>} />
+        <Route path="/owner/agencies" element={<OwnerRoute><AdminAgencies /></OwnerRoute>} />
+        <Route path="/owner/rooms" element={<OwnerRoute><OwnerRooms /></OwnerRoute>} />
+        <Route path="/owner/gifts" element={<OwnerRoute><AdminGifts /></OwnerRoute>} />
+        <Route path="/owner/coins" element={<OwnerRoute><AdminCoins /></OwnerRoute>} />
+        <Route path="/owner/recharge" element={<OwnerRoute><AdminRecharge /></OwnerRoute>} />
+        <Route path="/owner/withdrawals" element={<OwnerRoute><AdminWithdrawals /></OwnerRoute>} />
         <Route path="/owner/revenue" element={<OwnerRoute><OwnerRevenue /></OwnerRoute>} />
+        <Route path="/owner/reports" element={<OwnerRoute><AdminReports /></OwnerRoute>} />
+        <Route path="/owner/notifications" element={<OwnerRoute><AdminNotifications /></OwnerRoute>} />
+        <Route path="/owner/leaderboards" element={<OwnerRoute><AdminLeaderboards /></OwnerRoute>} />
+        <Route path="/owner/competitions" element={<OwnerRoute><AdminCompetitions /></OwnerRoute>} />
+        <Route path="/owner/events" element={<OwnerRoute><AdminEvents /></OwnerRoute>} />
+        <Route path="/owner/promotions" element={<OwnerRoute><AdminPromotions /></OwnerRoute>} />
         <Route path="/owner/settings" element={<OwnerRoute><OwnerSettings /></OwnerRoute>} />
+        <Route path="/owner/analytics" element={<OwnerRoute><AdminAnalytics /></OwnerRoute>} />
+        <Route path="/owner/logs" element={<OwnerRoute><AdminLogs /></OwnerRoute>} />
+        <Route path="/owner/seller-recharges" element={<OwnerRoute><OwnerSellerRecharges /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
@@ -215,6 +210,7 @@ const AppRoutes = () => {
         {/* Coins Seller routes */}
         <Route path="/seller" element={<SellerRoute><SellerDashboard /></SellerRoute>} />
         <Route path="/seller/send" element={<SellerRoute><SellerSendCoins /></SellerRoute>} />
+        <Route path="/seller/wallet" element={<SellerRoute><SellerWallet /></SellerRoute>} />
         <Route path="/seller/recharges" element={<SellerRoute><SellerRecharges /></SellerRoute>} />
         <Route path="/seller/verify" element={<SellerRoute><SellerVerify /></SellerRoute>} />
         <Route path="/seller/history" element={<SellerRoute><SellerHistory /></SellerRoute>} />
