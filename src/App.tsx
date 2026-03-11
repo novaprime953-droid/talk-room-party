@@ -69,6 +69,7 @@ import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
+import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
