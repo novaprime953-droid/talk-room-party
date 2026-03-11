@@ -16,6 +16,8 @@ import WalletPage from "./pages/WalletPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import EventsPage from "./pages/EventsPage";
 import SettingsPage from "./pages/SettingsPage";
+import GamesPage from "./pages/GamesPage";
+import GamePlayPage from "./pages/GamePlayPage";
 import NotFound from "./pages/NotFound";
 
 // Admin pages (reused in Owner Panel)
