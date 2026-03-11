@@ -1,10 +1,11 @@
-import { Home, Search, Plus, Trophy, User } from "lucide-react";
+import { Home, Search, Gamepad2, Plus, Trophy, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const tabs = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Search, label: "Explore", path: "/explore" },
+  { icon: Gamepad2, label: "Games", path: "/games" },
   { icon: Plus, label: "Create", path: "/create" },
   { icon: Trophy, label: "Rank", path: "/leaderboard" },
   { icon: User, label: "Profile", path: "/profile" },

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, MoreVertical, Mic, MicOff, Hand, MessageCircle, Gift, Users, LogOut } from "lucide-react";
+import { ArrowLeft, MoreVertical, Mic, MicOff, Hand, MessageCircle, Gift, Gamepad2, Users, LogOut } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import VoiceSeat from "@/components/VoiceSeat";
 import RoomChat from "@/components/RoomChat";
 import GiftPanel from "@/components/GiftPanel";
+import RoomGamesPopup from "@/components/RoomGamesPopup";
 import { useRoom, useRoomParticipants, useJoinRoom, useLeaveRoom } from "@/hooks/useRooms";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ const RoomPage = () => {
   const [showChat, setShowChat] = useState(false);
   const [showGifts, setShowGifts] = useState(false);
   const [handRaised, setHandRaised] = useState(false);
+  const [showGames, setShowGames] = useState(false);
 
   const { data: room } = useRoom(id!);
   const { data: participants, refetch: refetchParticipants } = useRoomParticipants(id!);
@@ -169,6 +171,9 @@ const RoomPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Games Popup */}
+      <RoomGamesPopup open={showGames} onClose={() => setShowGames(false)} />
+
       {/* Bottom Controls */}
       <div className="bg-card/90 backdrop-blur-lg border-t border-border/50 px-4 py-3 safe-bottom">
         <div className="flex items-center justify-around max-w-sm mx-auto">
@@ -199,6 +204,14 @@ const RoomPage = () => {
             }`}
           >
             {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowGames(true)}
+            className={`p-3 rounded-full ${showGames ? "bg-primary/20 text-primary" : "bg-muted/40 text-muted-foreground"}`}
+          >
+            <Gamepad2 className="w-5 h-5" />
           </motion.button>
 
           <motion.button
