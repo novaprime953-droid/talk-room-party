@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import VoiceSeat from "@/components/VoiceSeat";
 import RoomChat from "@/components/RoomChat";
 import GiftPanel from "@/components/GiftPanel";
+import RoomGamesPopup from "@/components/RoomGamesPopup";
 import { useRoom, useRoomParticipants, useJoinRoom, useLeaveRoom } from "@/hooks/useRooms";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
