@@ -277,6 +277,44 @@ export type Database = {
         }
         Relationships: []
       }
+      game_transactions: {
+        Row: {
+          coins_used: number
+          coins_won: number
+          created_at: string
+          game_name: string
+          id: string
+          result: string
+          user_id: string
+        }
+        Insert: {
+          coins_used?: number
+          coins_won?: number
+          created_at?: string
+          game_name: string
+          id?: string
+          result?: string
+          user_id: string
+        }
+        Update: {
+          coins_used?: number
+          coins_won?: number
+          created_at?: string
+          game_name?: string
+          id?: string
+          result?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_game_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       gift_transactions: {
         Row: {
           coins_spent: number
@@ -901,6 +939,14 @@ export type Database = {
           p_receiver_id: string
           p_room_id: string
           p_sender_id: string
+        }
+        Returns: Json
+      }
+      start_game: {
+        Args: {
+          p_coins_required: number
+          p_game_name: string
+          p_user_id: string
         }
         Returns: Json
       }
