@@ -59,6 +59,7 @@ const navSections = [
   {
     label: "System",
     items: [
+      { label: "Game Settings", icon: Gamepad2, path: "/owner/game-settings" },
       { label: "Settings", icon: Settings, path: "/owner/settings" },
     ],
   },
