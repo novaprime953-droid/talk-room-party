@@ -171,6 +171,9 @@ const RoomPage = () => {
         )}
       </AnimatePresence>
 
+      {/* Games Popup */}
+      <RoomGamesPopup open={showGames} onClose={() => setShowGames(false)} />
+
       {/* Bottom Controls */}
       <div className="bg-card/90 backdrop-blur-lg border-t border-border/50 px-4 py-3 safe-bottom">
         <div className="flex items-center justify-around max-w-sm mx-auto">
@@ -201,6 +204,14 @@ const RoomPage = () => {
             }`}
           >
             {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+          </motion.button>
+
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setShowGames(true)}
+            className={`p-3 rounded-full ${showGames ? "bg-primary/20 text-primary" : "bg-muted/40 text-muted-foreground"}`}
+          >
+            <Gamepad2 className="w-5 h-5" />
           </motion.button>
 
           <motion.button

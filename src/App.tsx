@@ -134,6 +134,8 @@ const AppRoutes = () => {
         {/* Main app routes */}
         <Route path="/" element={<ProtectedRoute><div className="max-w-lg mx-auto"><HomePage /></div></ProtectedRoute>} />
         <Route path="/explore" element={<ProtectedRoute><div className="max-w-lg mx-auto"><ExplorePage /></div></ProtectedRoute>} />
+        <Route path="/games" element={<ProtectedRoute><div className="max-w-lg mx-auto"><GamesPage /></div></ProtectedRoute>} />
+        <Route path="/games/play" element={<ProtectedRoute><GamePlayPage /></ProtectedRoute>} />
         <Route path="/create" element={<ProtectedRoute><div className="max-w-lg mx-auto"><CreateRoomPage /></div></ProtectedRoute>} />
         <Route path="/room/:id" element={<ProtectedRoute><div className="max-w-lg mx-auto"><RoomPage /></div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><div className="max-w-lg mx-auto"><ProfilePage /></div></ProtectedRoute>} />
