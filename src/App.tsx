@@ -69,6 +69,7 @@ import OwnerRevenue from "./pages/owner/OwnerRevenue";
 import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
+import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -202,6 +203,7 @@ const AppRoutes = () => {
         <Route path="/owner/analytics" element={<OwnerRoute><AdminAnalytics /></OwnerRoute>} />
         <Route path="/owner/logs" element={<OwnerRoute><AdminLogs /></OwnerRoute>} />
         <Route path="/owner/seller-recharges" element={<OwnerRoute><OwnerSellerRecharges /></OwnerRoute>} />
+        <Route path="/owner/game-settings" element={<OwnerRoute><OwnerGameSettings /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />

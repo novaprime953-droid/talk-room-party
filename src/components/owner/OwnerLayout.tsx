@@ -4,7 +4,7 @@ import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
   Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
   CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone,
-  Activity, Swords, LogOut,
+  Activity, Swords, LogOut, Gamepad2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
@@ -59,6 +59,7 @@ const navSections = [
   {
     label: "System",
     items: [
+      { label: "Game Settings", icon: Gamepad2, path: "/owner/game-settings" },
       { label: "Settings", icon: Settings, path: "/owner/settings" },
     ],
   },
