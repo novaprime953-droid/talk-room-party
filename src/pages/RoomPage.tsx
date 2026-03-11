@@ -18,6 +18,7 @@ const RoomPage = () => {
   const [showChat, setShowChat] = useState(false);
   const [showGifts, setShowGifts] = useState(false);
   const [handRaised, setHandRaised] = useState(false);
+  const [showGames, setShowGames] = useState(false);
 
   const { data: room } = useRoom(id!);
   const { data: participants, refetch: refetchParticipants } = useRoomParticipants(id!);
