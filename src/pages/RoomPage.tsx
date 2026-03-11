@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, MoreVertical, Mic, MicOff, Hand, MessageCircle, Gift, Users, LogOut } from "lucide-react";
+import { ArrowLeft, MoreVertical, Mic, MicOff, Hand, MessageCircle, Gift, Gamepad2, Users, LogOut } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import VoiceSeat from "@/components/VoiceSeat";
 import RoomChat from "@/components/RoomChat";
