@@ -33,6 +33,8 @@ const ProfilePage = () => {
   };
 
   const menuItems = [
+    { icon: ShoppingBag, label: "Store", desc: "Buy frames, vehicles & more", color: "text-primary", path: "/store" },
+    { icon: Sparkles, label: "My Props", desc: "Equipped items & dress", color: "text-accent", path: "/my-props" },
     { icon: Coins, label: "My Wallet", desc: "Balance & transactions", color: "text-accent", path: "/wallet" },
     { icon: Gift, label: "My Gifts", desc: "Received & sent gifts", color: "text-primary", path: "/gifts" },
     { icon: Star, label: "VIP Center", desc: "Premium benefits", color: "text-accent", path: "/vip" },
