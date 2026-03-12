@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut, Banknote } from "lucide-react";
+import { Settings, Edit, Coins, Gift, Star, ChevronRight, Shield, Crown, Users, Heart, LogOut, Banknote, ShoppingBag, Sparkles } from "lucide-react";
+import { useEquippedProps } from "@/hooks/useProps";
 import { useNavigate } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +12,8 @@ const ProfilePage = () => {
   const { data: profile, isLoading } = useProfile();
   const { user, signOut } = useAuth();
   const { data: roles } = useUserRoles();
+  const { data: equippedProps } = useEquippedProps(user?.id);
+  const equippedFrame = equippedProps?.find(p => (p as any).props?.category === 'frame');
 
   const hasAdminAccess = roles?.some((r) =>
     ["admin", "super_admin", "owner", "manager", "business_dev"].includes(r)
@@ -30,6 +33,8 @@ const ProfilePage = () => {
   };
 
   const menuItems = [
+    { icon: ShoppingBag, label: "Store", desc: "Buy frames, vehicles & more", color: "text-primary", path: "/store" },
+    { icon: Sparkles, label: "My Props", desc: "Equipped items & dress", color: "text-accent", path: "/my-props" },
     { icon: Coins, label: "My Wallet", desc: "Balance & transactions", color: "text-accent", path: "/wallet" },
     { icon: Gift, label: "My Gifts", desc: "Received & sent gifts", color: "text-primary", path: "/gifts" },
     { icon: Star, label: "VIP Center", desc: "Premium benefits", color: "text-accent", path: "/vip" },
@@ -65,12 +70,17 @@ const ProfilePage = () => {
         <div className="h-32 gradient-primary" />
         <div className="px-4 -mt-12">
           <div className="flex items-end gap-4">
-            <div className="w-24 h-24 rounded-full bg-card border-4 border-background flex items-center justify-center text-3xl font-bold gradient-primary text-primary-foreground glow-primary overflow-hidden">
-              {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-              ) : (
-                (profile?.display_name ?? profile?.username ?? "U").charAt(0).toUpperCase()
+            <div className="relative">
+              {equippedFrame && (equippedFrame as any).props?.image_url && (
+                <img src={(equippedFrame as any).props.image_url} alt="" className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] object-contain z-10 pointer-events-none" />
               )}
+              <div className="w-24 h-24 rounded-full bg-card border-4 border-background flex items-center justify-center text-3xl font-bold gradient-primary text-primary-foreground glow-primary overflow-hidden">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  (profile?.display_name ?? profile?.username ?? "U").charAt(0).toUpperCase()
+                )}
+              </div>
             </div>
             <div className="flex-1 pb-2">
               <h1 className="font-display font-bold text-xl text-foreground">

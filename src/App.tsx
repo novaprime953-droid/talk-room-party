@@ -70,6 +70,11 @@ import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
 import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
+import OwnerProps from "./pages/owner/OwnerProps";
+
+// Store & Props pages
+import StorePage from "./pages/StorePage";
+import MyPropsPage from "./pages/MyPropsPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -145,6 +150,8 @@ const AppRoutes = () => {
         <Route path="/notifications" element={<ProtectedRoute><div className="max-w-lg mx-auto"><NotificationsPage /></div></ProtectedRoute>} />
         <Route path="/events" element={<ProtectedRoute><div className="max-w-lg mx-auto"><EventsPage /></div></ProtectedRoute>} />
         <Route path="/settings" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SettingsPage /></div></ProtectedRoute>} />
+        <Route path="/store" element={<ProtectedRoute><div className="max-w-lg mx-auto"><StorePage /></div></ProtectedRoute>} />
+        <Route path="/my-props" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MyPropsPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -204,6 +211,7 @@ const AppRoutes = () => {
         <Route path="/owner/logs" element={<OwnerRoute><AdminLogs /></OwnerRoute>} />
         <Route path="/owner/seller-recharges" element={<OwnerRoute><OwnerSellerRecharges /></OwnerRoute>} />
         <Route path="/owner/game-settings" element={<OwnerRoute><OwnerGameSettings /></OwnerRoute>} />
+        <Route path="/owner/props" element={<OwnerRoute><OwnerProps /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />

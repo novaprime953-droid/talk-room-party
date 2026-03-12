@@ -534,6 +534,45 @@ export type Database = {
         }
         Relationships: []
       }
+      props: {
+        Row: {
+          animation_url: string | null
+          category: string
+          created_at: string
+          duration_days: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          animation_url?: string | null
+          category?: string
+          created_at?: string
+          duration_days?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          price?: number
+          updated_at?: string
+        }
+        Update: {
+          animation_url?: string | null
+          category?: string
+          created_at?: string
+          duration_days?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       recharge_requests: {
         Row: {
           amount: number
@@ -779,6 +818,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_props: {
+        Row: {
+          expires_at: string | null
+          gifted_by: string | null
+          id: string
+          is_equipped: boolean
+          prop_id: string
+          purchased_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          expires_at?: string | null
+          gifted_by?: string | null
+          id?: string
+          is_equipped?: boolean
+          prop_id: string
+          purchased_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          expires_at?: string | null
+          gifted_by?: string | null
+          id?: string
+          is_equipped?: boolean
+          prop_id?: string
+          purchased_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_props_prop_id_fkey"
+            columns: ["prop_id"]
+            isOneToOne: false
+            referencedRelation: "props"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -921,6 +1001,10 @@ export type Database = {
           p_owner_id: string
           p_target_id: string
         }
+        Returns: Json
+      }
+      purchase_prop: {
+        Args: { p_prop_id: string; p_user_id: string }
         Returns: Json
       }
       seller_send_coins: {
