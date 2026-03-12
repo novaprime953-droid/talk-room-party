@@ -3,18 +3,22 @@ import { motion } from "framer-motion";
 import { X, Globe, Lock, Mic, Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateRoom } from "@/hooks/useRooms";
+import { useAuth } from "@/hooks/useAuth";
+import AvatarUpload from "@/components/AvatarUpload";
 import { toast } from "sonner";
 
 const categories = ["Chat", "Music", "Gaming", "Dating", "Education", "Language", "Comedy", "Podcast"];
 
 const CreateRoomPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const createRoom = useCreateRoom();
   const [roomName, setRoomName] = useState("");
   const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Chat");
   const [maxSeats, setMaxSeats] = useState(8);
+  const [coverImage, setCoverImage] = useState<string | null>(null);
 
   const handleCreate = async () => {
     if (!roomName.trim()) {
@@ -28,6 +32,7 @@ const CreateRoomPage = () => {
         category: selectedCategory.toLowerCase(),
         privacy_type: isPrivate ? "private" : "public",
         max_seats: maxSeats,
+        cover_image: coverImage || undefined,
       });
       toast.success("Room created! 🎉");
       navigate(`/room/${room.id}`);
@@ -47,13 +52,23 @@ const CreateRoomPage = () => {
       </div>
 
       <div className="px-4 space-y-6">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
-          className="w-full h-32 rounded-2xl gradient-primary flex flex-col items-center justify-center gap-2 glow-primary"
+        {/* Room Cover Upload */}
+        <AvatarUpload
+          currentUrl={coverImage}
+          storagePath={`${user?.id}/room-${Date.now()}`}
+          onUploaded={(url) => setCoverImage(url)}
         >
-          <Image className="w-8 h-8 text-primary-foreground/60" />
-          <span className="text-xs text-primary-foreground/70 font-semibold">Add Cover Image</span>
-        </motion.button>
+          <div className="w-full h-32 rounded-2xl gradient-primary flex flex-col items-center justify-center gap-2 glow-primary overflow-hidden">
+            {coverImage ? (
+              <img src={coverImage} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <>
+                <Image className="w-8 h-8 text-primary-foreground/60" />
+                <span className="text-xs text-primary-foreground/70 font-semibold">Add Cover Image</span>
+              </>
+            )}
+          </div>
+        </AvatarUpload>
 
         <div>
           <label className="text-xs font-bold text-foreground mb-2 block">Room Name</label>

@@ -1,27 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, User, Camera, Save } from "lucide-react";
+import { ArrowLeft, User, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/hooks/useAuth";
+import AvatarUpload from "@/components/AvatarUpload";
 import { toast } from "sonner";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
 
-  const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
-  const [bio, setBio] = useState(profile?.bio ?? "");
-  const [phone, setPhone] = useState(profile?.phone ?? "");
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
+  const [phone, setPhone] = useState("");
 
-  // Sync on load
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setDisplayName(profile.display_name ?? "");
       setBio(profile.bio ?? "");
       setPhone(profile.phone ?? "");
     }
-  });
+  }, [profile]);
 
   const handleSave = async () => {
     try {
@@ -36,6 +38,14 @@ const SettingsPage = () => {
     }
   };
 
+  const handleAvatarUploaded = async (url: string) => {
+    try {
+      await updateProfile.mutateAsync({ avatar_url: url });
+    } catch {
+      toast.error("Failed to save avatar");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="px-4 pt-4">
@@ -46,9 +56,13 @@ const SettingsPage = () => {
           <h1 className="font-display font-bold text-xl text-foreground">Settings</h1>
         </div>
 
-        {/* Avatar */}
+        {/* Avatar Upload */}
         <div className="flex justify-center mb-6">
-          <div className="relative">
+          <AvatarUpload
+            currentUrl={profile?.avatar_url}
+            storagePath={`${user?.id}/profile`}
+            onUploaded={handleAvatarUploaded}
+          >
             <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-3xl font-bold text-primary-foreground overflow-hidden">
               {profile?.avatar_url ? (
                 <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -56,10 +70,7 @@ const SettingsPage = () => {
                 <User className="w-10 h-10" />
               )}
             </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 bg-card rounded-full border-2 border-background flex items-center justify-center">
-              <Camera className="w-4 h-4 text-foreground" />
-            </button>
-          </div>
+          </AvatarUpload>
         </div>
 
         <div className="space-y-4">

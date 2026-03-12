@@ -986,6 +986,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
       has_any_admin_role: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
