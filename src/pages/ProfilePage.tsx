@@ -12,6 +12,8 @@ const ProfilePage = () => {
   const { data: profile, isLoading } = useProfile();
   const { user, signOut } = useAuth();
   const { data: roles } = useUserRoles();
+  const { data: equippedProps } = useEquippedProps(user?.id);
+  const equippedFrame = equippedProps?.find(p => (p as any).props?.category === 'frame');
 
   const hasAdminAccess = roles?.some((r) =>
     ["admin", "super_admin", "owner", "manager", "business_dev"].includes(r)
