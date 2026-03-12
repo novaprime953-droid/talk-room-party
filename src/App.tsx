@@ -211,6 +211,7 @@ const AppRoutes = () => {
         <Route path="/owner/logs" element={<OwnerRoute><AdminLogs /></OwnerRoute>} />
         <Route path="/owner/seller-recharges" element={<OwnerRoute><OwnerSellerRecharges /></OwnerRoute>} />
         <Route path="/owner/game-settings" element={<OwnerRoute><OwnerGameSettings /></OwnerRoute>} />
+        <Route path="/owner/props" element={<OwnerRoute><OwnerProps /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
