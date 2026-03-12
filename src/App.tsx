@@ -70,6 +70,11 @@ import OwnerSettings from "./pages/owner/OwnerSettings";
 import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
 import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
+import OwnerProps from "./pages/owner/OwnerProps";
+
+// Store & Props pages
+import StorePage from "./pages/StorePage";
+import MyPropsPage from "./pages/MyPropsPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
