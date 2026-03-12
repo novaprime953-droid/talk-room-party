@@ -150,6 +150,7 @@ export const useCreateRoom = () => {
       privacy_type: string;
       max_seats: number;
       country?: string;
+      cover_image?: string;
     }) => {
       if (!user) throw new Error('Not authenticated');
       const { data, error } = await supabase

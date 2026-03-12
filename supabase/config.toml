@@ -2,3 +2,6 @@ project_id = "vxbgnvpkcissenlqgwuv"
 
 [functions.admin-api]
 verify_jwt = false
+
+[functions.expire-props]
+verify_jwt = false
