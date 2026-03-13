@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useAdmin";
 import { toast } from "sonner";
+import FramedAvatar from "@/components/FramedAvatar";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -70,18 +71,13 @@ const ProfilePage = () => {
         <div className="h-32 gradient-primary" />
         <div className="px-4 -mt-12">
           <div className="flex items-end gap-4">
-            <div className="relative">
-              {equippedFrame && (equippedFrame as any).props?.image_url && (
-                <img src={(equippedFrame as any).props.image_url} alt="" className="absolute -inset-2 w-[calc(100%+16px)] h-[calc(100%+16px)] object-contain z-10 pointer-events-none" />
-              )}
-              <div className="w-24 h-24 rounded-full bg-card border-4 border-background flex items-center justify-center text-3xl font-bold gradient-primary text-primary-foreground glow-primary overflow-hidden">
-                {profile?.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  (profile?.display_name ?? profile?.username ?? "U").charAt(0).toUpperCase()
-                )}
-              </div>
-            </div>
+            <FramedAvatar
+              src={profile?.avatar_url}
+              name={profile?.display_name ?? profile?.username}
+              frameUrl={(equippedFrame as any)?.props?.image_url}
+              size="xl"
+              showGlow
+            />
             <div className="flex-1 pb-2">
               <h1 className="font-display font-bold text-xl text-foreground">
                 {profile?.display_name ?? profile?.username ?? "User"}
