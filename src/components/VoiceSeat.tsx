@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Mic, MicOff, Crown } from "lucide-react";
+import { Mic, MicOff, Crown, Lock } from "lucide-react";
+import FramedAvatar from "./FramedAvatar";
 
 interface SeatProps {
   index: number;
@@ -9,7 +10,9 @@ interface SeatProps {
     isSpeaking?: boolean;
     isMuted?: boolean;
     isHost?: boolean;
+    frameUrl?: string | null;
   };
+  isLocked?: boolean;
   onTap?: () => void;
 }
 
@@ -26,44 +29,48 @@ const SoundWave = () => (
   </div>
 );
 
-const VoiceSeat = ({ index, user, onTap }: SeatProps) => {
+const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
       onClick={onTap}
       className="flex flex-col items-center gap-1.5 w-20"
     >
-      <div
-        className={`relative w-14 h-14 rounded-full flex items-center justify-center ${
-          user
-            ? user.isSpeaking
-              ? "ring-2 ring-primary animate-pulse-glow"
-              : "ring-1 ring-border"
-            : "border-2 border-dashed border-muted-foreground/30"
-        } bg-muted/50 overflow-hidden`}
-      >
+      <div className="relative">
         {user ? (
           <>
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-lg font-bold text-foreground">
-                {user.name.charAt(0).toUpperCase()}
-              </span>
-            )}
+            <FramedAvatar
+              src={user.avatar}
+              name={user.name}
+              frameUrl={user.frameUrl}
+              size="md"
+              showGlow={user.isSpeaking}
+            />
             {user.isHost && (
-              <div className="absolute -top-1 -right-1 w-5 h-5 gradient-gold rounded-full flex items-center justify-center">
+              <div className="absolute -top-1 -right-1 w-5 h-5 gradient-gold rounded-full flex items-center justify-center z-20">
                 <Crown className="w-3 h-3 text-accent-foreground" />
               </div>
             )}
             {user.isMuted && (
-              <div className="absolute bottom-0 right-0 w-5 h-5 bg-destructive rounded-full flex items-center justify-center">
+              <div className="absolute bottom-0 right-0 w-5 h-5 bg-destructive rounded-full flex items-center justify-center z-20">
                 <MicOff className="w-3 h-3 text-destructive-foreground" />
               </div>
             )}
           </>
         ) : (
-          <Mic className="w-5 h-5 text-muted-foreground/40" />
+          <div
+            className={`w-14 h-14 rounded-full flex items-center justify-center ${
+              isLocked
+                ? "bg-muted/30 border-2 border-dashed border-destructive/30"
+                : "bg-muted/50 border-2 border-dashed border-muted-foreground/30"
+            }`}
+          >
+            {isLocked ? (
+              <Lock className="w-4 h-4 text-destructive/40" />
+            ) : (
+              <Mic className="w-5 h-5 text-muted-foreground/40" />
+            )}
+          </div>
         )}
       </div>
 
@@ -76,7 +83,9 @@ const VoiceSeat = ({ index, user, onTap }: SeatProps) => {
         </>
       )}
       {!user && (
-        <span className="text-[10px] text-muted-foreground">Seat {index + 1}</span>
+        <span className="text-[10px] text-muted-foreground">
+          {isLocked ? "Locked" : `Seat ${index + 1}`}
+        </span>
       )}
     </motion.button>
   );
