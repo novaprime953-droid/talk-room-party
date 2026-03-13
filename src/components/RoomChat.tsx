@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Gift, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import FramedAvatar from "./FramedAvatar";
 
 interface ChatMessage {
   id: string;
@@ -11,6 +12,7 @@ interface ChatMessage {
   type: string;
   created_at: string;
   username?: string;
+  avatar?: string | null;
 }
 
 const RoomChat = ({ roomId }: { roomId: string }) => {
@@ -19,12 +21,11 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Load initial messages
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase
         .from("room_messages")
-        .select("*, profiles:profiles!room_messages_user_id_fkey(username, display_name)")
+        .select("*, profiles:profiles!room_messages_user_id_fkey(username, display_name, avatar_url)")
         .eq("room_id", roomId)
         .order("created_at", { ascending: true })
         .limit(100);
@@ -38,6 +39,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
             type: m.type,
             created_at: m.created_at,
             username: m.profiles?.display_name ?? m.profiles?.username ?? "User",
+            avatar: m.profiles?.avatar_url ?? null,
           }))
         );
       }
@@ -45,7 +47,6 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
     load();
   }, [roomId]);
 
-  // Realtime messages
   useEffect(() => {
     const channel = supabase
       .channel(`room-chat-${roomId}`)
@@ -56,10 +57,9 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
         filter: `room_id=eq.${roomId}`,
       }, async (payload) => {
         const newMsg = payload.new as any;
-        // Fetch username
         const { data: profile } = await supabase
           .from("profiles")
-          .select("username, display_name")
+          .select("username, display_name, avatar_url")
           .eq("user_id", newMsg.user_id)
           .single();
 
@@ -72,6 +72,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
             type: newMsg.type,
             created_at: newMsg.created_at,
             username: profile?.display_name ?? profile?.username ?? "User",
+            avatar: profile?.avatar_url ?? null,
           },
         ]);
       })
@@ -80,7 +81,6 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
     return () => { supabase.removeChannel(channel); };
   }, [roomId]);
 
-  // Auto-scroll
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
@@ -105,20 +105,31 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
             key={msg.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`px-3 py-1.5 rounded-xl inline-block max-w-[85%] ${
-              msg.type === "system"
-                ? "bg-muted/30 w-full text-center"
-                : msg.type === "gift"
-                ? "border border-accent/20 bg-accent/5"
-                : "bg-muted/40"
-            }`}
+            className="flex items-start gap-2"
           >
             {msg.type !== "system" && (
-              <span className={`text-xs font-bold ${msg.type === "gift" ? "text-accent" : "text-primary"}`}>
-                {msg.username}{" "}
-              </span>
+              <FramedAvatar src={msg.avatar} name={msg.username} size="xs" />
             )}
-            <span className="text-xs text-foreground/80">{msg.message}</span>
+            <div
+              className={`px-3 py-1.5 rounded-xl inline-block max-w-[80%] ${
+                msg.type === "system"
+                  ? "bg-muted/30 w-full text-center ml-0"
+                  : msg.type === "gift"
+                  ? "border border-accent/20 bg-accent/5"
+                  : msg.type === "entrance"
+                  ? "bg-primary/10 border border-primary/20"
+                  : "bg-muted/40"
+              }`}
+            >
+              {msg.type !== "system" && (
+                <span className={`text-xs font-bold ${
+                  msg.type === "gift" ? "text-accent" : msg.type === "entrance" ? "text-primary" : "text-primary"
+                }`}>
+                  {msg.username}{" "}
+                </span>
+              )}
+              <span className="text-xs text-foreground/80">{msg.message}</span>
+            </div>
           </motion.div>
         ))}
       </div>

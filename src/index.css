@@ -132,4 +132,20 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .animate-float {
+    animation: float 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 8px hsl(330, 85%, 60%, 0.3); }
+    50% { box-shadow: 0 0 20px hsl(330, 85%, 60%, 0.6); }
+  }
+  .animate-pulse-glow {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+  }
 }
