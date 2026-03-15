@@ -67,7 +67,7 @@ export const useReports = (status?: string) => {
     queryFn: async () => {
       let query = supabase
         .from('reports')
-        .select('*, reporter:profiles!reports_reporter_id_fkey(username), reported:profiles!reports_reported_user_id_fkey(username)')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
       if (status) query = query.eq('status', status);
