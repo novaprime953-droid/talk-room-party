@@ -25,7 +25,7 @@ export const useRoomRankings = (roomId: string, period: Period) => {
       // Get gift transactions for this room in the period, grouped by sender
       const { data, error } = await supabase
         .from('gift_transactions')
-        .select('sender_id, coins_spent, profiles!gift_transactions_sender_id_fkey(username, display_name, avatar_url)')
+        .select('sender_id, coins_spent')
         .eq('room_id', roomId)
         .gte('created_at', start);
 

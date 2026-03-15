@@ -38,7 +38,9 @@ const RoomCard = ({
   countryFlag,
 }: RoomCardProps) => {
   const navigate = useNavigate();
-  const gradient = gradients[Math.floor(Math.random() * gradients.length)];
+  // Deterministic gradient based on room id to prevent flickering on re-renders
+  const hash = id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const gradient = gradients[hash % gradients.length];
 
   return (
     <motion.div
