@@ -71,10 +71,12 @@ import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
 import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 import OwnerProps from "./pages/owner/OwnerProps";
+import OwnerSocial from "./pages/owner/OwnerSocial";
+import OwnerUserIds from "./pages/owner/OwnerUserIds";
 
-// Store & Props pages
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
+import SocialPage from "./pages/SocialPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -152,6 +154,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SettingsPage /></div></ProtectedRoute>} />
         <Route path="/store" element={<ProtectedRoute><div className="max-w-lg mx-auto"><StorePage /></div></ProtectedRoute>} />
         <Route path="/my-props" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MyPropsPage /></div></ProtectedRoute>} />
+        <Route path="/social" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SocialPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -212,6 +215,8 @@ const AppRoutes = () => {
         <Route path="/owner/seller-recharges" element={<OwnerRoute><OwnerSellerRecharges /></OwnerRoute>} />
         <Route path="/owner/game-settings" element={<OwnerRoute><OwnerGameSettings /></OwnerRoute>} />
         <Route path="/owner/props" element={<OwnerRoute><OwnerProps /></OwnerRoute>} />
+        <Route path="/owner/social" element={<OwnerRoute><OwnerSocial /></OwnerRoute>} />
+        <Route path="/owner/user-ids" element={<OwnerRoute><OwnerUserIds /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />

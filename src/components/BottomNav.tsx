@@ -1,11 +1,11 @@
-import { Home, Zap, MessageCircle, User } from "lucide-react";
+import { Home, Zap, Gamepad2, Users2, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const tabs = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Zap, label: "Activity", path: "/explore" },
-  { icon: MessageCircle, label: "Chat", path: "/games" },
+  { icon: Gamepad2, label: "Games", path: "/games" },
+  { icon: Users2, label: "Social", path: "/social" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Crown, Home, PartyPopper, CalendarDays, Globe, Radio } from "lucide-react";
+import { Search, Crown, Home, PartyPopper, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProfile } from "@/hooks/useProfile";
 import { useUnreadCount } from "@/hooks/useNotifications";
@@ -14,10 +14,7 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 const tabs = [
   { key: "mine", label: "Mine", icon: Home },
   { key: "party", label: "Party", icon: PartyPopper },
-  { key: "live", label: "Live", icon: Radio },
   { key: "events", label: "Events", icon: CalendarDays },
-  { key: "country", label: "Country", icon: Globe },
-  { key: "ranking", label: "Ranking", icon: Crown },
 ];
 
 const HomePage = () => {
@@ -88,8 +85,8 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Banner - only show on party/mine/live */}
-      {["party", "mine", "live"].includes(activeTab) && (
+      {/* Banner - only show on party/mine */}
+      {["party", "mine"].includes(activeTab) && (
         <div className="pt-3 pb-1">
           <BannerSlider />
         </div>
@@ -107,10 +104,7 @@ const HomePage = () => {
           >
             {activeTab === "mine" && <MineTab />}
             {activeTab === "party" && <PartyTab />}
-            {activeTab === "live" && <PartyTab />}
             {activeTab === "events" && <EventsTab />}
-            {activeTab === "country" && <CountryTab />}
-            {activeTab === "ranking" && <LeaderboardPage embedded />}
           </motion.div>
         </AnimatePresence>
       </div>

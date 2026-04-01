@@ -4,7 +4,7 @@ import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
   Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
   CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone,
-  Activity, Swords, LogOut, Gamepad2, Sparkles,
+  Activity, Swords, LogOut, Gamepad2, Sparkles, Hash, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
@@ -43,6 +43,7 @@ const navSections = [
   {
     label: "Moderation",
     items: [
+      { label: "Social Management", icon: MessageSquare, path: "/owner/social" },
       { label: "Reports", icon: FileText, path: "/owner/reports" },
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
     ],
@@ -59,6 +60,7 @@ const navSections = [
   {
     label: "System",
     items: [
+      { label: "User IDs", icon: Hash, path: "/owner/user-ids" },
       { label: "Game Settings", icon: Gamepad2, path: "/owner/game-settings" },
       { label: "Props / Dress", icon: Sparkles, path: "/owner/props" },
       { label: "Settings", icon: Settings, path: "/owner/settings" },
