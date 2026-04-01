@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import { useFeed, useCreatePost, useLikePost, useMyLikes, usePostComments, useAddComment, useReportPost } from "@/hooks/useSocial";
 import { formatDistanceToNow } from "date-fns";
-import { FramedAvatar } from "@/components/FramedAvatar";
+import FramedAvatar from "@/components/FramedAvatar";
 
 const SocialPage = () => {
   const { user } = useAuth();
