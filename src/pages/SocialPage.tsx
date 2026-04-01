@@ -60,7 +60,7 @@ const SocialPage = () => {
         {/* Create Post */}
         <div className="bg-card rounded-2xl p-4 shadow-card border border-border/30">
           <div className="flex gap-3">
-            <FramedAvatar src={profile?.avatar_url} fallback={profile?.display_name} size="sm" />
+            <FramedAvatar src={profile?.avatar_url} name={profile?.display_name} size="sm" />
             <div className="flex-1">
               <textarea
                 value={content}
@@ -171,7 +171,7 @@ const PostCard = ({ post, isLiked, onLike, onComment, onReport, menuOpen, onMenu
     <div className="bg-card rounded-2xl shadow-card border border-border/30 overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 pb-2">
-        <FramedAvatar src={profile?.avatar_url} fallback={profile?.display_name} size="sm" />
+        <FramedAvatar src={profile?.avatar_url} name={profile?.display_name} size="sm" />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-foreground truncate">{profile?.display_name || "User"}</span>
