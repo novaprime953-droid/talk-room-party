@@ -4,7 +4,7 @@ import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
   Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
   CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone,
-  Activity, Swords, LogOut, Gamepad2, Sparkles,
+  Activity, Swords, LogOut, Gamepad2, Sparkles, Hash, MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";

@@ -71,6 +71,8 @@ import OwnerRooms from "./pages/owner/OwnerRooms";
 import OwnerSellerRecharges from "./pages/owner/OwnerSellerRecharges";
 import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 import OwnerProps from "./pages/owner/OwnerProps";
+import OwnerSocial from "./pages/owner/OwnerSocial";
+import OwnerUserIds from "./pages/owner/OwnerUserIds";
 
 // Store & Props pages
 import StorePage from "./pages/StorePage";
