@@ -104,10 +104,7 @@ const HomePage = () => {
           >
             {activeTab === "mine" && <MineTab />}
             {activeTab === "party" && <PartyTab />}
-            {activeTab === "live" && <PartyTab />}
             {activeTab === "events" && <EventsTab />}
-            {activeTab === "country" && <CountryTab />}
-            {activeTab === "ranking" && <LeaderboardPage embedded />}
           </motion.div>
         </AnimatePresence>
       </div>
