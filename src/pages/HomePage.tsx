@@ -85,8 +85,8 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Banner - only show on party/mine/live */}
-      {["party", "mine", "live"].includes(activeTab) && (
+      {/* Banner - only show on party/mine */}
+      {["party", "mine"].includes(activeTab) && (
         <div className="pt-3 pb-1">
           <BannerSlider />
         </div>
