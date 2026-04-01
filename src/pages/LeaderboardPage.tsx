@@ -17,7 +17,7 @@ const periods = [
   { label: "Monthly", value: "monthly" as const },
 ];
 
-const LeaderboardPage = () => {
+const LeaderboardPage = ({ embedded }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"gifters" | "hosts">("gifters");
   const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
