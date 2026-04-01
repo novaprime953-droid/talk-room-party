@@ -14,10 +14,7 @@ import LeaderboardPage from "@/pages/LeaderboardPage";
 const tabs = [
   { key: "mine", label: "Mine", icon: Home },
   { key: "party", label: "Party", icon: PartyPopper },
-  { key: "live", label: "Live", icon: Radio },
   { key: "events", label: "Events", icon: CalendarDays },
-  { key: "country", label: "Country", icon: Globe },
-  { key: "ranking", label: "Ranking", icon: Crown },
 ];
 
 const HomePage = () => {
