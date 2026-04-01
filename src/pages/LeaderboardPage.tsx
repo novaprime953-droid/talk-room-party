@@ -47,16 +47,18 @@ const LeaderboardPage = ({ embedded }: { embedded?: boolean }) => {
   const rest = entries.slice(3);
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="px-4 pt-4">
-        <div className="flex items-center gap-3 mb-4">
-          <button onClick={() => navigate(-1)} className="p-2 text-foreground">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="font-display font-bold text-xl text-foreground flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-accent" /> Leaderboard
-          </h1>
-        </div>
+    <div className={embedded ? "" : "min-h-screen bg-background pb-20"}>
+      <div className={embedded ? "" : "px-4 pt-4"}>
+        {!embedded && (
+          <div className="flex items-center gap-3 mb-4">
+            <button onClick={() => navigate(-1)} className="p-2 text-foreground">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="font-display font-bold text-xl text-foreground flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-accent" /> Leaderboard
+            </h1>
+          </div>
+        )}
 
         {/* Main tabs */}
         <div className="flex gap-2 mb-3">
