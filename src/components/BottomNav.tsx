@@ -1,13 +1,11 @@
-import { Home, Search, Gamepad2, Plus, Trophy, User } from "lucide-react";
+import { Home, Zap, MessageCircle, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const tabs = [
   { icon: Home, label: "Home", path: "/" },
-  { icon: Search, label: "Explore", path: "/explore" },
-  { icon: Gamepad2, label: "Games", path: "/games" },
-  { icon: Plus, label: "Create", path: "/create" },
-  { icon: Trophy, label: "Rank", path: "/leaderboard" },
+  { icon: Zap, label: "Activity", path: "/explore" },
+  { icon: MessageCircle, label: "Chat", path: "/games" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
@@ -15,7 +13,6 @@ const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide on room and panel pages
   const hiddenPrefixes = ["/room/", "/admin", "/owner", "/agency", "/bizdev", "/host", "/seller"];
   if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) return null;
 
@@ -24,42 +21,29 @@ const BottomNav = () => {
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path;
-          const isCreate = tab.label === "Create";
-
           return (
             <button
               key={tab.label}
               onClick={() => navigate(tab.path)}
-              className="relative flex flex-col items-center gap-0.5 py-1 px-3"
+              className="relative flex flex-col items-center gap-0.5 py-1 px-5"
             >
-              {isCreate ? (
+              <tab.icon
+                className={`w-5 h-5 transition-colors ${
+                  isActive ? "text-primary" : "text-muted-foreground"
+                }`}
+              />
+              <span
+                className={`text-[10px] font-semibold transition-colors ${
+                  isActive ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                {tab.label}
+              </span>
+              {isActive && (
                 <motion.div
-                  whileTap={{ scale: 0.9 }}
-                  className="gradient-primary rounded-2xl p-3 -mt-5 glow-primary"
-                >
-                  <tab.icon className="w-6 h-6 text-primary-foreground" />
-                </motion.div>
-              ) : (
-                <>
-                  <tab.icon
-                    className={`w-5 h-5 transition-colors ${
-                      isActive ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  />
-                  <span
-                    className={`text-[10px] font-semibold transition-colors ${
-                      isActive ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    {tab.label}
-                  </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute -top-0.5 w-5 h-0.5 rounded-full gradient-primary"
-                    />
-                  )}
-                </>
+                  layoutId="activeTab"
+                  className="absolute -top-0.5 w-5 h-0.5 rounded-full gradient-primary"
+                />
               )}
             </button>
           );

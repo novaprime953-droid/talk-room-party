@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Users, Mic, Lock, Crown } from "lucide-react";
+import { Users, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface RoomCardProps {
@@ -14,14 +14,15 @@ interface RoomCardProps {
   tags?: string[];
   coverImage?: string;
   countryFlag?: string;
+  memberAvatars?: string[];
 }
 
 const gradients = [
-  "from-pink-500/20 to-purple-600/20",
-  "from-blue-500/20 to-cyan-500/20",
-  "from-amber-500/20 to-red-500/20",
-  "from-green-500/20 to-teal-500/20",
-  "from-violet-500/20 to-fuchsia-500/20",
+  "from-pink-500/30 to-purple-600/30",
+  "from-blue-500/30 to-cyan-500/30",
+  "from-amber-500/30 to-red-500/30",
+  "from-green-500/30 to-teal-500/30",
+  "from-violet-500/30 to-fuchsia-500/30",
 ];
 
 const RoomCard = ({
@@ -30,86 +31,71 @@ const RoomCard = ({
   host,
   hostAvatar,
   listeners,
-  speakers,
   isLive,
   isPrivate,
-  tags = [],
   coverImage,
   countryFlag,
+  memberAvatars = [],
 }: RoomCardProps) => {
   const navigate = useNavigate();
-  // Deterministic gradient based on room id to prevent flickering on re-renders
-  const hash = id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const hash = id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
   const gradient = gradients[hash % gradients.length];
 
   return (
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={() => navigate(`/room/${id}`)}
-      className="relative overflow-hidden rounded-2xl bg-card border border-border/50 cursor-pointer shadow-card"
+      className="relative overflow-hidden rounded-2xl bg-card border border-border/50 cursor-pointer shadow-card aspect-square"
     >
-      {/* Room Avatar / Cover */}
-      <div className={`relative h-24 bg-gradient-to-br ${gradient} overflow-hidden`}>
+      {/* Cover / gradient background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`}>
         {coverImage && (
-          <img src={coverImage} alt={name} className="w-full h-full object-cover absolute inset-0" />
+          <img src={coverImage} alt={name} className="w-full h-full object-cover" loading="lazy" />
         )}
-        {/* Live badge */}
-        {isLive && (
-          <div className="absolute top-2 right-2 flex items-center gap-1 bg-live/90 px-2 py-0.5 rounded-full">
-            <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full animate-pulse" />
-            <span className="text-[9px] font-bold text-primary-foreground">LIVE</span>
-          </div>
-        )}
-        {isPrivate && (
-          <div className="absolute top-2 left-2 bg-background/60 backdrop-blur-sm rounded-full p-1">
-            <Lock className="w-3 h-3 text-accent" />
-          </div>
-        )}
-        {countryFlag && (
-          <div className="absolute bottom-2 right-2 text-lg leading-none">{countryFlag}</div>
-        )}
-        {/* Host avatar overlay */}
-        <div className="absolute -bottom-4 left-3">
-          <div className="w-10 h-10 rounded-full border-2 border-card bg-muted flex items-center justify-center overflow-hidden">
-            {hostAvatar ? (
-              <img src={hostAvatar} alt={host} className="w-full h-full object-cover" />
-            ) : (
-              <Crown className="w-4 h-4 text-accent" />
-            )}
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       </div>
 
-      {/* Info */}
-      <div className="pt-5 pb-3 px-3">
-        <h3 className="font-display font-bold text-foreground text-xs line-clamp-1 mb-1">{name}</h3>
-        <p className="text-[10px] text-muted-foreground font-semibold mb-2 truncate">{host}</p>
+      {/* Live badge */}
+      {isLive && (
+        <div className="absolute top-2 left-2 flex items-center gap-1 bg-live/90 px-2 py-0.5 rounded-full z-10">
+          <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+          <span className="text-[9px] font-bold text-white">LIVE</span>
+        </div>
+      )}
 
-        {/* Tags */}
-        {tags.length > 0 && (
-          <div className="flex gap-1 mb-2 flex-wrap">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted/50 text-muted-foreground font-semibold"
+      {isPrivate && (
+        <div className="absolute top-2 right-2 bg-background/60 backdrop-blur-sm rounded-full p-1 z-10">
+          <Lock className="w-3 h-3 text-accent" />
+        </div>
+      )}
+
+      {/* Bottom info overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
+        <h3 className="font-display font-bold text-white text-xs line-clamp-1 mb-0.5">{name}</h3>
+        <div className="flex items-center gap-1 mb-2">
+          {countryFlag && <span className="text-xs leading-none">{countryFlag}</span>}
+          <span className="text-[10px] text-white/70 font-semibold truncate">{host}</span>
+        </div>
+
+        {/* Member avatars row + count */}
+        <div className="flex items-center justify-between">
+          <div className="flex -space-x-1.5">
+            {(memberAvatars.length > 0 ? memberAvatars.slice(0, 5) : [null, null, null]).map((av, i) => (
+              <div
+                key={i}
+                className="w-5 h-5 rounded-full border border-black/40 bg-muted/60 overflow-hidden"
               >
-                {tag}
-              </span>
+                {av ? (
+                  <img src={av} alt="" className="w-full h-full object-cover" loading="lazy" />
+                ) : (
+                  <div className="w-full h-full bg-muted/40" />
+                )}
+              </div>
             ))}
           </div>
-        )}
-
-        {/* Stats */}
-        <div className="flex items-center gap-3 text-muted-foreground">
-          {speakers > 0 && (
-            <div className="flex items-center gap-1">
-              <Mic className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-semibold">{speakers}</span>
-            </div>
-          )}
-          <div className="flex items-center gap-1">
-            <Users className="w-3 h-3" />
-            <span className="text-[10px] font-semibold">{listeners}</span>
+          <div className="flex items-center gap-1 bg-black/40 rounded-full px-2 py-0.5">
+            <Users className="w-3 h-3 text-white/80" />
+            <span className="text-[10px] font-bold text-white/80">{listeners}</span>
           </div>
         </div>
       </div>
