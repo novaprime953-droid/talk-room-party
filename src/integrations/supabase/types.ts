@@ -53,6 +53,48 @@ export type Database = {
         }
         Relationships: []
       }
+      banners: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          end_date: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          sort_order: number
+          start_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          start_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          start_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bans: {
         Row: {
           ban_type: string
@@ -495,6 +537,7 @@ export type Database = {
           phone: string | null
           updated_at: string
           user_id: string
+          user_id_number: number | null
           username: string | null
           xp: number
         }
@@ -512,6 +555,7 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id: string
+          user_id_number?: number | null
           username?: string | null
           xp?: number
         }
@@ -529,6 +573,7 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           user_id?: string
+          user_id_number?: number | null
           username?: string | null
           xp?: number
         }
