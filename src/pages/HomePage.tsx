@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Crown, Home, PartyPopper, CalendarDays, Globe, Radio } from "lucide-react";
+import { Search, Crown, Home, PartyPopper, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProfile } from "@/hooks/useProfile";
 import { useUnreadCount } from "@/hooks/useNotifications";
