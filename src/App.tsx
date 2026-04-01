@@ -154,6 +154,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SettingsPage /></div></ProtectedRoute>} />
         <Route path="/store" element={<ProtectedRoute><div className="max-w-lg mx-auto"><StorePage /></div></ProtectedRoute>} />
         <Route path="/my-props" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MyPropsPage /></div></ProtectedRoute>} />
+        <Route path="/social" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SocialPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
