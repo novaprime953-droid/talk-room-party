@@ -38,7 +38,7 @@ const HomePage = () => {
             </button>
             <button
               onClick={() => setActiveTab("ranking")}
-              className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-amber-600 flex items-center justify-center shadow-lg"
+              className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-warning flex items-center justify-center shadow-lg"
             >
               <Crown className="w-4 h-4 text-white" />
             </button>
