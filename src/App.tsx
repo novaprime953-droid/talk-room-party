@@ -74,9 +74,9 @@ import OwnerProps from "./pages/owner/OwnerProps";
 import OwnerSocial from "./pages/owner/OwnerSocial";
 import OwnerUserIds from "./pages/owner/OwnerUserIds";
 
-// Store & Props pages
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
+import SocialPage from "./pages/SocialPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
