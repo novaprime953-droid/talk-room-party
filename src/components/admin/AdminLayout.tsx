@@ -170,6 +170,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1 text-foreground">
             <Menu className="w-5 h-5" />
           </button>
+          <GlobalSearch basePath="/admin" />
           <div className="flex-1" />
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             {roles?.map((r) => (
