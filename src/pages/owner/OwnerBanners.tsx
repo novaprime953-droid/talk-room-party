@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EmptyState } from "@/components/EmptyState";
+import EmptyState from "@/components/EmptyState";
 
 const OwnerBanners = () => {
   const { data: banners, isLoading } = useAllBanners();
