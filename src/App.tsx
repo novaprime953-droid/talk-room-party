@@ -218,6 +218,7 @@ const AppRoutes = () => {
         <Route path="/owner/props" element={<OwnerRoute><OwnerProps /></OwnerRoute>} />
         <Route path="/owner/social" element={<OwnerRoute><OwnerSocial /></OwnerRoute>} />
         <Route path="/owner/user-ids" element={<OwnerRoute><OwnerUserIds /></OwnerRoute>} />
+        <Route path="/owner/banners" element={<OwnerRoute><OwnerBanners /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
