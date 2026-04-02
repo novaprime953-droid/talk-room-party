@@ -197,6 +197,7 @@ const OwnerLayout = ({ children }: { children: React.ReactNode }) => {
           <button onClick={() => setOpen(true)} className="lg:hidden p-1 text-foreground">
             <Menu className="w-5 h-5" />
           </button>
+          <GlobalSearch basePath="/owner" />
           <div className="flex-1" />
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             {roles?.map((r) => (
