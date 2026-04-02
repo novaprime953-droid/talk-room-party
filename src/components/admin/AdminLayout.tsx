@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserRoles } from "@/hooks/useAdmin";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 
 const menuSections = [
   {
