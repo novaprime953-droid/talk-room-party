@@ -45,6 +45,7 @@ const navSections = [
     label: "Moderation",
     items: [
       { label: "Social Management", icon: MessageSquare, path: "/owner/social" },
+      { label: "Banners", icon: ImageIcon, path: "/owner/banners" },
       { label: "Reports", icon: FileText, path: "/owner/reports" },
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
     ],
