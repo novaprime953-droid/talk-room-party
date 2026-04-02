@@ -4,9 +4,10 @@ import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
   Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
   CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone,
-  Activity, Swords, LogOut, Gamepad2, Sparkles, Hash, MessageSquare,
+  Activity, Swords, LogOut, Gamepad2, Sparkles, Hash, MessageSquare, ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 import { useUserRoles } from "@/hooks/useAdmin";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -44,6 +45,7 @@ const navSections = [
     label: "Moderation",
     items: [
       { label: "Social Management", icon: MessageSquare, path: "/owner/social" },
+      { label: "Banners", icon: ImageIcon, path: "/owner/banners" },
       { label: "Reports", icon: FileText, path: "/owner/reports" },
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
     ],
@@ -195,6 +197,7 @@ const OwnerLayout = ({ children }: { children: React.ReactNode }) => {
           <button onClick={() => setOpen(true)} className="lg:hidden p-1 text-foreground">
             <Menu className="w-5 h-5" />
           </button>
+          <GlobalSearch basePath="/owner" />
           <div className="flex-1" />
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             {roles?.map((r) => (

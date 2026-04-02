@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { useBanCheck } from "@/hooks/useBanCheck";
 import BottomNav from "@/components/BottomNav";
 import HomePage from "./pages/HomePage";
 import ExplorePage from "./pages/ExplorePage";
@@ -73,6 +74,7 @@ import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 import OwnerProps from "./pages/owner/OwnerProps";
 import OwnerSocial from "./pages/owner/OwnerSocial";
 import OwnerUserIds from "./pages/owner/OwnerUserIds";
+import OwnerBanners from "./pages/owner/OwnerBanners";
 
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
@@ -103,6 +105,7 @@ const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  useBanCheck();
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return <Navigate to="/auth" replace />;
   return <>{children}</>;
@@ -217,6 +220,7 @@ const AppRoutes = () => {
         <Route path="/owner/props" element={<OwnerRoute><OwnerProps /></OwnerRoute>} />
         <Route path="/owner/social" element={<OwnerRoute><OwnerSocial /></OwnerRoute>} />
         <Route path="/owner/user-ids" element={<OwnerRoute><OwnerUserIds /></OwnerRoute>} />
+        <Route path="/owner/banners" element={<OwnerRoute><OwnerBanners /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />

@@ -62,6 +62,8 @@ export type Database = {
           image_url: string
           is_active: boolean
           link_url: string | null
+          redirect_id: string | null
+          redirect_type: string
           sort_order: number
           start_date: string | null
           title: string
@@ -75,6 +77,8 @@ export type Database = {
           image_url: string
           is_active?: boolean
           link_url?: string | null
+          redirect_id?: string | null
+          redirect_type?: string
           sort_order?: number
           start_date?: string | null
           title: string
@@ -88,6 +92,8 @@ export type Database = {
           image_url?: string
           is_active?: boolean
           link_url?: string | null
+          redirect_id?: string | null
+          redirect_type?: string
           sort_order?: number
           start_date?: string | null
           title?: string
@@ -255,6 +261,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      event_leaderboard: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          rank: number | null
+          reward_claimed: boolean
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          rank?: number | null
+          reward_claimed?: boolean
+          score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          rank?: number | null
+          reward_claimed?: boolean
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_leaderboard_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -1154,6 +1201,7 @@ export type Database = {
           created_at: string
           granted_by: string | null
           id: string
+          invited_by: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
@@ -1161,6 +1209,7 @@ export type Database = {
           created_at?: string
           granted_by?: string | null
           id?: string
+          invited_by?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
@@ -1168,6 +1217,7 @@ export type Database = {
           created_at?: string
           granted_by?: string | null
           id?: string
+          invited_by?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
