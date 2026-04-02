@@ -73,6 +73,7 @@ import OwnerGameSettings from "./pages/owner/OwnerGameSettings";
 import OwnerProps from "./pages/owner/OwnerProps";
 import OwnerSocial from "./pages/owner/OwnerSocial";
 import OwnerUserIds from "./pages/owner/OwnerUserIds";
+import OwnerBanners from "./pages/owner/OwnerBanners";
 
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
