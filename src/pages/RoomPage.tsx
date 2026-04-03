@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, MoreVertical, Mic, MicOff, Hand, MessageCircle,
-  Gift, Gamepad2, Users, LogOut, Trophy, Share2, Crown,
-  Lock, UserPlus, Settings,
+  ArrowLeft, Mic, MicOff, MessageCircle, Gift, Gamepad2,
+  Users, LogOut, Trophy, Share2, Crown, Lock, UserPlus,
+  Settings, Music, Smile, DoorOpen, Volume2, MoreVertical,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import VoiceSeat from "@/components/VoiceSeat";
@@ -13,10 +13,12 @@ import RoomGamesPopup from "@/components/RoomGamesPopup";
 import RoomRankings from "@/components/RoomRankings";
 import RoomEntrance from "@/components/RoomEntrance";
 import FramedAvatar from "@/components/FramedAvatar";
+import GiftAnimation from "@/components/GiftAnimation";
 import { useRoom, useRoomParticipants, useJoinRoom, useLeaveRoom } from "@/hooks/useRooms";
 import { useAuth } from "@/hooks/useAuth";
 import { useEquippedProps } from "@/hooks/useProps";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type BottomPanel = "chat" | "gifts" | "rankings" | null;
 
@@ -25,10 +27,13 @@ const RoomPage = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [isMuted, setIsMuted] = useState(true);
-  const [activePanel, setActivePanel] = useState<BottomPanel>(null);
+  const [activePanel, setActivePanel] = useState<BottomPanel>("chat");
   const [handRaised, setHandRaised] = useState(false);
   const [showGames, setShowGames] = useState(false);
   const [showHostMenu, setShowHostMenu] = useState(false);
+  const [musicOn, setMusicOn] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
+  const [giftAnim, setGiftAnim] = useState<{ sender: string; receiver: string; giftName: string; emoji: string } | null>(null);
 
   const { data: room } = useRoom(id!);
   const { data: participants, refetch: refetchParticipants } = useRoomParticipants(id!);
@@ -42,32 +47,23 @@ const RoomPage = () => {
   useEffect(() => {
     if (id && user) {
       joinRoom.mutate({ roomId: id });
-
-      // Send entrance notification
       const sendEntrance = async () => {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("display_name, username")
+          .select("display_name, username, user_id_number")
           .eq("user_id", user.id)
           .single();
         const name = profile?.display_name ?? profile?.username ?? "User";
-
-        // Check for vehicle prop
         const { data: vehicleProp } = await supabase
           .from("user_props")
           .select("*, props(*)")
           .eq("user_id", user.id)
           .eq("is_equipped", true)
           .eq("status", "active");
-
-        const vehicle = (vehicleProp as any[])?.find(
-          (p) => p.props?.category === "vehicle"
-        );
-
+        const vehicle = (vehicleProp as any[])?.find((p) => p.props?.category === "vehicle");
         let msg = `${name} entered the room`;
         if (vehicle) {
           msg = `🚗 ${name} entered with ${vehicle.props.name}`;
-          // Trigger entrance animation
           (window as any).__triggerEntrance?.({
             id: crypto.randomUUID(),
             username: name,
@@ -75,12 +71,8 @@ const RoomPage = () => {
             vehicleEmoji: "🚗",
           });
         }
-
         await supabase.from("room_messages").insert({
-          room_id: id,
-          user_id: user.id,
-          message: msg,
-          type: "entrance",
+          room_id: id, user_id: user.id, message: msg, type: "entrance",
         });
       };
       sendEntrance();
@@ -93,15 +85,35 @@ const RoomPage = () => {
     if (!id) return;
     const channel = supabase
       .channel(`room-participants-${id}`)
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "room_participants",
-        filter: `room_id=eq.${id}`,
-      }, () => refetchParticipants())
+      .on("postgres_changes", { event: "*", schema: "public", table: "room_participants", filter: `room_id=eq.${id}` }, () => refetchParticipants())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [id, refetchParticipants]);
+
+  // Listen for gift transactions in realtime for animations
+  useEffect(() => {
+    if (!id) return;
+    const channel = supabase
+      .channel(`room-gifts-${id}`)
+      .on("postgres_changes", {
+        event: "INSERT", schema: "public", table: "gift_transactions", filter: `room_id=eq.${id}`,
+      }, async (payload) => {
+        const tx = payload.new as any;
+        const [senderRes, receiverRes, giftRes] = await Promise.all([
+          supabase.from("profiles").select("display_name, username").eq("user_id", tx.sender_id).single(),
+          supabase.from("profiles").select("display_name, username").eq("user_id", tx.receiver_id).single(),
+          supabase.from("gifts").select("gift_name, icon_url, category").eq("id", tx.gift_id).single(),
+        ]);
+        const sName = senderRes.data?.display_name ?? senderRes.data?.username ?? "User";
+        const rName = receiverRes.data?.display_name ?? receiverRes.data?.username ?? "User";
+        const gName = giftRes.data?.gift_name ?? "Gift";
+        const emoji = giftRes.data?.icon_url || (giftRes.data?.category === "luxury" ? "👑" : giftRes.data?.category === "premium" ? "💎" : "🎁");
+        setGiftAnim({ sender: sName, receiver: rName, giftName: gName, emoji });
+        setTimeout(() => setGiftAnim(null), 3500);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [id]);
 
   const handleLeave = async () => {
     if (id) await leaveRoom.mutateAsync(id);
@@ -111,22 +123,24 @@ const RoomPage = () => {
   const handleRaiseHand = async () => {
     setHandRaised(!handRaised);
     if (id && user) {
-      await supabase
-        .from("room_participants")
-        .update({ hand_raised: !handRaised })
-        .eq("room_id", id)
-        .eq("user_id", user.id);
+      await supabase.from("room_participants").update({ hand_raised: !handRaised }).eq("room_id", id).eq("user_id", user.id);
     }
   };
 
   const handleToggleMic = async () => {
     setIsMuted(!isMuted);
     if (id && user) {
-      await supabase
-        .from("room_participants")
-        .update({ mic_status: isMuted ? "unmuted" : "muted" })
-        .eq("room_id", id)
-        .eq("user_id", user.id);
+      await supabase.from("room_participants").update({ mic_status: isMuted ? "unmuted" : "muted" }).eq("room_id", id).eq("user_id", user.id);
+    }
+  };
+
+  const handleShare = () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: room?.room_name, url });
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success("Room link copied!");
     }
   };
 
@@ -134,12 +148,17 @@ const RoomPage = () => {
     setActivePanel((prev) => (prev === panel ? null : panel));
   };
 
-  // Build seats
-  const maxSeats = room?.max_seats ?? 8;
-  const myFrame = myEquipped?.find((p) => (p as any).props?.category === "frame");
+  const handleSeatTap = async (index: number) => {
+    if (!user || !id) return;
+    const occupied = participants?.find((p) => p.seat_index === index && !p.left_at);
+    if (occupied) return; // seat taken
+    await supabase.from("room_participants").update({ seat_index: index }).eq("room_id", id).eq("user_id", user.id);
+    refetchParticipants();
+  };
 
+  const maxSeats = room?.max_seats ?? 8;
   const seats = Array.from({ length: maxSeats }, (_, i) => {
-    const p = participants?.find((p) => p.seat_index === i);
+    const p = participants?.find((p) => p.seat_index === i && !p.left_at);
     if (!p) return null;
     const profile = p.profiles as any;
     return {
@@ -148,7 +167,7 @@ const RoomPage = () => {
       isSpeaking: p.mic_status === "unmuted",
       isMuted: p.mic_status === "muted",
       isHost: room?.host_id === p.user_id,
-      frameUrl: null as string | null, // Could fetch per-user frame props
+      frameUrl: null as string | null,
       userId: p.user_id,
     };
   });
@@ -156,60 +175,160 @@ const RoomPage = () => {
   const activeListeners = participants?.filter((p) => !p.left_at)?.length ?? 0;
 
   return (
-    <div className="min-h-screen bg-background gradient-room flex flex-col relative">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background pointer-events-none" />
+
       {/* Entrance Animation Overlay */}
       <RoomEntrance />
 
+      {/* Gift Animation Overlay */}
+      <GiftAnimation animation={giftAnim} />
+
       {/* Header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2 relative z-10">
-        <button onClick={() => navigate(-1)} className="p-2 text-foreground">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="text-center flex-1">
-          <div className="flex items-center justify-center gap-2">
-            {room?.cover_image && (
-              <FramedAvatar src={room.cover_image} name={room.room_name} size="xs" />
+      <div className="relative z-10 flex items-center justify-between px-3 pt-3 pb-2">
+        {/* Left: Room info */}
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="relative">
+            <FramedAvatar src={room?.cover_image} name={room?.room_name} size="sm" />
+            {room?.is_live && (
+              <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-live rounded-full border-2 border-background animate-pulse" />
             )}
-            <h1 className="font-display font-bold text-sm text-foreground truncate max-w-[180px]">
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="font-display font-bold text-xs text-foreground truncate">
               {room?.room_name ?? "Loading..."}
             </h1>
-          </div>
-          <div className="flex items-center justify-center gap-2 mt-0.5">
-            {room?.is_live && (
-              <>
-                <div className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-live rounded-full animate-pulse" />
-                  <span className="text-[10px] text-live font-bold">LIVE</span>
-                </div>
-                <span className="text-[10px] text-muted-foreground">•</span>
-              </>
-            )}
-            <div className="flex items-center gap-1">
-              <Users className="w-3 h-3 text-muted-foreground" />
-              <span className="text-[10px] text-muted-foreground">{activeListeners}</span>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[9px] text-muted-foreground">ID: {id?.slice(0, 8)}</span>
+              <span className="text-[9px] text-muted-foreground">•</span>
+              <Users className="w-2.5 h-2.5 text-muted-foreground" />
+              <span className="text-[9px] text-muted-foreground">{activeListeners}</span>
+              {room?.country && (
+                <>
+                  <span className="text-[9px] text-muted-foreground">•</span>
+                  <span className="text-[9px]">{room.country}</span>
+                </>
+              )}
             </div>
-            {room?.country && (
-              <>
-                <span className="text-[10px] text-muted-foreground">•</span>
-                <span className="text-xs">{room.country}</span>
-              </>
-            )}
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          {isHost && (
-            <button
-              onClick={() => setShowHostMenu(!showHostMenu)}
-              className="p-2 text-foreground"
-            >
-              <Settings className="w-5 h-5" />
-            </button>
-          )}
-          <button className="p-2 text-foreground">
-            <MoreVertical className="w-5 h-5" />
+
+        {/* Right: Action icons */}
+        <div className="flex items-center gap-0.5">
+          <button onClick={() => setMusicOn(!musicOn)} className={`p-2 rounded-full ${musicOn ? "text-primary" : "text-muted-foreground"}`}>
+            <Music className="w-4 h-4" />
+          </button>
+          <button onClick={handleShare} className="p-2 text-muted-foreground">
+            <Share2 className="w-4 h-4" />
+          </button>
+          <button onClick={() => setShowMembers(!showMembers)} className="p-2 text-muted-foreground">
+            <Users className="w-4 h-4" />
+          </button>
+          <button onClick={handleLeave} className="p-2 text-destructive">
+            <DoorOpen className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      {/* Host Display */}
+      {room && (
+        <div className="relative z-10 flex flex-col items-center py-2">
+          <div className="relative">
+            <div className="relative">
+              <FramedAvatar
+                src={(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.avatar_url}
+                name={(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.display_name ?? "Host"}
+                size="lg"
+                showGlow
+              />
+            </div>
+            <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-20 shadow-lg">
+              <Crown className="w-3.5 h-3.5 text-yellow-900" />
+            </div>
+          </div>
+          <p className="text-xs font-bold text-foreground mt-1.5">
+            {(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.display_name ?? "Host"}
+          </p>
+          <div className="flex items-center gap-1 mt-0.5">
+            <div className="px-1.5 py-0.5 rounded-full bg-primary/20 text-[8px] font-bold text-primary">HOST</div>
+            {room.is_live && (
+              <div className="px-1.5 py-0.5 rounded-full bg-live/20 text-[8px] font-bold text-live flex items-center gap-0.5">
+                <div className="w-1 h-1 bg-live rounded-full animate-pulse" /> LIVE
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Announcement bar */}
+      <div className="relative z-10 mx-3 mb-2">
+        <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5 overflow-hidden">
+          <motion.p
+            animate={{ x: [0, -200, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="text-[10px] text-primary font-medium whitespace-nowrap"
+          >
+            📢 Welcome to {room?.room_name}! Follow the room rules and have fun 🎉
+          </motion.p>
+        </div>
+      </div>
+
+      {/* Seats Grid */}
+      <div className="flex-1 relative z-10 px-3 py-2 min-h-0">
+        <div className="grid grid-cols-4 gap-y-4 gap-x-2 justify-items-center max-w-sm mx-auto">
+          {seats.map((seat, i) => (
+            <VoiceSeat
+              key={i}
+              index={i}
+              user={seat ? {
+                name: seat.name,
+                avatar: seat.avatar ?? undefined,
+                isSpeaking: seat.isSpeaking,
+                isMuted: seat.isMuted,
+                isHost: seat.isHost,
+                frameUrl: seat.frameUrl,
+              } : undefined}
+              onTap={() => handleSeatTap(i)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Members Panel */}
+      <AnimatePresence>
+        {showMembers && (
+          <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25 }}
+            className="fixed inset-y-0 right-0 w-72 z-50 bg-card border-l border-border shadow-2xl"
+          >
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h3 className="font-bold text-sm text-foreground">Members ({activeListeners})</h3>
+              <button onClick={() => setShowMembers(false)} className="text-muted-foreground">✕</button>
+            </div>
+            <div className="p-3 space-y-2 overflow-y-auto max-h-[calc(100vh-60px)]">
+              {participants?.filter(p => !p.left_at).map(p => {
+                const prof = p.profiles as any;
+                return (
+                  <div key={p.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted/20">
+                    <FramedAvatar src={prof?.avatar_url} name={prof?.display_name} size="xs" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground truncate">{prof?.display_name ?? prof?.username ?? "User"}</p>
+                      <p className="text-[9px] text-muted-foreground">
+                        {p.user_id === room?.host_id ? "👑 Host" : p.seat_index !== null ? `🎤 Seat ${p.seat_index + 1}` : "👀 Listener"}
+                      </p>
+                    </div>
+                    {p.mic_status === "unmuted" && <Volume2 className="w-3 h-3 text-primary" />}
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Host Controls Dropdown */}
       <AnimatePresence>
@@ -230,9 +349,7 @@ const RoomPage = () => {
                 key={item.label}
                 onClick={() => setShowHostMenu(false)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                  item.danger
-                    ? "text-destructive hover:bg-destructive/10"
-                    : "text-foreground hover:bg-muted/30"
+                  item.danger ? "text-destructive hover:bg-destructive/10" : "text-foreground hover:bg-muted/30"
                 }`}
               >
                 <item.icon className="w-4 h-4" />
@@ -243,38 +360,14 @@ const RoomPage = () => {
         )}
       </AnimatePresence>
 
-      {/* Seats Grid */}
-      <div className="flex-1 px-4 py-4">
-        <div className="grid grid-cols-4 gap-y-6 justify-items-center max-w-sm mx-auto">
-          {seats.map((seat, i) => (
-            <VoiceSeat
-              key={i}
-              index={i}
-              user={
-                seat
-                  ? {
-                      name: seat.name,
-                      avatar: seat.avatar ?? undefined,
-                      isSpeaking: seat.isSpeaking,
-                      isMuted: seat.isMuted,
-                      isHost: seat.isHost,
-                      frameUrl: seat.frameUrl,
-                    }
-                  : undefined
-              }
-            />
-          ))}
-        </div>
-      </div>
-
       {/* Bottom Panels */}
       <AnimatePresence>
         {activePanel === "chat" && (
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: "40vh" }}
+            animate={{ height: "35vh" }}
             exit={{ height: 0 }}
-            className="bg-card/90 backdrop-blur-lg border-t border-border/50 overflow-hidden"
+            className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 overflow-hidden"
           >
             <RoomChat roomId={id!} />
           </motion.div>
@@ -284,21 +377,17 @@ const RoomPage = () => {
             initial={{ height: 0 }}
             animate={{ height: "35vh" }}
             exit={{ height: 0 }}
-            className="bg-card/90 backdrop-blur-lg border-t border-border/50 overflow-hidden"
+            className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 overflow-hidden"
           >
-            <GiftPanel
-              roomId={id!}
-              hostId={room?.host_id}
-              onClose={() => setActivePanel(null)}
-            />
+            <GiftPanel roomId={id!} hostId={room?.host_id} onClose={() => setActivePanel(null)} />
           </motion.div>
         )}
         {activePanel === "rankings" && (
           <motion.div
             initial={{ height: 0 }}
-            animate={{ height: "45vh" }}
+            animate={{ height: "40vh" }}
             exit={{ height: 0 }}
-            className="bg-card/90 backdrop-blur-lg border-t border-border/50 overflow-hidden"
+            className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 overflow-hidden"
           >
             <RoomRankings roomId={id!} />
           </motion.div>
@@ -308,89 +397,70 @@ const RoomPage = () => {
       {/* Games Popup */}
       <RoomGamesPopup open={showGames} onClose={() => setShowGames(false)} />
 
-      {/* Bottom Controls */}
-      <div className="bg-card/90 backdrop-blur-lg border-t border-border/50 px-4 py-3 safe-bottom">
-        <div className="flex items-center justify-around max-w-sm mx-auto">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => togglePanel("chat")}
-            className={`p-3 rounded-full ${
-              activePanel === "chat"
-                ? "bg-primary/20 text-primary"
-                : "bg-muted/40 text-muted-foreground"
-            }`}
+      {/* Bottom Controls Bar */}
+      <div className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 px-2 py-2 safe-bottom">
+        <div className="flex items-center justify-between max-w-md mx-auto">
+          {/* Chat */}
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => togglePanel("chat")}
+            className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] ${activePanel === "chat" ? "text-primary" : "text-muted-foreground"}`}
           >
             <MessageCircle className="w-5 h-5" />
+            <span className="text-[8px] font-bold">Chat</span>
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => togglePanel("gifts")}
-            className={`p-3 rounded-full ${
-              activePanel === "gifts"
-                ? "bg-accent/20 text-accent"
-                : "bg-accent/10 text-accent"
-            }`}
-          >
-            <Gift className="w-5 h-5" />
-          </motion.button>
-
-          {/* Mic button */}
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={handleToggleMic}
-            className={`p-4 rounded-full ${
-              isMuted
-                ? "bg-muted/40 text-muted-foreground"
-                : "gradient-primary text-primary-foreground glow-primary"
-            }`}
+          {/* Mic (center, larger) */}
+          <motion.button whileTap={{ scale: 0.9 }} onClick={handleToggleMic}
+            className={`p-3.5 rounded-full ${isMuted ? "bg-muted/50 text-muted-foreground" : "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/30"}`}
           >
             {isMuted ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => togglePanel("rankings")}
-            className={`p-3 rounded-full ${
-              activePanel === "rankings"
-                ? "bg-accent/20 text-accent"
-                : "bg-muted/40 text-muted-foreground"
-            }`}
-          >
-            <Trophy className="w-5 h-5" />
+          {/* Emoji */}
+          <motion.button whileTap={{ scale: 0.9 }} className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] text-muted-foreground">
+            <Smile className="w-5 h-5" />
+            <span className="text-[8px] font-bold">Emoji</span>
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setShowGames(true)}
-            className={`p-3 rounded-full ${
-              showGames
-                ? "bg-primary/20 text-primary"
-                : "bg-muted/40 text-muted-foreground"
-            }`}
+          {/* Gift */}
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => togglePanel("gifts")}
+            className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] ${activePanel === "gifts" ? "text-accent" : "text-accent/70"}`}
+          >
+            <Gift className="w-5 h-5" />
+            <span className="text-[8px] font-bold">Gift</span>
+          </motion.button>
+
+          {/* Games */}
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowGames(true)}
+            className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] text-muted-foreground"
           >
             <Gamepad2 className="w-5 h-5" />
+            <span className="text-[8px] font-bold">Game</span>
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={handleRaiseHand}
-            className={`p-3 rounded-full ${
-              handRaised
-                ? "bg-accent/20 text-accent"
-                : "bg-muted/40 text-muted-foreground"
-            }`}
+          {/* Rankings */}
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => togglePanel("rankings")}
+            className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] ${activePanel === "rankings" ? "text-accent" : "text-muted-foreground"}`}
           >
-            <Hand className="w-5 h-5" />
+            <Trophy className="w-5 h-5" />
+            <span className="text-[8px] font-bold">Rank</span>
           </motion.button>
 
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={handleLeave}
-            className="p-3 rounded-full bg-destructive/10 text-destructive"
-          >
-            <LogOut className="w-5 h-5" />
-          </motion.button>
+          {/* Settings (host only) or Hand raise */}
+          {isHost ? (
+            <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowHostMenu(!showHostMenu)}
+              className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] text-muted-foreground"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="text-[8px] font-bold">More</span>
+            </motion.button>
+          ) : (
+            <motion.button whileTap={{ scale: 0.9 }} onClick={handleRaiseHand}
+              className={`flex flex-col items-center gap-0.5 p-1.5 rounded-xl min-w-[44px] ${handRaised ? "text-accent" : "text-muted-foreground"}`}
+            >
+              <span className="text-lg">✋</span>
+              <span className="text-[8px] font-bold">Hand</span>
+            </motion.button>
+          )}
         </div>
       </div>
     </div>

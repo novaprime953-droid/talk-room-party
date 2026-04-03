@@ -27,7 +27,7 @@ const BannerSlider = () => {
 
   if (activeBanners.length === 0) {
     return (
-      <div className="mx-4 h-36 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+      <div className="mx-4 h-44 sm:h-48 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shadow-lg shadow-primary/5">
         <span className="text-sm text-muted-foreground font-semibold">✨ Welcome to Talk Room</span>
       </div>
     );
@@ -35,7 +35,7 @@ const BannerSlider = () => {
 
   return (
     <div className="mx-4">
-      <div className="relative h-36 rounded-2xl overflow-hidden">
+      <div className="relative h-44 sm:h-48 rounded-2xl overflow-hidden shadow-lg shadow-primary/5">
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
