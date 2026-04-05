@@ -81,6 +81,8 @@ import MyPropsPage from "./pages/MyPropsPage";
 import SocialPage from "./pages/SocialPage";
 import MedalsPage from "./pages/MedalsPage";
 import FamilyPage from "./pages/FamilyPage";
+import LevelPage from "./pages/LevelPage";
+import VIPPage from "./pages/VIPPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
