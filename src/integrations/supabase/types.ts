@@ -345,6 +345,77 @@ export type Database = {
         }
         Relationships: []
       }
+      families: {
+        Row: {
+          badge_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          level: number
+          max_members: number
+          name: string
+          owner_id: string
+          updated_at: string
+          xp: number
+        }
+        Insert: {
+          badge_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          level?: number
+          max_members?: number
+          name: string
+          owner_id: string
+          updated_at?: string
+          xp?: number
+        }
+        Update: {
+          badge_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          level?: number
+          max_members?: number
+          name?: string
+          owner_id?: string
+          updated_at?: string
+          xp?: number
+        }
+        Relationships: []
+      }
+      family_members: {
+        Row: {
+          family_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          family_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          family_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       followers: {
         Row: {
           created_at: string
@@ -560,6 +631,36 @@ export type Database = {
           new_id?: number
           old_id?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      medals: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon_url: string | null
+          id: string
+          name: string
+          unlock_condition: Json
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name: string
+          unlock_condition?: Json
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_url?: string | null
+          id?: string
+          name?: string
+          unlock_condition?: Json
         }
         Relationships: []
       }
@@ -1154,6 +1255,35 @@ export type Database = {
           value?: Json
         }
         Relationships: []
+      }
+      user_medals: {
+        Row: {
+          id: string
+          medal_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          medal_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          medal_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_medals_medal_id_fkey"
+            columns: ["medal_id"]
+            isOneToOne: false
+            referencedRelation: "medals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_props: {
         Row: {

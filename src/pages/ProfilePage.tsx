@@ -70,7 +70,7 @@ const ProfilePage = () => {
 
   // Main button grid
   const mainButtons = [
-    { icon: Award, label: "Medal of Honor", color: "text-purple-400", bg: "bg-purple-500/20", path: "/leaderboard" },
+    { icon: Award, label: "Medal of Honor", color: "text-purple-400", bg: "bg-purple-500/20", path: "/medals" },
     { icon: ShoppingBag, label: "Shop", color: "text-emerald-400", bg: "bg-emerald-500/20", path: "/store" },
     { icon: Sparkles, label: "Props", color: "text-sky-400", bg: "bg-sky-500/20", path: "/my-props" },
     { icon: ClipboardList, label: "Task", color: "text-orange-400", bg: "bg-orange-500/20", path: "/events" },
@@ -79,7 +79,7 @@ const ProfilePage = () => {
 
   // Second section
   const secondButtons = [
-    { icon: Users, label: "Family", color: "text-blue-400", bg: "bg-blue-500/20", path: "/social" },
+    { icon: Users, label: "Family", color: "text-blue-400", bg: "bg-blue-500/20", path: "/family" },
     { icon: Heart, label: "CP Nest", color: "text-pink-400", bg: "bg-pink-500/20", path: "/social" },
     { icon: BarChart3, label: "Reward Records", color: "text-emerald-400", bg: "bg-emerald-500/20", path: "/wallet" },
     { icon: MessageSquare, label: "Feedback", color: "text-red-400", bg: "bg-red-500/20", path: "/notifications" },
