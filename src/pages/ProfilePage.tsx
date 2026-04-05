@@ -186,22 +186,24 @@ const ProfilePage = () => {
 
       {/* VIP + Level Cards */}
       <div className="px-4 mb-4 flex gap-2">
-        <motion.div
+        <motion.button
           whileTap={{ scale: 0.97 }}
-          className="flex-1 rounded-2xl p-3 relative overflow-hidden"
+          onClick={() => navigate("/vip")}
+          className="flex-1 rounded-2xl p-3 relative overflow-hidden text-left"
           style={{ background: 'linear-gradient(135deg, hsl(30 80% 25%), hsl(45 100% 20%))' }}
         >
           <p className="text-[10px] text-amber-300/80 font-bold">VIP</p>
           <p className="font-display font-bold text-lg text-amber-300">VIP{vipLevel}</p>
-        </motion.div>
-        <motion.div
+        </motion.button>
+        <motion.button
           whileTap={{ scale: 0.97 }}
-          className="flex-1 rounded-2xl p-3 relative overflow-hidden"
+          onClick={() => navigate("/level")}
+          className="flex-1 rounded-2xl p-3 relative overflow-hidden text-left"
           style={{ background: 'linear-gradient(135deg, hsl(140 40% 20%), hsl(160 60% 25%))' }}
         >
-          <p className="text-[10px] text-emerald-300/80 font-bold">Wealth level</p>
+          <p className="text-[10px] text-emerald-300/80 font-bold">Level</p>
           <p className="font-display font-bold text-lg text-emerald-300">Lv.{wealthLevel}</p>
-        </motion.div>
+        </motion.button>
       </div>
 
       {/* Main Button Grid */}
