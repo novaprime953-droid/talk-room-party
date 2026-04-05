@@ -164,6 +164,8 @@ const AppRoutes = () => {
         <Route path="/social" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SocialPage /></div></ProtectedRoute>} />
         <Route path="/medals" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MedalsPage /></div></ProtectedRoute>} />
         <Route path="/family" element={<ProtectedRoute><div className="max-w-lg mx-auto"><FamilyPage /></div></ProtectedRoute>} />
+        <Route path="/level" element={<ProtectedRoute><div className="max-w-lg mx-auto"><LevelPage /></div></ProtectedRoute>} />
+        <Route path="/vip" element={<ProtectedRoute><div className="max-w-lg mx-auto"><VIPPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
