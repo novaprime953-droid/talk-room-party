@@ -160,6 +160,8 @@ const AppRoutes = () => {
         <Route path="/store" element={<ProtectedRoute><div className="max-w-lg mx-auto"><StorePage /></div></ProtectedRoute>} />
         <Route path="/my-props" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MyPropsPage /></div></ProtectedRoute>} />
         <Route path="/social" element={<ProtectedRoute><div className="max-w-lg mx-auto"><SocialPage /></div></ProtectedRoute>} />
+        <Route path="/medals" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MedalsPage /></div></ProtectedRoute>} />
+        <Route path="/family" element={<ProtectedRoute><div className="max-w-lg mx-auto"><FamilyPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
