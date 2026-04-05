@@ -634,6 +634,41 @@ export type Database = {
         }
         Relationships: []
       }
+      level_rewards: {
+        Row: {
+          coins_reward: number
+          created_at: string
+          description: string | null
+          id: string
+          level: number
+          prop_id: string | null
+        }
+        Insert: {
+          coins_reward?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          level: number
+          prop_id?: string | null
+        }
+        Update: {
+          coins_reward?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          level?: number
+          prop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "level_rewards_prop_id_fkey"
+            columns: ["prop_id"]
+            isOneToOne: false
+            referencedRelation: "props"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medals: {
         Row: {
           category: string
@@ -932,6 +967,10 @@ export type Database = {
           user_id: string
           user_id_number: number | null
           username: string | null
+          vip_end: string | null
+          vip_level: number
+          vip_start: string | null
+          vip_xp: number
           xp: number
         }
         Insert: {
@@ -950,6 +989,10 @@ export type Database = {
           user_id: string
           user_id_number?: number | null
           username?: string | null
+          vip_end?: string | null
+          vip_level?: number
+          vip_start?: string | null
+          vip_xp?: number
           xp?: number
         }
         Update: {
@@ -968,6 +1011,10 @@ export type Database = {
           user_id?: string
           user_id_number?: number | null
           username?: string | null
+          vip_end?: string | null
+          vip_level?: number
+          vip_start?: string | null
+          vip_xp?: number
           xp?: number
         }
         Relationships: []
@@ -1457,6 +1504,10 @@ export type Database = {
     }
     Functions: {
       grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
+      grant_xp: {
+        Args: { p_amount: number; p_source?: string; p_user_id: string }
+        Returns: Json
+      }
       has_any_admin_role: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -1476,6 +1527,10 @@ export type Database = {
       }
       purchase_prop: {
         Args: { p_prop_id: string; p_user_id: string }
+        Returns: Json
+      }
+      purchase_vip: {
+        Args: { p_cost: number; p_user_id: string; p_vip_level: number }
         Returns: Json
       }
       seller_send_coins: {

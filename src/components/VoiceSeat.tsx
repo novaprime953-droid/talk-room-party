@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Mic, MicOff, Crown, Lock } from "lucide-react";
 import FramedAvatar from "./FramedAvatar";
+import LevelBadge from "./LevelBadge";
+import VIPBadge from "./VIPBadge";
 
 interface SeatProps {
   index: number;
@@ -11,6 +13,8 @@ interface SeatProps {
     isMuted?: boolean;
     isHost?: boolean;
     frameUrl?: string | null;
+    level?: number;
+    vipLevel?: number;
   };
   isLocked?: boolean;
   onTap?: () => void;
@@ -79,6 +83,10 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
           <span className="text-[11px] font-semibold text-foreground truncate w-full text-center">
             {user.name}
           </span>
+          <div className="flex items-center gap-1">
+            <LevelBadge level={user.level ?? 1} size="xs" />
+            {(user.vipLevel ?? 0) > 0 && <VIPBadge vipLevel={user.vipLevel!} size="xs" />}
+          </div>
           {user.isSpeaking && <SoundWave />}
         </>
       )}

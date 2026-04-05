@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import FramedAvatar from "./FramedAvatar";
+import LevelBadge from "./LevelBadge";
 
 interface ChatMessage {
   id: string;
@@ -13,6 +14,7 @@ interface ChatMessage {
   created_at: string;
   username?: string;
   avatar?: string | null;
+  level?: number;
 }
 
 const RoomChat = ({ roomId }: { roomId: string }) => {
@@ -25,7 +27,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
     const load = async () => {
       const { data } = await supabase
         .from("room_messages")
-        .select("*, profiles:profiles!room_messages_user_id_fkey(username, display_name, avatar_url)")
+        .select("*, profiles:profiles!room_messages_user_id_fkey(username, display_name, avatar_url, level)")
         .eq("room_id", roomId)
         .order("created_at", { ascending: true })
         .limit(100);
@@ -40,6 +42,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
             created_at: m.created_at,
             username: m.profiles?.display_name ?? m.profiles?.username ?? "User",
             avatar: m.profiles?.avatar_url ?? null,
+            level: m.profiles?.level ?? 1,
           }))
         );
       }
@@ -59,7 +62,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
         const newMsg = payload.new as any;
         const { data: profile } = await supabase
           .from("profiles")
-          .select("username, display_name, avatar_url")
+          .select("username, display_name, avatar_url, level")
           .eq("user_id", newMsg.user_id)
           .single();
 
@@ -73,6 +76,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
             created_at: newMsg.created_at,
             username: profile?.display_name ?? profile?.username ?? "User",
             avatar: profile?.avatar_url ?? null,
+            level: profile?.level ?? 1,
           },
         ]);
       })
@@ -125,7 +129,8 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
                 <span className={`text-xs font-bold ${
                   msg.type === "gift" ? "text-accent" : msg.type === "entrance" ? "text-primary" : "text-primary"
                 }`}>
-                  {msg.username}{" "}
+                  {msg.username}
+                  <LevelBadge level={msg.level ?? 1} size="xs" className="ml-1" />{" "}
                 </span>
               )}
               <span className="text-xs text-foreground/80">{msg.message}</span>
