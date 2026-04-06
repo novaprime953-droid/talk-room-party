@@ -175,9 +175,11 @@ const RoomPage = () => {
   const activeListeners = participants?.filter((p) => !p.left_at)?.length ?? 0;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden"
+      style={room?.background_url ? { backgroundImage: `url(${room.background_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+    >
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background pointer-events-none" />
+      <div className={`absolute inset-0 pointer-events-none ${room?.background_url ? 'bg-black/40' : 'bg-gradient-to-b from-primary/5 via-background to-background'}`} />
 
       {/* Entrance Animation Overlay */}
       <RoomEntrance />
