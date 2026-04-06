@@ -262,6 +262,30 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_logins: {
+        Row: {
+          created_at: string
+          id: string
+          login_date: string
+          user_id: string
+          xp_granted: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          login_date?: string
+          user_id: string
+          xp_granted?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          login_date?: string
+          user_id?: string
+          xp_granted?: number
+        }
+        Relationships: []
+      }
       event_leaderboard: {
         Row: {
           created_at: string
@@ -1503,6 +1527,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_daily_login: { Args: { p_user_id: string }; Returns: Json }
       grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
       grant_xp: {
         Args: { p_amount: number; p_source?: string; p_user_id: string }
