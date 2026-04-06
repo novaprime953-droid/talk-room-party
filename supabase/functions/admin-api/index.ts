@@ -341,6 +341,44 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (path === "/delete-user" && req.method === "POST") {
+      const isOwner = userRoles.includes("owner");
+      if (!isOwner) {
+        return new Response(JSON.stringify({ error: "Only the owner can delete users" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { target_user_id } = body;
+      if (!target_user_id) {
+        return new Response(JSON.stringify({ error: "target_user_id required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Prevent deleting owner
+      const { data: targetRoles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", target_user_id);
+      
+      if (targetRoles?.some((r: any) => r.role === "owner")) {
+        return new Response(JSON.stringify({ error: "Cannot delete the owner" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { error: delError } = await supabase.auth.admin.deleteUser(target_user_id);
+      if (delError) throw delError;
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
