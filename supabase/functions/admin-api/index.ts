@@ -371,8 +371,17 @@ Deno.serve(async (req) => {
         });
       }
 
-      const { error: delError } = await supabase.auth.admin.deleteUser(target_user_id);
-      if (delError) throw delError;
+      // Try soft-delete approach: ban + delete
+      try {
+        await supabase.auth.admin.updateUserById(target_user_id, { ban_duration: "876600h" });
+      } catch (_) { /* ignore */ }
+      
+      const { error: delError } = await supabase.auth.admin.deleteUser(target_user_id, true);
+      if (delError) {
+        // If still fails, try without shouldSoftDelete
+        const { error: delError2 } = await supabase.auth.admin.deleteUser(target_user_id);
+        if (delError2) throw delError2;
+      }
 
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
