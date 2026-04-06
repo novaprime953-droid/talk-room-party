@@ -341,6 +341,53 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (path === "/delete-user" && req.method === "POST") {
+      const isOwner = userRoles.includes("owner");
+      if (!isOwner) {
+        return new Response(JSON.stringify({ error: "Only the owner can delete users" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { target_user_id } = body;
+      if (!target_user_id) {
+        return new Response(JSON.stringify({ error: "target_user_id required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Prevent deleting owner
+      const { data: targetRoles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", target_user_id);
+      
+      if (targetRoles?.some((r: any) => r.role === "owner")) {
+        return new Response(JSON.stringify({ error: "Cannot delete the owner" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Try soft-delete approach: ban + delete
+      try {
+        await supabase.auth.admin.updateUserById(target_user_id, { ban_duration: "876600h" });
+      } catch (_) { /* ignore */ }
+      
+      const { error: delError } = await supabase.auth.admin.deleteUser(target_user_id, true);
+      if (delError) {
+        // If still fails, try without shouldSoftDelete
+        const { error: delError2 } = await supabase.auth.admin.deleteUser(target_user_id);
+        if (delError2) throw delError2;
+      }
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
