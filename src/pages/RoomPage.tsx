@@ -345,13 +345,21 @@ const RoomPage = () => {
               { icon: MicOff, label: "Mute All" },
               { icon: Lock, label: "Lock Empty Seats" },
               { icon: UserPlus, label: "Assign Co-Host" },
+              { icon: Settings, label: "Change Background", action: async () => {
+                const url = prompt("Enter background image URL:");
+                if (url && id) {
+                  await supabase.from("voice_rooms").update({ background_url: url }).eq("id", id);
+                  toast.success("Background updated!");
+                  setShowHostMenu(false);
+                }
+              }},
               { icon: LogOut, label: "End Room", danger: true },
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => setShowHostMenu(false)}
+                onClick={() => item.action ? item.action() : setShowHostMenu(false)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                  item.danger ? "text-destructive hover:bg-destructive/10" : "text-foreground hover:bg-muted/30"
+                  (item as any).danger ? "text-destructive hover:bg-destructive/10" : "text-foreground hover:bg-muted/30"
                 }`}
               >
                 <item.icon className="w-4 h-4" />
