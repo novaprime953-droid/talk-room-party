@@ -1426,6 +1426,7 @@ export type Database = {
       }
       voice_rooms: {
         Row: {
+          background_url: string | null
           category: string
           country: string | null
           cover_image: string | null
@@ -1443,6 +1444,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          background_url?: string | null
           category?: string
           country?: string | null
           cover_image?: string | null
@@ -1460,6 +1462,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          background_url?: string | null
           category?: string
           country?: string | null
           cover_image?: string | null
