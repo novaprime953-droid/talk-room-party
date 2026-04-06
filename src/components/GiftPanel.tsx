@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Coins } from "lucide-react";
+import { Coins, ChevronDown, Check } from "lucide-react";
 import { useGiftsCatalog, useSendGift } from "@/hooks/useGifts";
 import { useProfile } from "@/hooks/useProfile";
+import { useRoomParticipants } from "@/hooks/useRooms";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 interface GiftPanelProps {
@@ -18,13 +21,27 @@ const giftEmojis: Record<string, string> = {
 };
 
 const GiftPanel = ({ roomId, hostId, onClose }: GiftPanelProps) => {
+  const { user } = useAuth();
   const { data: gifts } = useGiftsCatalog();
   const { data: profile } = useProfile();
+  const { data: participants } = useRoomParticipants(roomId);
   const sendGift = useSendGift();
+  const [selectedReceiver, setSelectedReceiver] = useState<string | null>(hostId ?? null);
+  const [showReceiverList, setShowReceiverList] = useState(false);
+
+  const activeParticipants = participants?.filter(p => !p.left_at) ?? [];
+
+  const getReceiverName = () => {
+    if (!selectedReceiver) return "Select receiver";
+    if (selectedReceiver === user?.id) return "🎁 Myself";
+    const p = activeParticipants.find(p => p.user_id === selectedReceiver);
+    const prof = p?.profiles as any;
+    return prof?.display_name ?? prof?.username ?? "User";
+  };
 
   const handleSend = async (giftId: string, coinValue: number) => {
-    if (!hostId) {
-      toast.error("No host to send gift to");
+    if (!selectedReceiver) {
+      toast.error("Select a receiver first");
       return;
     }
     if ((profile?.coins_balance ?? 0) < coinValue) {
@@ -32,7 +49,7 @@ const GiftPanel = ({ roomId, hostId, onClose }: GiftPanelProps) => {
       return;
     }
     try {
-      await sendGift.mutateAsync({ receiverId: hostId, roomId, giftId });
+      await sendGift.mutateAsync({ receiverId: selectedReceiver, roomId, giftId });
       toast.success("Gift sent! 🎉");
     } catch (err: any) {
       toast.error(err.message || "Failed to send gift");
@@ -49,6 +66,48 @@ const GiftPanel = ({ roomId, hostId, onClose }: GiftPanelProps) => {
             {profile?.coins_balance?.toLocaleString() ?? "0"}
           </span>
         </div>
+      </div>
+
+      {/* Receiver selector */}
+      <div className="relative mb-3">
+        <button
+          onClick={() => setShowReceiverList(!showReceiverList)}
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-muted/30 border border-border/50 text-xs"
+        >
+          <span className="text-foreground font-semibold">{getReceiverName()}</span>
+          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+        </button>
+        {showReceiverList && (
+          <div className="absolute top-full left-0 right-0 z-20 mt-1 bg-card border border-border rounded-xl shadow-lg max-h-40 overflow-y-auto">
+            {/* Self option */}
+            {user && (
+              <button
+                onClick={() => { setSelectedReceiver(user.id); setShowReceiverList(false); }}
+                className="w-full flex items-center justify-between px-3 py-2 hover:bg-muted/20 text-left text-xs"
+              >
+                <span className="text-foreground">🎁 Send to Myself</span>
+                {selectedReceiver === user.id && <Check className="w-3 h-3 text-primary" />}
+              </button>
+            )}
+            {activeParticipants.filter(p => p.user_id !== user?.id).map(p => {
+              const prof = p.profiles as any;
+              const name = prof?.display_name ?? prof?.username ?? "User";
+              const isHost = p.user_id === hostId;
+              return (
+                <button
+                  key={p.user_id}
+                  onClick={() => { setSelectedReceiver(p.user_id); setShowReceiverList(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 hover:bg-muted/20 text-left text-xs"
+                >
+                  <span className="text-foreground">
+                    {isHost ? "👑 " : ""}{name}
+                  </span>
+                  {selectedReceiver === p.user_id && <Check className="w-3 h-3 text-primary" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto">

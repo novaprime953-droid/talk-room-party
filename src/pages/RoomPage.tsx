@@ -175,9 +175,11 @@ const RoomPage = () => {
   const activeListeners = participants?.filter((p) => !p.left_at)?.length ?? 0;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden"
+      style={room?.background_url ? { backgroundImage: `url(${room.background_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+    >
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background pointer-events-none" />
+      <div className={`absolute inset-0 pointer-events-none ${room?.background_url ? 'bg-black/40' : 'bg-gradient-to-b from-primary/5 via-background to-background'}`} />
 
       {/* Entrance Animation Overlay */}
       <RoomEntrance />
@@ -343,13 +345,21 @@ const RoomPage = () => {
               { icon: MicOff, label: "Mute All" },
               { icon: Lock, label: "Lock Empty Seats" },
               { icon: UserPlus, label: "Assign Co-Host" },
+              { icon: Settings, label: "Change Background", action: async () => {
+                const url = prompt("Enter background image URL:");
+                if (url && id) {
+                  await supabase.from("voice_rooms").update({ background_url: url }).eq("id", id);
+                  toast.success("Background updated!");
+                  setShowHostMenu(false);
+                }
+              }},
               { icon: LogOut, label: "End Room", danger: true },
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => setShowHostMenu(false)}
+                onClick={() => item.action ? item.action() : setShowHostMenu(false)}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                  item.danger ? "text-destructive hover:bg-destructive/10" : "text-foreground hover:bg-muted/30"
+                  (item as any).danger ? "text-destructive hover:bg-destructive/10" : "text-foreground hover:bg-muted/30"
                 }`}
               >
                 <item.icon className="w-4 h-4" />
