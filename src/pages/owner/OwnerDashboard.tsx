@@ -79,14 +79,22 @@ const OwnerDashboard = () => {
   const { data: searchUsers } = useQuery({
     queryKey: ["owner-coin-search", coinSearch],
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles")
-        .select("user_id, username, display_name, avatar_url, coins_balance, level")
-        .or(`username.ilike.%${coinSearch}%,display_name.ilike.%${coinSearch}%,email.ilike.%${coinSearch}%`)
-        .limit(10);
+      const trimmed = coinSearch.trim();
+      const isNumeric = /^\d+$/.test(trimmed);
+      const query = isNumeric
+        ? supabase.from("profiles")
+            .select("user_id, username, display_name, avatar_url, coins_balance, level, user_id_number")
+            .eq("user_id_number", parseInt(trimmed))
+            .limit(10)
+        : supabase.from("profiles")
+            .select("user_id, username, display_name, avatar_url, coins_balance, level, user_id_number")
+            .or(`username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`)
+            .limit(10);
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
-    enabled: coinSearch.length >= 2 && !selectedUser,
+    enabled: coinSearch.trim().length >= 1 && !selectedUser,
   });
 
   const sendCoins = async () => {
@@ -244,7 +252,7 @@ const OwnerDashboard = () => {
 
         {!selectedUser ? (
           <div className="space-y-3">
-            <Input placeholder="Search user by name or email..." value={coinSearch} onChange={(e) => setCoinSearch(e.target.value)} />
+            <Input placeholder="Search by name, email, or user ID number..." value={coinSearch} onChange={(e) => setCoinSearch(e.target.value)} />
             {searchUsers && searchUsers.length > 0 && (
               <div className="divide-y divide-border/30 rounded-xl border border-border/50 overflow-hidden max-h-48 overflow-y-auto">
                 {searchUsers.map((p) => (
@@ -256,7 +264,7 @@ const OwnerDashboard = () => {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-foreground">{p.display_name ?? p.username}</p>
-                        <p className="text-[10px] text-muted-foreground">Lv.{p.level} • {p.coins_balance?.toLocaleString()} coins</p>
+                        <p className="text-[10px] text-muted-foreground">ID: {(p as any).user_id_number ?? "—"} • Lv.{p.level} • {p.coins_balance?.toLocaleString()} coins</p>
                       </div>
                     </div>
                   </button>
