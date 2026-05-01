@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Search, X, User, Hash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,8 +9,19 @@ interface GlobalSearchProps {
   basePath?: string; // e.g. "/owner" or "/admin"
 }
 
-const GlobalSearch = ({ basePath = "/owner" }: GlobalSearchProps) => {
-  const [open, setOpen] = useState(false);
+interface GlobalSearchExternalProps {
+  trigger?: React.ReactNode;
+  onOpenChange?: (open: boolean) => void;
+  isOpen?: boolean;
+}
+
+const GlobalSearch = ({ basePath = "/owner", trigger, onOpenChange, isOpen }: GlobalSearchProps & GlobalSearchExternalProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = isOpen ?? internalOpen;
+  const setOpen = useCallback((v: boolean) => {
+    setInternalOpen(v);
+    onOpenChange?.(v);
+  }, [onOpenChange]);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -45,10 +56,14 @@ const GlobalSearch = ({ basePath = "/owner" }: GlobalSearchProps) => {
 
   return (
     <>
-      <button onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/30 border border-border/50 text-xs text-muted-foreground hover:bg-muted/50 transition-colors">
-        <Search className="w-3.5 h-3.5" /> Search users / rooms...
-      </button>
+      {trigger ? (
+        <div onClick={() => setOpen(true)}>{trigger}</div>
+      ) : (
+        <button onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/30 border border-border/50 text-xs text-muted-foreground hover:bg-muted/50 transition-colors">
+          <Search className="w-3.5 h-3.5" /> Search users / rooms...
+        </button>
+      )}
 
       <AnimatePresence>
         {open && (
@@ -76,7 +91,7 @@ const GlobalSearch = ({ basePath = "/owner" }: GlobalSearchProps) => {
                     <p className="text-[10px] font-bold text-muted-foreground uppercase px-4 py-2">Users</p>
                     {results!.users.map((u: any) => (
                       <button key={u.user_id}
-                        onClick={() => { setOpen(false); navigate(`${basePath}/users`); }}
+                        onClick={() => { setOpen(false); setQuery(""); navigate(`/profile/${u.user_id}`); }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-muted/10 text-left">
                         <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center overflow-hidden">
                           {u.avatar_url ? <img src={u.avatar_url} alt="" className="w-full h-full object-cover" /> :
@@ -99,7 +114,7 @@ const GlobalSearch = ({ basePath = "/owner" }: GlobalSearchProps) => {
                     <p className="text-[10px] font-bold text-muted-foreground uppercase px-4 py-2">Rooms</p>
                     {results!.rooms.map((r: any) => (
                       <button key={r.id}
-                        onClick={() => { setOpen(false); navigate(`/room/${r.id}`); }}
+                        onClick={() => { setOpen(false); setQuery(""); navigate(`/room/${r.id}`); }}
                         className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-muted/10 text-left">
                         <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
                           <span className="text-xs font-bold text-primary">🎙</span>
@@ -107,7 +122,7 @@ const GlobalSearch = ({ basePath = "/owner" }: GlobalSearchProps) => {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-foreground truncate">{r.room_name}</p>
                           <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-                            {r.is_live && <span className="text-online font-bold">LIVE</span>}
+                            {r.is_live && <span className="text-green-400 font-bold">● LIVE</span>}
                             <span>👥 {r.listener_count}</span>
                           </div>
                         </div>
