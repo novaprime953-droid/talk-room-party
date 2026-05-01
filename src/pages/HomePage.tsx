@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Search, Crown, Home, PartyPopper, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlobalSearch from "@/components/admin/GlobalSearch";
@@ -21,7 +21,7 @@ const tabs = [
 const HomePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("party");
-  const [showSearch, setShowSearch] = useState(false);
+
 
   return (
     <div className="min-h-screen bg-background pb-20">
