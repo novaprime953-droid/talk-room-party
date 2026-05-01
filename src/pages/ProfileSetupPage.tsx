@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpdateProfile } from "@/hooks/useProfile";
 import { toast } from "sonner";
-import { Camera, User, Calendar, Globe } from "lucide-react";
+import { User, Calendar, Globe } from "lucide-react";
 import AvatarUpload from "@/components/AvatarUpload";
 
 interface ProfileSetupPageProps {
@@ -62,8 +62,9 @@ const ProfileSetupPage = ({ onComplete }: ProfileSetupPageProps) => {
 
         <div className="flex justify-center">
           <AvatarUpload
-            currentAvatar={avatarUrl}
-            onUpload={(url) => setAvatarUrl(url)}
+            currentUrl={avatarUrl || null}
+            storagePath={`${user?.id || 'temp'}/profile`}
+            onUploaded={(url) => setAvatarUrl(url)}
           />
         </div>
 
