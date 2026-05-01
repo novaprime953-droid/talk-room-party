@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Search, X, User, Hash, Mic } from "lucide-react";
+import { Search, X, User, Hash } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
