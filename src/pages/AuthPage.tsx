@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Mic, Eye, EyeOff } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 const AuthPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
