@@ -68,6 +68,61 @@
     --live: 0 85% 55%;
     --online: 150 60% 45%;
   }
+
+  .light {
+    --background: 0 0% 97%;
+    --foreground: 250 20% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 250 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 250 20% 15%;
+
+    --primary: 330 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 50% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 250 10% 92%;
+    --muted-foreground: 250 10% 45%;
+
+    --accent: 45 100% 50%;
+    --accent-foreground: 250 20% 15%;
+
+    --destructive: 0 84% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 250 10% 88%;
+    --input: 250 10% 88%;
+    --ring: 330 85% 55%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(330, 85%, 55%), hsl(270, 50%, 50%));
+    --gradient-gold: linear-gradient(135deg, hsl(45, 100%, 50%), hsl(30, 100%, 45%));
+    --gradient-room: linear-gradient(180deg, hsl(270, 20%, 95%), hsl(250, 15%, 97%));
+    --gradient-card: linear-gradient(135deg, hsl(0, 0%, 100%), hsl(250, 10%, 97%));
+
+    --shadow-glow-primary: 0 0 15px hsl(330, 85%, 55%, 0.15);
+    --shadow-glow-gold: 0 0 15px hsl(45, 100%, 50%, 0.15);
+    --shadow-card: 0 4px 20px hsl(0, 0%, 0%, 0.08);
+
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 250 20% 20%;
+    --sidebar-primary: 330 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 250 10% 94%;
+    --sidebar-accent-foreground: 250 20% 15%;
+    --sidebar-border: 250 10% 88%;
+    --sidebar-ring: 330 85% 55%;
+
+    --success: 150 60% 40%;
+    --warning: 35 100% 50%;
+    --info: 200 80% 50%;
+    --coin: 45 100% 50%;
+    --live: 0 85% 50%;
+    --online: 150 60% 40%;
+  }
 }
 
 @layer base {
