@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/hooks/useTheme";
 import { useBanCheck } from "@/hooks/useBanCheck";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
 import BottomNav from "@/components/BottomNav";
@@ -84,6 +85,7 @@ import MedalsPage from "./pages/MedalsPage";
 import FamilyPage from "./pages/FamilyPage";
 import LevelPage from "./pages/LevelPage";
 import VIPPage from "./pages/VIPPage";
+import ProfileSetupPage from "./pages/ProfileSetupPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -106,14 +108,23 @@ import SellerWalletSearch from "./pages/seller/SellerWalletSearch";
 import SellerPackages from "./pages/seller/SellerPackages";
 import SellerWallet from "./pages/seller/SellerWallet";
 
+import { useState } from "react";
+import { useProfile } from "@/hooks/useProfile";
+
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useProfile();
+  const [setupDone, setSetupDone] = useState(false);
   useBanCheck();
   useDailyLogin();
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading || profileLoading) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
   if (!user) return <Navigate to="/auth" replace />;
+  // First-time profile setup: if display_name is still the email prefix default
+  if (profile && !setupDone && (!profile.display_name || profile.display_name === profile.email?.split('@')[0])) {
+    return <ProfileSetupPage onComplete={() => setSetupDone(true)} />;
+  }
   return <>{children}</>;
 };
 
@@ -261,13 +272,15 @@ const AppRoutes = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
