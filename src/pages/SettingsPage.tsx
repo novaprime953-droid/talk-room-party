@@ -12,6 +12,7 @@ import AvatarUpload from "@/components/AvatarUpload";
 import FramedAvatar from "@/components/FramedAvatar";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTheme } from "@/hooks/useTheme";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const SettingsPage = () => {
   const [eventNotif, setEventNotif] = useState(true);
   const [giftAnim, setGiftAnim] = useState(true);
   const [giftSound, setGiftSound] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (profile) {
@@ -193,6 +195,14 @@ const SettingsPage = () => {
 
       {/* Privacy */}
       <div className="mx-4 mb-3">
+        <p className="text-[10px] font-bold text-muted-foreground px-1 mb-1.5 uppercase tracking-wider">Appearance</p>
+        <div className="bg-card rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/30 mb-3">
+          <SettingRow
+            icon={theme === 'dark' ? Moon : Sun}
+            label={theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+            right={<ToggleSwitch on={theme === 'dark'} onChange={toggleTheme} />}
+          />
+        </div>
         <p className="text-[10px] font-bold text-muted-foreground px-1 mb-1.5 uppercase tracking-wider">Privacy & Security</p>
         <div className="bg-card rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/30">
           <SettingRow icon={Shield} label="Blocked Users" onClick={() => {}} />
