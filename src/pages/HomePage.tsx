@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Search, Crown, Home, PartyPopper, CalendarDays } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 import { useProfile } from "@/hooks/useProfile";
 import { useUnreadCount } from "@/hooks/useNotifications";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +21,6 @@ const tabs = [
 const HomePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("party");
-  const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
   return (
@@ -30,9 +30,14 @@ const HomePage = () => {
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-xl font-display font-bold text-gradient-primary">Talk Room</h1>
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowSearch(!showSearch)} className="p-2 text-muted-foreground">
-              <Search className="w-5 h-5" />
-            </button>
+            <GlobalSearch
+              basePath=""
+              trigger={
+                <button className="p-2 text-muted-foreground">
+                  <Search className="w-5 h-5" />
+                </button>
+              }
+            />
             <button
               onClick={() => setActiveTab("ranking")}
               className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-warning flex items-center justify-center shadow-lg"
@@ -41,29 +46,6 @@ const HomePage = () => {
             </button>
           </div>
         </div>
-
-        {/* Search (collapsible) */}
-        <AnimatePresence>
-          {showSearch && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="flex items-center gap-2 bg-muted/30 rounded-2xl px-4 py-2 mb-3">
-                <Search className="w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search rooms, users..."
-                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Tabs */}
         <div className="flex gap-1 overflow-x-auto no-scrollbar">
