@@ -4,6 +4,7 @@ import { LayoutDashboard, Send, CreditCard, ShieldCheck, History, Menu, X, Arrow
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
 import { motion } from "framer-motion";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/seller" },
@@ -83,6 +84,10 @@ const CoinSellerLayout = ({ children }: { children: React.ReactNode }) => {
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />}
 
       <main className="flex-1 lg:ml-60 pt-14 lg:pt-0">
+        <header className="sticky top-14 lg:top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 py-3 flex items-center gap-3">
+          <GlobalSearch basePath="/seller" />
+          <div className="flex-1" />
+        </header>
         <div className="p-4 lg:p-6 max-w-6xl pb-24 lg:pb-6">{children}</div>
       </main>
     </div>

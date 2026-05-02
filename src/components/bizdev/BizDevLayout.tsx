@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Megaphone, Target, Handshake, Calendar, DollarSign, Menu, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GlobalSearch from "@/components/admin/GlobalSearch";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/bizdev" },
@@ -14,6 +15,7 @@ const navItems = [
 
 const BizDevLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   return (
@@ -62,6 +64,10 @@ const BizDevLayout = ({ children }: { children: React.ReactNode }) => {
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={() => setOpen(false)} />}
 
       <main className="flex-1 lg:ml-60 pt-14 lg:pt-0">
+        <header className="sticky top-14 lg:top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/50 px-4 py-3 flex items-center gap-3">
+          <GlobalSearch basePath="/bizdev" />
+          <div className="flex-1" />
+        </header>
         <div className="p-4 lg:p-6 max-w-6xl pb-24 lg:pb-6">{children}</div>
       </main>
     </div>
