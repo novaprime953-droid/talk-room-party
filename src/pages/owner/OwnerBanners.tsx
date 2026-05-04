@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Image, Plus, Trash2, Eye, EyeOff, ExternalLink, Calendar, Upload } from "lucide-react";
+import { useState, useRef } from "react";
+import { Image, Plus, Trash2, Eye, EyeOff, ExternalLink, Calendar, Upload, GripVertical, Sparkles } from "lucide-react";
 import { useAllBanners, useCreateBanner, useDeleteBanner, useToggleBanner } from "@/hooks/useBanners";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ const OwnerBanners = () => {
   const [endDate, setEndDate] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [uploading, setUploading] = useState(false);
+  const [previewTab, setPreviewTab] = useState<"list" | "preview">("list");
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,32 +69,36 @@ const OwnerBanners = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-display font-bold text-2xl text-foreground flex items-center gap-2">
-            <Image className="w-6 h-6 text-primary" /> Banner Management
+          <h1 className="font-display font-bold text-xl text-foreground flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500 to-amber-500 flex items-center justify-center">
+              <Image className="w-5 h-5 text-white" />
+            </div>
+            Banner Management
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            {banners?.length ?? 0} total • <span className="text-online">{activeCount} active</span> • {inactiveCount} inactive
-          </p>
         </div>
         <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowForm(!showForm)}
-          className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors ${showForm ? "bg-muted text-muted-foreground" : "gradient-primary text-primary-foreground"}`}>
-          {showForm ? <><Eye className="w-4 h-4" /> Cancel</> : <><Plus className="w-4 h-4" /> New Banner</>}
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-lg ${
+            showForm
+              ? "bg-muted/60 text-muted-foreground shadow-none"
+              : "bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-purple-500/25"
+          }`}>
+          {showForm ? <><Eye className="w-4 h-4" /> Cancel</> : <><Plus className="w-4 h-4" /> Add Banner</>}
         </motion.button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-card rounded-2xl p-4 border border-border/30">
-          <p className="text-[10px] text-muted-foreground uppercase font-bold">Total</p>
-          <p className="text-2xl font-display font-bold text-foreground">{banners?.length ?? 0}</p>
+        <div className="bg-gradient-to-br from-purple-500/10 to-purple-900/10 rounded-2xl p-4 border border-purple-500/20 backdrop-blur-sm">
+          <p className="text-[10px] text-purple-300 uppercase font-bold tracking-wider">Total</p>
+          <p className="text-2xl font-display font-bold text-foreground mt-1">{banners?.length ?? 0}</p>
         </div>
-        <div className="bg-card rounded-2xl p-4 border border-online/20">
-          <p className="text-[10px] text-online uppercase font-bold">Active</p>
-          <p className="text-2xl font-display font-bold text-online">{activeCount}</p>
+        <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-900/10 rounded-2xl p-4 border border-emerald-500/20 backdrop-blur-sm">
+          <p className="text-[10px] text-emerald-400 uppercase font-bold tracking-wider">Active</p>
+          <p className="text-2xl font-display font-bold text-emerald-400 mt-1">{activeCount}</p>
         </div>
-        <div className="bg-card rounded-2xl p-4 border border-border/30">
-          <p className="text-[10px] text-muted-foreground uppercase font-bold">Inactive</p>
-          <p className="text-2xl font-display font-bold text-muted-foreground">{inactiveCount}</p>
+        <div className="bg-gradient-to-br from-amber-500/10 to-amber-900/10 rounded-2xl p-4 border border-amber-500/20 backdrop-blur-sm">
+          <p className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">Paused</p>
+          <p className="text-2xl font-display font-bold text-amber-400 mt-1">{inactiveCount}</p>
         </div>
       </div>
 
@@ -101,9 +106,9 @@ const OwnerBanners = () => {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-            <div className="bg-card rounded-2xl p-5 shadow-card mb-6 space-y-4 border border-primary/20">
+            <div className="bg-card/80 backdrop-blur-xl rounded-2xl p-5 mb-6 space-y-4 border border-purple-500/20" style={{ boxShadow: "0 8px 32px rgba(108,0,255,0.15)" }}>
               <h3 className="font-display font-bold text-sm text-foreground flex items-center gap-2">
-                <Plus className="w-4 h-4 text-primary" /> Create New Banner
+                <Sparkles className="w-4 h-4 text-amber-400" /> Create New Banner
               </h3>
 
               <div className="space-y-2">
@@ -112,19 +117,21 @@ const OwnerBanners = () => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground font-bold">Banner Image *</Label>
+                <Label className="text-xs text-muted-foreground font-bold">Banner Image * <span className="text-[10px] font-normal">(1200×400 recommended)</span></Label>
                 {imageUrl ? (
                   <div className="relative">
-                    <img src={imageUrl} alt="" className="w-full h-36 object-cover rounded-xl border border-border/30" />
-                    <button onClick={() => setImageUrl("")} className="absolute top-2 right-2 p-1.5 bg-destructive/90 rounded-full text-white">
+                    <img src={imageUrl} alt="" className="w-full h-40 object-cover rounded-xl border border-purple-500/20" />
+                    <button onClick={() => setImageUrl("")} className="absolute top-2 right-2 p-1.5 bg-red-500/90 backdrop-blur-sm rounded-full text-white hover:bg-red-500 transition-colors">
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center h-36 border-2 border-dashed border-primary/30 rounded-xl cursor-pointer hover:bg-primary/5 transition-colors">
-                    <Upload className="w-8 h-8 text-primary/50 mb-2" />
-                    <span className="text-xs text-muted-foreground font-medium">{uploading ? "Uploading..." : "Click to upload banner image"}</span>
-                    <span className="text-[10px] text-muted-foreground/60 mt-1">Recommended: 1200×400px, max 5MB</span>
+                  <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-purple-500/25 rounded-xl cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5 transition-all group">
+                    <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <Upload className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-medium">{uploading ? "Uploading..." : "Drop or click to upload"}</span>
+                    <span className="text-[10px] text-muted-foreground/60 mt-1">JPG, PNG, WEBP · Max 5MB</span>
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
                   </label>
                 )}
@@ -171,7 +178,7 @@ const OwnerBanners = () => {
               </div>
 
               <motion.button whileTap={{ scale: 0.97 }} onClick={handleCreate} disabled={createBanner.isPending}
-                className="gradient-primary text-primary-foreground px-6 py-3 rounded-xl text-sm font-bold w-full shadow-lg shadow-primary/20">
+                className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-6 py-3 rounded-xl text-sm font-bold w-full shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-shadow disabled:opacity-50">
                 {createBanner.isPending ? "Creating..." : "Create Banner"}
               </motion.button>
             </div>
@@ -184,21 +191,27 @@ const OwnerBanners = () => {
         {banners?.map((b: any, idx: number) => (
           <motion.div key={b.id} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
-            className={`bg-card rounded-2xl overflow-hidden shadow-card border ${b.is_active ? "border-online/20" : "border-border/30 opacity-70"}`}>
-            <div className="flex gap-0">
-              <div className="relative w-32 h-24 flex-shrink-0">
-                <img src={b.image_url} alt={b.title} className="w-full h-full object-cover" />
-                {b.is_active && <div className="absolute top-1.5 left-1.5 w-2 h-2 rounded-full bg-online animate-pulse" />}
+            className={`bg-card/60 backdrop-blur-sm rounded-2xl overflow-hidden border transition-all ${
+              b.is_active
+                ? "border-purple-500/20 shadow-[0_4px_20px_rgba(108,0,255,0.1)]"
+                : "border-border/20 opacity-60"
+            }`}>
+            <div className="flex">
+              <div className="relative w-36 h-24 flex-shrink-0">
+                <img src={b.image_url} alt={b.title} className="w-full h-full object-cover" loading="lazy" />
+                {b.is_active && (
+                  <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/90 backdrop-blur-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                    <span className="text-[8px] font-bold text-white uppercase">Live</span>
+                  </div>
+                )}
               </div>
               <div className="flex-1 p-3 min-w-0">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="text-sm font-bold text-foreground truncate">{b.title}</h3>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold flex-shrink-0 ${b.is_active ? "bg-online/10 text-online" : "bg-muted/30 text-muted-foreground"}`}>
-                    {b.is_active ? "Active" : "Disabled"}
-                  </span>
                 </div>
                 {b.link_url && (
-                  <div className="flex items-center gap-1 text-[10px] text-primary mt-0.5 truncate">
+                  <div className="flex items-center gap-1 text-[10px] text-purple-400 mt-0.5 truncate">
                     <ExternalLink className="w-2.5 h-2.5 flex-shrink-0" /> <span className="truncate">{b.link_url}</span>
                   </div>
                 )}
@@ -210,12 +223,16 @@ const OwnerBanners = () => {
                 )}
                 <div className="flex gap-1.5 mt-2">
                   <button onClick={() => toggleBanner.mutate({ id: b.id, is_active: !b.is_active })}
-                    className={`text-[10px] px-2.5 py-1 rounded-full font-bold flex items-center gap-0.5 transition-colors ${b.is_active ? "bg-warning/10 text-warning" : "bg-online/10 text-online"}`}>
-                    {b.is_active ? <><EyeOff className="w-2.5 h-2.5" /> Disable</> : <><Eye className="w-2.5 h-2.5" /> Enable</>}
+                    className={`text-[10px] px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-all ${
+                      b.is_active
+                        ? "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20"
+                        : "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                    }`}>
+                    {b.is_active ? <><EyeOff className="w-3 h-3" /> Pause</> : <><Eye className="w-3 h-3" /> Activate</>}
                   </button>
                   <button onClick={() => { if (confirm("Delete this banner?")) deleteBanner.mutate(b.id); }}
-                    className="text-[10px] px-2.5 py-1 rounded-full bg-destructive/10 text-destructive font-bold flex items-center gap-0.5 hover:bg-destructive/20 transition-colors">
-                    <Trash2 className="w-2.5 h-2.5" /> Delete
+                    className="text-[10px] px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 font-bold flex items-center gap-1 hover:bg-red-500/20 transition-all">
+                    <Trash2 className="w-3 h-3" /> Delete
                   </button>
                 </div>
               </div>
