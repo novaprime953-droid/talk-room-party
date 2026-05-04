@@ -49,17 +49,22 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      {/* Ambient glow effects */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-accent/8 blur-[100px] pointer-events-none" />
+
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="text-center mb-8"
+        className="text-center mb-8 relative z-10"
       >
-        <div className="w-20 h-20 rounded-3xl gradient-primary mx-auto mb-4 flex items-center justify-center glow-primary">
+        <div className="w-24 h-24 rounded-3xl gradient-primary mx-auto mb-4 flex items-center justify-center glow-primary relative">
           <Mic className="w-10 h-10 text-primary-foreground" />
+          <div className="absolute inset-0 rounded-3xl animate-shimmer" />
         </div>
-        <h1 className="font-display font-bold text-3xl text-foreground">Talk Room</h1>
-        <p className="text-muted-foreground text-sm mt-1">Voice chat, reimagined</p>
+        <h1 className="font-display font-bold text-3xl text-foreground neon-text">Talk Room</h1>
+        <p className="text-muted-foreground text-sm mt-1">Premium Voice Chat Experience</p>
       </motion.div>
 
       <motion.form
@@ -67,7 +72,7 @@ const AuthPage = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
         onSubmit={handleSubmit}
-        className="w-full max-w-sm space-y-4"
+        className="w-full max-w-sm space-y-4 relative z-10"
       >
         {isSignUp && (
           <input
@@ -75,7 +80,7 @@ const AuthPage = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full bg-card border border-border/50 rounded-2xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors"
+            className="w-full glass rounded-2xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/40 transition-all"
             required
           />
         )}
@@ -84,7 +89,7 @@ const AuthPage = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-card border border-border/50 rounded-2xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors"
+          className="w-full glass rounded-2xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/40 transition-all"
           required
         />
         <div className="relative">
@@ -93,7 +98,7 @@ const AuthPage = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-card border border-border/50 rounded-2xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary transition-colors pr-12"
+            className="w-full glass rounded-2xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/40 transition-all pr-12"
             required
             minLength={6}
           />
@@ -106,7 +111,7 @@ const AuthPage = () => {
           whileTap={{ scale: 0.97 }}
           type="submit"
           disabled={loading}
-          className="w-full gradient-primary text-primary-foreground font-bold py-3 rounded-2xl glow-primary disabled:opacity-50"
+          className="w-full gradient-primary text-primary-foreground font-bold py-3.5 rounded-2xl glow-primary disabled:opacity-50 text-base tracking-wide"
         >
           {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
         </motion.button>
@@ -119,7 +124,7 @@ const AuthPage = () => {
         </p>
       </motion.form>
 
-      <div className="w-full max-w-sm mt-4">
+      <div className="w-full max-w-sm mt-4 relative z-10">
         <div className="flex items-center gap-3 mb-4">
           <div className="flex-1 h-px bg-border" />
           <span className="text-xs text-muted-foreground">or</span>
@@ -143,7 +148,7 @@ const AuthPage = () => {
               toast.error(err.message || "Google sign-in failed");
             }
           }}
-          className="w-full bg-card border border-border/50 text-foreground font-semibold py-3 rounded-2xl flex items-center justify-center gap-3 hover:bg-muted/50 transition-colors"
+          className="w-full glass text-foreground font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-all"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>

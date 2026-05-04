@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Users, Lock } from "lucide-react";
+import { Users, Lock, Mic } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface RoomCardProps {
@@ -18,11 +18,11 @@ interface RoomCardProps {
 }
 
 const gradients = [
-  "from-pink-500/30 to-purple-600/30",
-  "from-blue-500/30 to-cyan-500/30",
-  "from-amber-500/30 to-red-500/30",
-  "from-green-500/30 to-teal-500/30",
-  "from-violet-500/30 to-fuchsia-500/30",
+  "from-purple-600/40 to-indigo-700/40",
+  "from-pink-600/40 to-purple-700/40",
+  "from-blue-600/40 to-purple-600/40",
+  "from-violet-600/40 to-fuchsia-600/40",
+  "from-indigo-500/40 to-purple-600/40",
 ];
 
 const RoomCard = ({
@@ -45,21 +45,22 @@ const RoomCard = ({
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={() => navigate(`/room/${id}`)}
-      className="relative overflow-hidden rounded-2xl bg-card border border-border/50 cursor-pointer shadow-card aspect-square"
+      className="relative overflow-hidden rounded-2xl bg-card cursor-pointer aspect-square group"
+      style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06)' }}
     >
       {/* Cover / gradient background */}
       <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`}>
         {coverImage && (
-          <img src={coverImage} alt={name} className="w-full h-full object-cover" loading="lazy" />
+          <img src={coverImage} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
       </div>
 
       {/* Live badge */}
       {isLive && (
-        <div className="absolute top-2 left-2 flex items-center gap-1 bg-live/90 px-2 py-0.5 rounded-full z-10">
-          <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-          <span className="text-[9px] font-bold text-white">LIVE</span>
+        <div className="absolute top-2 left-2 flex items-center gap-1 bg-live px-2 py-0.5 rounded-full z-10 animate-live-pulse">
+          <div className="w-1.5 h-1.5 bg-white rounded-full" />
+          <span className="text-[8px] font-bold text-white tracking-wider">LIVE</span>
         </div>
       )}
 
@@ -71,10 +72,10 @@ const RoomCard = ({
 
       {/* Bottom info overlay */}
       <div className="absolute bottom-0 left-0 right-0 p-3 z-10">
-        <h3 className="font-display font-bold text-white text-xs line-clamp-1 mb-0.5">{name}</h3>
-        <div className="flex items-center gap-1 mb-2">
+        <h3 className="font-display font-bold text-white text-xs line-clamp-1 mb-1 drop-shadow-lg">{name}</h3>
+        <div className="flex items-center gap-1.5 mb-2">
           {countryFlag && <span className="text-xs leading-none">{countryFlag}</span>}
-          <span className="text-[10px] text-white/70 font-semibold truncate">{host}</span>
+          <span className="text-[10px] text-white/80 font-medium truncate">{host}</span>
         </div>
 
         {/* Member avatars row + count */}
@@ -93,9 +94,9 @@ const RoomCard = ({
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-1 bg-black/40 rounded-full px-2 py-0.5">
+          <div className="flex items-center gap-1 glass rounded-full px-2 py-0.5">
             <Users className="w-3 h-3 text-white/80" />
-            <span className="text-[10px] font-bold text-white/80">{listeners}</span>
+            <span className="text-[10px] font-bold text-white/90">{listeners}</span>
           </div>
         </div>
       </div>

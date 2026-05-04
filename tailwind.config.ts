@@ -67,6 +67,8 @@ export default {
         coin: "hsl(var(--coin))",
         live: "hsl(var(--live))",
         online: "hsl(var(--online))",
+        "neon-purple": "hsl(var(--neon-purple))",
+        "neon-pink": "hsl(var(--neon-pink))",
       },
       borderRadius: {
         lg: "var(--radius)",
