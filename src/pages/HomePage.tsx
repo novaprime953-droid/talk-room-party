@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Search, Crown, Home, PartyPopper, CalendarDays, Bell, Wallet, Flame, Sparkles, Globe, Zap, Swords } from "lucide-react";
+import { useState } from "react";
+import { Search, Crown, CalendarDays, Bell, Wallet, Flame, Sparkles, Globe, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import { useProfile } from "@/hooks/useProfile";
