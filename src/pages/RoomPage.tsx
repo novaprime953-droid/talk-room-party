@@ -14,6 +14,8 @@ import RoomRankings from "@/components/RoomRankings";
 import RoomEntrance from "@/components/RoomEntrance";
 import FramedAvatar from "@/components/FramedAvatar";
 import GiftAnimation from "@/components/GiftAnimation";
+import PKBattle from "@/components/PKBattle";
+import GiftBottomSheet from "@/components/GiftBottomSheet";
 import { useRoom, useRoomParticipants, useJoinRoom, useLeaveRoom } from "@/hooks/useRooms";
 import { useAuth } from "@/hooks/useAuth";
 import { useEquippedProps } from "@/hooks/useProps";
@@ -34,6 +36,8 @@ const RoomPage = () => {
   const [musicOn, setMusicOn] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
   const [giftAnim, setGiftAnim] = useState<{ sender: string; receiver: string; giftName: string; emoji: string } | null>(null);
+  const [showPK, setShowPK] = useState(false);
+  const [showGiftSheet, setShowGiftSheet] = useState(false);
 
   const { data: room } = useRoom(id!);
   const { data: participants, refetch: refetchParticipants } = useRoomParticipants(id!);
@@ -264,7 +268,7 @@ const RoomPage = () => {
       )}
 
       {/* Announcement bar */}
-      <div className="relative z-10 mx-3 mb-2">
+      <div className="relative z-10 mx-3 mb-1">
         <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5 overflow-hidden">
           <motion.p
             animate={{ x: [0, -200, 0] }}
@@ -275,6 +279,9 @@ const RoomPage = () => {
           </motion.p>
         </div>
       </div>
+
+      {/* PK Battle overlay */}
+      <PKBattle open={showPK} onClose={() => setShowPK(false)} />
 
       {/* Seats Grid */}
       <div className="flex-1 relative z-10 px-3 py-2 min-h-0">
@@ -389,7 +396,7 @@ const RoomPage = () => {
             exit={{ height: 0 }}
             className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 overflow-hidden"
           >
-            <GiftPanel roomId={id!} hostId={room?.host_id} onClose={() => setActivePanel(null)} />
+            <GiftPanel roomId={id!} hostId={room?.host_id} onClose={() => { setActivePanel(null); setShowGiftSheet(true); }} />
           </motion.div>
         )}
         {activePanel === "rankings" && (
@@ -406,6 +413,9 @@ const RoomPage = () => {
 
       {/* Games Popup */}
       <RoomGamesPopup open={showGames} onClose={() => setShowGames(false)} />
+
+      {/* Gift Bottom Sheet (full) */}
+      <GiftBottomSheet open={showGiftSheet} onClose={() => setShowGiftSheet(false)} roomId={id!} hostId={room?.host_id} />
 
       {/* Bottom Controls Bar */}
       <div className="relative z-10 bg-card/95 backdrop-blur-xl border-t border-border/50 px-2 py-2 safe-bottom">
