@@ -273,17 +273,21 @@ const RoomPage = () => {
         </div>
       )}
 
-      {/* Announcement bar */}
-      <div className="relative z-10 mx-3 mb-1">
-        <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5 overflow-hidden">
-          <motion.p
-            animate={{ x: [0, -200, 0] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="text-[10px] text-primary font-medium whitespace-nowrap"
-          >
-            📢 Welcome to {room?.room_name}! Follow the room rules and have fun 🎉
-          </motion.p>
+      {/* Ranking pill row */}
+      <div className="relative z-10 px-3 mb-1 flex items-center gap-2">
+        <button className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-500/30 to-rose-700/30 ring-1 ring-rose-400/40 flex items-center justify-center">
+          <Megaphone className="w-3.5 h-3.5 text-rose-300" />
+        </button>
+        <div className="flex-1 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md ring-1 ring-white/10">
+          <Trophy className="w-3.5 h-3.5 text-amber-300" />
+          <span className="text-[10px] font-semibold text-foreground/80">No ranking yet</span>
         </div>
+        <button className="relative w-8 h-8 rounded-full bg-gradient-to-br from-amber-500/30 to-orange-700/30 ring-1 ring-amber-400/40 flex items-center justify-center">
+          <Users className="w-3.5 h-3.5 text-amber-200" />
+          <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-gradient-to-br from-orange-500 to-rose-600 text-[9px] font-bold text-white flex items-center justify-center ring-1 ring-background">
+            {activeListeners}
+          </span>
+        </button>
       </div>
 
       {/* PK Battle overlay */}
