@@ -86,6 +86,7 @@ import FamilyPage from "./pages/FamilyPage";
 import LevelPage from "./pages/LevelPage";
 import VIPPage from "./pages/VIPPage";
 import ProfileSetupPage from "./pages/ProfileSetupPage";
+import AgencyCenterPage from "./pages/AgencyCenterPage";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -179,6 +180,7 @@ const AppRoutes = () => {
         <Route path="/family" element={<ProtectedRoute><div className="max-w-lg mx-auto"><FamilyPage /></div></ProtectedRoute>} />
         <Route path="/level" element={<ProtectedRoute><div className="max-w-lg mx-auto"><LevelPage /></div></ProtectedRoute>} />
         <Route path="/vip" element={<ProtectedRoute><div className="max-w-lg mx-auto"><VIPPage /></div></ProtectedRoute>} />
+        <Route path="/agency-center" element={<ProtectedRoute><div className="max-w-lg mx-auto"><AgencyCenterPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
