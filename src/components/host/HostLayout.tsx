@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, DollarSign, Gift, ArrowUpRight, DoorOpen, Trophy, Menu, X, ArrowLeft, Mic } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUserRoles } from "@/hooks/useAdmin";
+import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 
@@ -24,19 +25,7 @@ const HostLayout = ({ children }: { children: React.ReactNode }) => {
   const hasAccess = roles?.some((r) => ["host", "admin", "super_admin", "owner", "manager"].includes(r));
 
   if (!hasAccess) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-        <Mic className="w-16 h-16 text-muted-foreground mb-4" />
-        <h2 className="font-display font-bold text-xl text-foreground mb-2">Host Access Required</h2>
-        <p className="text-sm text-muted-foreground text-center mb-4">
-          You need to be a registered host to access this panel.
-        </p>
-        <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/")}
-          className="gradient-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-bold">
-          Go Home
-        </motion.button>
-      </div>
-    );
+    return <Navigate to="/agency-center" replace />;
   }
 
   return (

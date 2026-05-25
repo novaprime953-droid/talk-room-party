@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, Navigate } from "react-router-dom";
 import { LayoutDashboard, UserPlus, Users, DollarSign, PieChart, Menu, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import GlobalSearch from "@/components/admin/GlobalSearch";
+import { useUserRoles } from "@/hooks/useAdmin";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/agency" },
@@ -16,6 +20,21 @@ const AgencyLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+  const { data: roles, isLoading: rolesLoading } = useUserRoles();
+  const { data: myAgency, isLoading: agencyLoading } = useQuery({
+    queryKey: ["my-agency-owner-gate", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("agencies").select("id").eq("owner_id", user!.id).maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const isPrivileged = roles?.some((r) => ["admin", "super_admin", "owner", "manager", "business_dev", "agency_owner"].includes(r));
+  if (!rolesLoading && !agencyLoading && !isPrivileged && !myAgency) {
+    return <Navigate to="/agency-center" replace />;
+  }
 
   return (
     <div className="flex min-h-screen bg-background">
