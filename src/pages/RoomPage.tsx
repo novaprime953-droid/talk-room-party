@@ -182,10 +182,14 @@ const RoomPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden"
-      style={room?.background_url ? { backgroundImage: `url(${room.background_url})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+      style={{
+        backgroundImage: `url(${room?.background_url ?? roomBgCastle})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
     >
-      {/* Background gradient */}
-      <div className={`absolute inset-0 pointer-events-none ${room?.background_url ? 'bg-black/40' : 'bg-gradient-to-b from-primary/5 via-background to-background'}`} />
+      {/* Background dim overlay */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-background/70 via-background/30 to-background/80" />
 
       {/* Entrance Animation Overlay */}
       <RoomEntrance />
