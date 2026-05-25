@@ -4,8 +4,10 @@ import {
   ArrowLeft, Mic, MicOff, MessageCircle, Gift, Gamepad2,
   Users, LogOut, Trophy, Share2, Crown, Lock, UserPlus,
   Settings, Music, Smile, DoorOpen, Volume2, MoreVertical,
+  Megaphone, Flag, Rocket,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import roomBgCastle from "@/assets/room-bg-castle.jpg";
 import VoiceSeat from "@/components/VoiceSeat";
 import RoomChat from "@/components/RoomChat";
 import GiftPanel from "@/components/GiftPanel";
