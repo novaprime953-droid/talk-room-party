@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Mic, MicOff, Crown, Lock } from "lucide-react";
+import { MicOff, Crown, Lock, Armchair, Heart } from "lucide-react";
 import FramedAvatar from "./FramedAvatar";
 import LevelBadge from "./LevelBadge";
 import VIPBadge from "./VIPBadge";
@@ -34,6 +34,8 @@ const SoundWave = () => (
 );
 
 const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
+  const isHostSeat = index === 0;
+  const label = isHostSeat ? "Host" : `No.${index + 1}`;
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
@@ -62,18 +64,23 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
             )}
           </>
         ) : (
-          <div
-            className={`w-14 h-14 rounded-full flex items-center justify-center ${
-              isLocked
-                ? "bg-muted/30 border-2 border-dashed border-destructive/30"
-                : "bg-muted/50 border-2 border-dashed border-muted-foreground/30"
-            }`}
-          >
-            {isLocked ? (
-              <Lock className="w-4 h-4 text-destructive/40" />
-            ) : (
-              <Mic className="w-5 h-5 text-muted-foreground/40" />
-            )}
+          <div className="relative w-14 h-14">
+            {/* Glow */}
+            <div className={`absolute inset-0 rounded-full ${isLocked ? "bg-destructive/10" : "bg-emerald-400/15"} blur-md`} />
+            {/* Ring */}
+            <div
+              className={`relative w-14 h-14 rounded-full flex items-center justify-center bg-background/40 backdrop-blur-sm ring-2 ${
+                isLocked
+                  ? "ring-destructive/40"
+                  : "ring-emerald-400/70 shadow-[0_0_18px_rgba(52,211,153,0.45)]"
+              }`}
+            >
+              {isLocked ? (
+                <Lock className="w-5 h-5 text-destructive/70" />
+              ) : (
+                <Armchair className="w-7 h-7 text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]" />
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -83,17 +90,23 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
           <span className="text-[11px] font-semibold text-foreground truncate w-full text-center">
             {user.name}
           </span>
-          <div className="flex items-center gap-1">
-            <LevelBadge level={user.level ?? 1} size="xs" />
-            {(user.vipLevel ?? 0) > 0 && <VIPBadge vipLevel={user.vipLevel!} size="xs" />}
+          <div className="flex items-center gap-1 text-[10px] text-rose-400">
+            <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
+            <span className="font-bold">0</span>
           </div>
           {user.isSpeaking && <SoundWave />}
         </>
       )}
       {!user && (
-        <span className="text-[10px] text-muted-foreground">
-          {isLocked ? "Locked" : `Seat ${index + 1}`}
-        </span>
+        <>
+          <span className="text-[11px] font-semibold text-foreground/90">
+            {isLocked ? "Locked" : label}
+          </span>
+          <div className="flex items-center gap-1 text-[10px] text-rose-400/80">
+            <Heart className="w-2.5 h-2.5 fill-rose-500/70 text-rose-500/70" />
+            <span className="font-bold">0</span>
+          </div>
+        </>
       )}
     </motion.button>
   );
