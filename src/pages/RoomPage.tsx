@@ -243,36 +243,6 @@ const RoomPage = () => {
         </div>
       </div>
 
-      {/* Host Display */}
-      {room && (
-        <div className="relative z-10 flex flex-col items-center py-2">
-          <div className="relative">
-            <div className="relative">
-              <FramedAvatar
-                src={(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.avatar_url}
-                name={(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.display_name ?? "Host"}
-                size="lg"
-                showGlow
-              />
-            </div>
-            <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center z-20 shadow-lg">
-              <Crown className="w-3.5 h-3.5 text-yellow-900" />
-            </div>
-          </div>
-          <p className="text-xs font-bold text-foreground mt-1.5">
-            {(participants?.find(p => p.user_id === room.host_id)?.profiles as any)?.display_name ?? "Host"}
-          </p>
-          <div className="flex items-center gap-1 mt-0.5">
-            <div className="px-1.5 py-0.5 rounded-full bg-primary/20 text-[8px] font-bold text-primary">HOST</div>
-            {room.is_live && (
-              <div className="px-1.5 py-0.5 rounded-full bg-live/20 text-[8px] font-bold text-live flex items-center gap-0.5">
-                <div className="w-1 h-1 bg-live rounded-full animate-pulse" /> LIVE
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Ranking pill row */}
       <div className="relative z-10 px-3 mb-1 flex items-center gap-2">
         <button className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-500/30 to-rose-700/30 ring-1 ring-rose-400/40 flex items-center justify-center">
