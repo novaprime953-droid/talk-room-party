@@ -164,7 +164,11 @@ const RoomPage = () => {
 
   const maxSeats = room?.max_seats ?? 8;
   const seats = Array.from({ length: maxSeats }, (_, i) => {
-    const p = participants?.find((p) => p.seat_index === i && !p.left_at);
+    let p = participants?.find((p) => p.seat_index === i && !p.left_at);
+    // Always show host on seat 0 if no one occupies it
+    if (i === 0 && !p && room?.host_id) {
+      p = participants?.find((p) => p.user_id === room.host_id && !p.left_at) ?? null as any;
+    }
     if (!p) return null;
     const profile = p.profiles as any;
     return {
