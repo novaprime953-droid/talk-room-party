@@ -18,6 +18,8 @@ interface SeatProps {
     vipLevel?: number;
   };
   isLocked?: boolean;
+  isMySeat?: boolean;
+  alreadySeatedElsewhere?: boolean;
   onTap?: () => void;
 }
 
@@ -34,7 +36,7 @@ const SoundWave = () => (
   </div>
 );
 
-const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
+const VoiceSeat = ({ index, user, isLocked, isMySeat, alreadySeatedElsewhere, onTap }: SeatProps) => {
   const isHostSeat = index === 0;
   const label = isHostSeat ? "Host" : `No.${index + 1}`;
   return (
@@ -63,16 +65,23 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
                 <MicOff className="w-3 h-3 text-destructive-foreground" />
               </div>
             )}
+            {isMySeat && (
+              <div className="absolute -top-1 -left-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center z-20 ring-2 ring-background">
+                <span className="text-[8px] font-bold text-primary-foreground">ME</span>
+              </div>
+            )}
           </>
         ) : (
           <div className="relative w-14 h-14">
             {/* Glow */}
-            <div className={`absolute inset-0 rounded-full ${isLocked ? "bg-destructive/10" : "bg-emerald-400/15"} blur-md`} />
+            <div className={`absolute inset-0 rounded-full ${isLocked ? "bg-destructive/10" : alreadySeatedElsewhere ? "bg-amber-400/15" : "bg-emerald-400/15"} blur-md`} />
             {/* Ring */}
             <div
               className={`relative w-14 h-14 rounded-full flex items-center justify-center bg-background/40 backdrop-blur-sm ring-2 ${
                 isLocked
                   ? "ring-destructive/40"
+                  : alreadySeatedElsewhere
+                  ? "ring-amber-400/70 shadow-[0_0_18px_rgba(251,191,36,0.45)]"
                   : "ring-emerald-400/70 shadow-[0_0_18px_rgba(52,211,153,0.45)]"
               }`}
             >
@@ -85,10 +94,15 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
                   loading="lazy"
                   width={56}
                   height={56}
-                  className="w-9 h-9 object-contain drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]"
+                  className={`w-9 h-9 object-contain ${alreadySeatedElsewhere ? "opacity-60" : ""}`}
                 />
               )}
             </div>
+            {alreadySeatedElsewhere && !isLocked && (
+              <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center z-20 ring-2 ring-background">
+                <span className="text-[8px] font-bold text-white">!</span>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -107,8 +121,8 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
       )}
       {!user && (
         <>
-          <span className="text-[11px] font-semibold text-foreground/90">
-            {isLocked ? "Locked" : label}
+          <span className={`text-[11px] font-semibold ${alreadySeatedElsewhere ? "text-amber-400" : "text-foreground/90"}`}>
+            {isLocked ? "Locked" : alreadySeatedElsewhere ? "Switch?" : label}
           </span>
           <div className="flex items-center gap-1 text-[10px] text-rose-400/80">
             <Heart className="w-2.5 h-2.5 fill-rose-500/70 text-rose-500/70" />

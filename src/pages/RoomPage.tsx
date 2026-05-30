@@ -154,16 +154,36 @@ const RoomPage = () => {
     setActivePanel((prev) => (prev === panel ? null : panel));
   };
 
+  const myCurrentSeatIndex = participants?.find(
+    (p) => p.user_id === user?.id && !p.left_at,
+  )?.seat_index ?? null;
+
   const handleSeatTap = async (index: number) => {
     if (!user || !id) return;
     const occupied = participants?.find((p) => p.seat_index === index && !p.left_at);
     if (occupied) return; // seat taken
-    // Enforce one seat per user: clear any previous seat first, then claim the new one.
-    await supabase
-      .from("room_participants")
-      .update({ seat_index: null })
-      .eq("room_id", id)
-      .eq("user_id", user.id);
+
+    // If already seated on a different seat, show error
+    if (myCurrentSeatIndex !== null && myCurrentSeatIndex !== index) {
+      toast.error("You already have a seat. Leave your current seat first.", {
+        description: `Seat ${myCurrentSeatIndex + 1} is yours. Tap it to leave before switching.`,
+        icon: <Lock className="w-4 h-4 text-destructive" />,
+      });
+      return;
+    }
+
+    // If tapping own seat → leave it (toggle off)
+    if (myCurrentSeatIndex === index) {
+      await supabase
+        .from("room_participants")
+        .update({ seat_index: null })
+        .eq("room_id", id)
+        .eq("user_id", user.id);
+      refetchParticipants();
+      return;
+    }
+
+    // Claim the seat
     await supabase
       .from("room_participants")
       .update({ seat_index: index })
@@ -287,21 +307,23 @@ const RoomPage = () => {
       {/* Seats Grid */}
       <div className="flex-1 relative z-10 px-3 py-2 min-h-0">
         <div className="grid grid-cols-4 gap-y-4 gap-x-2 justify-items-center max-w-sm mx-auto">
-          {seats.map((seat, i) => (
-            <VoiceSeat
-              key={i}
-              index={i}
-              user={seat ? {
-                name: seat.name,
-                avatar: seat.avatar ?? undefined,
-                isSpeaking: seat.isSpeaking,
-                isMuted: seat.isMuted,
-                isHost: seat.isHost,
-                frameUrl: seat.frameUrl,
-              } : undefined}
-              onTap={() => handleSeatTap(i)}
-            />
-          ))}
+        {seats.map((seat, i) => (
+          <VoiceSeat
+            key={i}
+            index={i}
+            isMySeat={myCurrentSeatIndex === i}
+            alreadySeatedElsewhere={myCurrentSeatIndex !== null && myCurrentSeatIndex !== i}
+            user={seat ? {
+              name: seat.name,
+              avatar: seat.avatar ?? undefined,
+              isSpeaking: seat.isSpeaking,
+              isMuted: seat.isMuted,
+              isHost: seat.isHost,
+              frameUrl: seat.frameUrl,
+            } : undefined}
+            onTap={() => handleSeatTap(i)}
+          />
+        ))}
         </div>
       </div>
 
