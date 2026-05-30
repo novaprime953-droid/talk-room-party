@@ -497,6 +497,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "fk_game_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       gift_transactions: {
@@ -623,10 +630,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "hosts_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "hosts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "hosts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles_view"
             referencedColumns: ["user_id"]
           },
         ]
@@ -1214,6 +1235,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "room_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       room_participants: {
@@ -1263,6 +1291,13 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "room_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
             referencedColumns: ["user_id"]
           },
         ]
@@ -1487,6 +1522,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
           },
+          {
+            foreignKeyName: "voice_rooms_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       withdrawal_requests: {
@@ -1527,7 +1569,134 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      agencies_public: {
+        Row: {
+          agency_name: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          status: string | null
+        }
+        Insert: {
+          agency_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          status?: string | null
+        }
+        Update: {
+          agency_name?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      hosts_public: {
+        Row: {
+          agency_id: string | null
+          created_at: string | null
+          id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hosts_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosts_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hosts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "hosts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      public_profiles_view: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string | null
+          is_online: boolean | null
+          last_seen: string | null
+          level: number | null
+          updated_at: string | null
+          user_id: string | null
+          user_id_number: number | null
+          username: string | null
+          vip_level: number | null
+          xp: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_online?: boolean | null
+          last_seen?: string | null
+          level?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          user_id_number?: number | null
+          username?: string | null
+          vip_level?: number | null
+          xp?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          is_online?: boolean | null
+          last_seen?: string | null
+          level?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          user_id_number?: number | null
+          username?: string | null
+          vip_level?: number | null
+          xp?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       claim_daily_login: { Args: { p_user_id: string }; Returns: Json }
