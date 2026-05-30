@@ -307,21 +307,23 @@ const RoomPage = () => {
       {/* Seats Grid */}
       <div className="flex-1 relative z-10 px-3 py-2 min-h-0">
         <div className="grid grid-cols-4 gap-y-4 gap-x-2 justify-items-center max-w-sm mx-auto">
-          {seats.map((seat, i) => (
-            <VoiceSeat
-              key={i}
-              index={i}
-              user={seat ? {
-                name: seat.name,
-                avatar: seat.avatar ?? undefined,
-                isSpeaking: seat.isSpeaking,
-                isMuted: seat.isMuted,
-                isHost: seat.isHost,
-                frameUrl: seat.frameUrl,
-              } : undefined}
-              onTap={() => handleSeatTap(i)}
-            />
-          ))}
+        {seats.map((seat, i) => (
+          <VoiceSeat
+            key={i}
+            index={i}
+            isMySeat={myCurrentSeatIndex === i}
+            alreadySeatedElsewhere={myCurrentSeatIndex !== null && myCurrentSeatIndex !== i}
+            user={seat ? {
+              name: seat.name,
+              avatar: seat.avatar ?? undefined,
+              isSpeaking: seat.isSpeaking,
+              isMuted: seat.isMuted,
+              isHost: seat.isHost,
+              frameUrl: seat.frameUrl,
+            } : undefined}
+            onTap={() => handleSeatTap(i)}
+          />
+        ))}
         </div>
       </div>
 
