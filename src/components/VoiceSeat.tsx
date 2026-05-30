@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { MicOff, Crown, Lock, Armchair, Heart } from "lucide-react";
+import { MicOff, Crown, Lock, Heart } from "lucide-react";
 import FramedAvatar from "./FramedAvatar";
 import LevelBadge from "./LevelBadge";
 import VIPBadge from "./VIPBadge";
+import seatEmpty from "@/assets/seat-empty.png";
 
 interface SeatProps {
   index: number;
@@ -78,7 +79,14 @@ const VoiceSeat = ({ index, user, isLocked, onTap }: SeatProps) => {
               {isLocked ? (
                 <Lock className="w-5 h-5 text-destructive/70" />
               ) : (
-                <Armchair className="w-7 h-7 text-amber-300 drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]" />
+                <img
+                  src={seatEmpty}
+                  alt="Empty seat"
+                  loading="lazy"
+                  width={56}
+                  height={56}
+                  className="w-9 h-9 object-contain drop-shadow-[0_0_6px_rgba(251,191,36,0.7)]"
+                />
               )}
             </div>
           </div>

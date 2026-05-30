@@ -158,16 +158,33 @@ const RoomPage = () => {
     if (!user || !id) return;
     const occupied = participants?.find((p) => p.seat_index === index && !p.left_at);
     if (occupied) return; // seat taken
-    await supabase.from("room_participants").update({ seat_index: index }).eq("room_id", id).eq("user_id", user.id);
+    // Enforce one seat per user: clear any previous seat first, then claim the new one.
+    await supabase
+      .from("room_participants")
+      .update({ seat_index: null })
+      .eq("room_id", id)
+      .eq("user_id", user.id);
+    await supabase
+      .from("room_participants")
+      .update({ seat_index: index })
+      .eq("room_id", id)
+      .eq("user_id", user.id);
     refetchParticipants();
   };
 
   const maxSeats = room?.max_seats ?? 8;
+  const hostParticipant = participants?.find(
+    (p) => p.user_id === room?.host_id && !p.left_at,
+  );
+  const hostHasOtherSeat =
+    hostParticipant?.seat_index !== null &&
+    hostParticipant?.seat_index !== undefined &&
+    hostParticipant?.seat_index !== 0;
   const seats = Array.from({ length: maxSeats }, (_, i) => {
     let p = participants?.find((p) => p.seat_index === i && !p.left_at);
-    // Always show host on seat 0 if no one occupies it
-    if (i === 0 && !p && room?.host_id) {
-      p = participants?.find((p) => p.user_id === room.host_id && !p.left_at) ?? null as any;
+    // Show host on seat 0 only if host hasn't already taken a different seat
+    if (i === 0 && !p && room?.host_id && !hostHasOtherSeat) {
+      p = hostParticipant ?? (null as any);
     }
     if (!p) return null;
     const profile = p.profiles as any;

@@ -19,7 +19,9 @@ const sizeMap = {
 
 const FramedAvatar = ({ src, name, frameUrl, size = "md", className, showGlow }: FramedAvatarProps) => {
   const s = sizeMap[size];
-  const initial = (name ?? "U").charAt(0).toUpperCase();
+  const seed = encodeURIComponent(name ?? "guest");
+  const fallbackSrc = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear`;
+  const imgSrc = src || fallbackSrc;
 
   return (
     <div className={cn("relative flex-shrink-0", className)} style={{ width: "fit-content" }}>
@@ -41,11 +43,7 @@ const FramedAvatar = ({ src, name, frameUrl, size = "md", className, showGlow }:
           showGlow && "glow-primary"
         )}
       >
-        {src ? (
-          <img src={src} alt={name ?? ""} className="w-full h-full object-cover" />
-        ) : (
-          <span className={cn(s.text, "font-bold text-foreground")}>{initial}</span>
-        )}
+        <img src={imgSrc} alt={name ?? ""} loading="lazy" className="w-full h-full object-cover" />
       </div>
     </div>
   );
