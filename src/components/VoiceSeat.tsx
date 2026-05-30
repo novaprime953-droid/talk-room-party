@@ -18,6 +18,8 @@ interface SeatProps {
     vipLevel?: number;
   };
   isLocked?: boolean;
+  isMySeat?: boolean;
+  alreadySeatedElsewhere?: boolean;
   onTap?: () => void;
 }
 
