@@ -4,7 +4,7 @@ import {
   ArrowLeft, Mic, MicOff, MessageCircle, Gift, Gamepad2,
   Users, LogOut, Trophy, Share2, Crown, Lock, UserPlus,
   Settings, Music, Smile, DoorOpen, Volume2, MoreVertical,
-  Megaphone, Flag, Rocket,
+  Megaphone, Flag, Rocket, Armchair,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import roomBgCastle from "@/assets/room-bg-castle.jpg";
@@ -23,6 +23,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEquippedProps } from "@/hooks/useProps";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
 
 type BottomPanel = "chat" | "gifts" | "rankings" | null;
 
@@ -40,6 +45,11 @@ const RoomPage = () => {
   const [giftAnim, setGiftAnim] = useState<{ sender: string; receiver: string; giftName: string; emoji: string } | null>(null);
   const [showPK, setShowPK] = useState(false);
   const [showGiftSheet, setShowGiftSheet] = useState(false);
+  const [pendingSeatIndex, setPendingSeatIndex] = useState<number | null>(null);
+  const [leaveConfirm, setLeaveConfirm] = useState<{ open: boolean; seatIndex: number | null }>({ open: false, seatIndex: null });
+  const [takeoverConfirm, setTakeoverConfirm] = useState<{ open: boolean; seatIndex: number | null; ownerName?: string }>({ open: false, seatIndex: null });
+  const [incomingTakeover, setIncomingTakeover] = useState<any>(null);
+  const [respondingTakeover, setRespondingTakeover] = useState(false);
 
   const { data: room } = useRoom(id!);
   const { data: participants, refetch: refetchParticipants } = useRoomParticipants(id!);
@@ -95,6 +105,29 @@ const RoomPage = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [id, refetchParticipants]);
+
+  // Realtime takeover requests targeting me
+  useEffect(() => {
+    if (!id || !user) return;
+    const channel = supabase
+      .channel(`takeover-${id}-${user.id}`)
+      .on("postgres_changes", {
+        event: "INSERT", schema: "public", table: "seat_takeover_requests",
+        filter: `current_owner_id=eq.${user.id}`,
+      }, async (payload) => {
+        const req = payload.new as any;
+        if (req.room_id !== id || req.status !== "pending") return;
+        const { data: prof } = await supabase
+          .from("profiles").select("display_name, username")
+          .eq("user_id", req.requester_id).single();
+        setIncomingTakeover({
+          ...req,
+          requesterName: prof?.display_name ?? prof?.username ?? "Someone",
+        });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [id, user?.id]);
 
   // Listen for gift transactions in realtime for animations
   useEffect(() => {
@@ -158,38 +191,113 @@ const RoomPage = () => {
     (p) => p.user_id === user?.id && !p.left_at,
   )?.seat_index ?? null;
 
+  const errorMessages: Record<string, string> = {
+    already_seated: "You already have a seat. Leave it first.",
+    seat_taken: "That seat is already taken.",
+    not_in_room: "You need to be in the room first.",
+    invalid_index: "Invalid seat.",
+    room_not_found: "Room not found.",
+    unauthenticated: "Please sign in.",
+  };
+
+  const claimSeat = async (index: number) => {
+    if (!id) return;
+    setPendingSeatIndex(index);
+    const { data, error } = await supabase.rpc("claim_seat", {
+      p_room_id: id, p_seat_index: index,
+    });
+    setPendingSeatIndex(null);
+    if (error) { toast.error(error.message); return; }
+    const res = data as any;
+    if (!res?.success) {
+      toast.error(errorMessages[res?.error_code] ?? res?.message ?? "Could not take seat", {
+        icon: <Lock className="w-4 h-4 text-destructive" />,
+      });
+      return;
+    }
+    refetchParticipants();
+  };
+
+  const leaveSeat = async () => {
+    if (!id) return;
+    const seatIdx = leaveConfirm.seatIndex;
+    setPendingSeatIndex(seatIdx);
+    const { data, error } = await supabase.rpc("leave_seat", { p_room_id: id });
+    setPendingSeatIndex(null);
+    setLeaveConfirm({ open: false, seatIndex: null });
+    if (error) { toast.error(error.message); return; }
+    if ((data as any)?.success) {
+      toast.success("You left the seat");
+      refetchParticipants();
+    }
+  };
+
+  const requestTakeover = async () => {
+    if (!id || takeoverConfirm.seatIndex == null) return;
+    const idx = takeoverConfirm.seatIndex;
+    setPendingSeatIndex(idx);
+    const { data, error } = await supabase.rpc("request_seat_takeover", {
+      p_room_id: id, p_seat_index: idx,
+    });
+    setPendingSeatIndex(null);
+    setTakeoverConfirm({ open: false, seatIndex: null });
+    if (error) { toast.error(error.message); return; }
+    const res = data as any;
+    if (!res?.success) { toast.error(res?.message ?? "Could not request seat"); return; }
+    toast.success("Takeover request sent — waiting for response");
+  };
+
+  const respondTakeover = async (accept: boolean) => {
+    if (!incomingTakeover) return;
+    setRespondingTakeover(true);
+    const { data, error } = await supabase.rpc("respond_seat_takeover", {
+      p_request_id: incomingTakeover.id, p_accept: accept,
+    });
+    setRespondingTakeover(false);
+    if (error) { toast.error(error.message); return; }
+    const res = data as any;
+    if (res?.success) {
+      toast.success(accept ? "Seat handed over" : "Takeover denied");
+      setIncomingTakeover(null);
+      refetchParticipants();
+    } else {
+      toast.error(res?.error_code ?? "Failed");
+      setIncomingTakeover(null);
+    }
+  };
+
   const handleSeatTap = async (index: number) => {
     if (!user || !id) return;
+    if (pendingSeatIndex !== null) return;
     const occupied = participants?.find((p) => p.seat_index === index && !p.left_at);
-    if (occupied) return; // seat taken
 
-    // If already seated on a different seat, show error
+    // Tapping own seat → confirm leave
+    if (myCurrentSeatIndex === index) {
+      setLeaveConfirm({ open: true, seatIndex: index });
+      return;
+    }
+
+    // Occupied by someone else → confirm takeover request
+    if (occupied && occupied.user_id !== user.id) {
+      const prof = occupied.profiles as any;
+      setTakeoverConfirm({
+        open: true,
+        seatIndex: index,
+        ownerName: prof?.display_name ?? prof?.username ?? "this user",
+      });
+      return;
+    }
+
+    // Already on another seat → quick error
     if (myCurrentSeatIndex !== null && myCurrentSeatIndex !== index) {
-      toast.error("You already have a seat. Leave your current seat first.", {
-        description: `Seat ${myCurrentSeatIndex + 1} is yours. Tap it to leave before switching.`,
+      toast.error(errorMessages.already_seated, {
+        description: `Tap seat ${myCurrentSeatIndex + 1} to leave first.`,
         icon: <Lock className="w-4 h-4 text-destructive" />,
       });
       return;
     }
 
-    // If tapping own seat → leave it (toggle off)
-    if (myCurrentSeatIndex === index) {
-      await supabase
-        .from("room_participants")
-        .update({ seat_index: null })
-        .eq("room_id", id)
-        .eq("user_id", user.id);
-      refetchParticipants();
-      return;
-    }
-
-    // Claim the seat
-    await supabase
-      .from("room_participants")
-      .update({ seat_index: index })
-      .eq("room_id", id)
-      .eq("user_id", user.id);
-    refetchParticipants();
+    await claimSeat(index);
   };
 
   const maxSeats = room?.max_seats ?? 8;
@@ -220,6 +328,7 @@ const RoomPage = () => {
   });
 
   const activeListeners = participants?.filter((p) => !p.left_at)?.length ?? 0;
+  const seatsFilled = participants?.filter((p) => !p.left_at && p.seat_index !== null && p.seat_index !== undefined).length ?? 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden"
@@ -257,6 +366,9 @@ const RoomPage = () => {
               <span className="text-[9px] text-muted-foreground">•</span>
               <Users className="w-2.5 h-2.5 text-muted-foreground" />
               <span className="text-[9px] text-muted-foreground">{activeListeners}</span>
+              <span className="text-[9px] text-muted-foreground">•</span>
+              <Armchair className="w-2.5 h-2.5 text-emerald-400" />
+              <span className="text-[9px] font-semibold text-emerald-400">{seatsFilled}/{maxSeats}</span>
               {room?.country && (
                 <>
                   <span className="text-[9px] text-muted-foreground">•</span>
