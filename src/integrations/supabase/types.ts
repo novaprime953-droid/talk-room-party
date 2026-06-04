@@ -1302,6 +1302,81 @@ export type Database = {
           },
         ]
       }
+      seat_events: {
+        Row: {
+          action: string
+          created_at: string
+          failure_reason: string | null
+          id: string
+          metadata: Json
+          room_id: string
+          seat_index: number | null
+          success: boolean
+          target_user_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          room_id: string
+          seat_index?: number | null
+          success?: boolean
+          target_user_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          failure_reason?: string | null
+          id?: string
+          metadata?: Json
+          room_id?: string
+          seat_index?: number | null
+          success?: boolean
+          target_user_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seat_takeover_requests: {
+        Row: {
+          created_at: string
+          current_owner_id: string
+          expires_at: string
+          id: string
+          requester_id: string
+          room_id: string
+          seat_index: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_owner_id: string
+          expires_at?: string
+          id?: string
+          requester_id: string
+          room_id: string
+          seat_index: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_owner_id?: string
+          expires_at?: string
+          id?: string
+          requester_id?: string
+          room_id?: string
+          seat_index?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       seller_recharge_requests: {
         Row: {
           coins_amount: number
@@ -1700,6 +1775,10 @@ export type Database = {
     }
     Functions: {
       claim_daily_login: { Args: { p_user_id: string }; Returns: Json }
+      claim_seat: {
+        Args: { p_room_id: string; p_seat_index: number }
+        Returns: Json
+      }
       grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
       grant_xp: {
         Args: { p_amount: number; p_source?: string; p_user_id: string }
@@ -1713,6 +1792,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      leave_seat: { Args: { p_room_id: string }; Returns: Json }
       owner_send_coins: {
         Args: {
           p_amount: number
@@ -1728,6 +1808,14 @@ export type Database = {
       }
       purchase_vip: {
         Args: { p_cost: number; p_user_id: string; p_vip_level: number }
+        Returns: Json
+      }
+      request_seat_takeover: {
+        Args: { p_room_id: string; p_seat_index: number }
+        Returns: Json
+      }
+      respond_seat_takeover: {
+        Args: { p_accept: boolean; p_request_id: string }
         Returns: Json
       }
       seller_send_coins: {
