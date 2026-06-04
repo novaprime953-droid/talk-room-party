@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { MicOff, Crown, Lock, Heart } from "lucide-react";
+import { MicOff, Crown, Lock, Heart, Loader2 } from "lucide-react";
 import FramedAvatar from "./FramedAvatar";
 import LevelBadge from "./LevelBadge";
 import VIPBadge from "./VIPBadge";
@@ -20,6 +20,8 @@ interface SeatProps {
   isLocked?: boolean;
   isMySeat?: boolean;
   alreadySeatedElsewhere?: boolean;
+  isPending?: boolean;
+  canRequestTakeover?: boolean;
   onTap?: () => void;
 }
 
@@ -36,16 +38,22 @@ const SoundWave = () => (
   </div>
 );
 
-const VoiceSeat = ({ index, user, isLocked, isMySeat, alreadySeatedElsewhere, onTap }: SeatProps) => {
+const VoiceSeat = ({ index, user, isLocked, isMySeat, alreadySeatedElsewhere, isPending, canRequestTakeover, onTap }: SeatProps) => {
   const isHostSeat = index === 0;
   const label = isHostSeat ? "Host" : `No.${index + 1}`;
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
       onClick={onTap}
+      disabled={isPending}
       className="flex flex-col items-center gap-1.5 w-20"
     >
       <div className="relative">
+        {isPending && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-background/40 rounded-full backdrop-blur-sm">
+            <Loader2 className="w-5 h-5 text-primary animate-spin" />
+          </div>
+        )}
         {user ? (
           <>
             <FramedAvatar
@@ -112,10 +120,14 @@ const VoiceSeat = ({ index, user, isLocked, isMySeat, alreadySeatedElsewhere, on
           <span className="text-[11px] font-semibold text-foreground truncate w-full text-center">
             {user.name}
           </span>
-          <div className="flex items-center gap-1 text-[10px] text-rose-400">
-            <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
-            <span className="font-bold">0</span>
-          </div>
+          {canRequestTakeover ? (
+            <span className="text-[9px] font-bold text-amber-400">Request seat</span>
+          ) : (
+            <div className="flex items-center gap-1 text-[10px] text-rose-400">
+              <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
+              <span className="font-bold">0</span>
+            </div>
+          )}
           {user.isSpeaking && <SoundWave />}
         </>
       )}
