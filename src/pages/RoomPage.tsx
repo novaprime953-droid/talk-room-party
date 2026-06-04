@@ -425,6 +425,8 @@ const RoomPage = () => {
             index={i}
             isMySeat={myCurrentSeatIndex === i}
             alreadySeatedElsewhere={myCurrentSeatIndex !== null && myCurrentSeatIndex !== i}
+            isPending={pendingSeatIndex === i}
+            canRequestTakeover={!!seat && seat.userId !== user?.id && myCurrentSeatIndex === null}
             user={seat ? {
               name: seat.name,
               avatar: seat.avatar ?? undefined,
