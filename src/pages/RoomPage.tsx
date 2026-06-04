@@ -620,6 +620,66 @@ const RoomPage = () => {
           )}
         </div>
       </div>
+
+      {/* Leave seat confirm */}
+      <AlertDialog open={leaveConfirm.open} onOpenChange={(o) => !o && setLeaveConfirm({ open: false, seatIndex: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leave your seat?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You'll release seat {(leaveConfirm.seatIndex ?? 0) + 1}. Others can claim it immediately.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={pendingSeatIndex !== null}>Stay</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); leaveSeat(); }} disabled={pendingSeatIndex !== null}>
+              {pendingSeatIndex !== null ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Leaving…</>
+              ) : "Leave seat"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Request takeover confirm */}
+      <AlertDialog open={takeoverConfirm.open} onOpenChange={(o) => !o && setTakeoverConfirm({ open: false, seatIndex: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Request this seat?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Seat {(takeoverConfirm.seatIndex ?? 0) + 1} is held by {takeoverConfirm.ownerName}. We'll ask them to hand it over.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={pendingSeatIndex !== null}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); requestTakeover(); }} disabled={pendingSeatIndex !== null}>
+              {pendingSeatIndex !== null ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending…</>
+              ) : "Send request"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Incoming takeover */}
+      <AlertDialog open={!!incomingTakeover} onOpenChange={(o) => !o && setIncomingTakeover(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Seat takeover request</AlertDialogTitle>
+            <AlertDialogDescription>
+              {incomingTakeover?.requesterName} is requesting your seat ({(incomingTakeover?.seat_index ?? 0) + 1}). Accept to hand it over.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => respondTakeover(false)} disabled={respondingTakeover}>Deny</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); respondTakeover(true); }} disabled={respondingTakeover}>
+              {respondingTakeover ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing…</>
+              ) : "Accept"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
