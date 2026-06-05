@@ -22,7 +22,7 @@ export const useFeed = () => {
       const postIds = data.map((p: any) => p.id);
 
       const [profilesRes, mediaRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, display_name, username, avatar_url, level, user_id_number").in("user_id", userIds),
+        supabase.from("public_profiles_view").select("user_id, display_name, username, avatar_url, level, user_id_number").in("user_id", userIds),
         supabase.from("post_media").select("*").in("post_id", postIds),
       ]);
 
@@ -128,7 +128,7 @@ export const usePostComments = (postId: string | null) => {
       if (error) throw error;
 
       const userIds = [...new Set(data.map((c: any) => c.user_id))];
-      const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, username, avatar_url, user_id_number").in("user_id", userIds);
+      const { data: profiles } = await supabase.from("public_profiles_view").select("user_id, display_name, username, avatar_url, user_id_number").in("user_id", userIds);
       const profileMap: Record<string, any> = {};
       profiles?.forEach((p: any) => { profileMap[p.user_id] = p; });
 
@@ -187,7 +187,7 @@ export const useAllPosts = () => {
       if (error) throw error;
 
       const userIds = [...new Set(data.map((p: any) => p.user_id))];
-      const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, username, avatar_url, user_id_number").in("user_id", userIds);
+      const { data: profiles } = await supabase.from("public_profiles_view").select("user_id, display_name, username, avatar_url, user_id_number").in("user_id", userIds);
       const profileMap: Record<string, any> = {};
       profiles?.forEach((p: any) => { profileMap[p.user_id] = p; });
 
