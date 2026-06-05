@@ -249,4 +249,19 @@
   .animate-live-pulse {
     animation: live-pulse 1.5s ease-in-out infinite;
   }
+
+  /* Desktop framing: present the mobile-first app as a centered phone canvas on large screens */
+  @media (min-width: 1024px) {
+    body {
+      background:
+        radial-gradient(ellipse at top, hsl(264, 60%, 18%) 0%, transparent 60%),
+        radial-gradient(ellipse at bottom, hsl(280, 50%, 14%) 0%, transparent 60%),
+        hsl(var(--background));
+    }
+    .light body {
+      background:
+        radial-gradient(ellipse at top, hsl(264, 40%, 92%) 0%, transparent 60%),
+        hsl(var(--background));
+    }
+  }
 }
