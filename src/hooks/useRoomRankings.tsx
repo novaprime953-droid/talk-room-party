@@ -35,7 +35,7 @@ const aggregateAndFetchProfiles = async (
   const userIds = sorted.map(s => s[0]);
 
   const { data: profiles } = await supabase
-    .from('profiles')
+    .from('public_profiles_view')
     .select('user_id, username, display_name, avatar_url, level')
     .in('user_id', userIds);
 

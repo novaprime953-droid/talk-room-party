@@ -65,7 +65,7 @@ const RoomPage = () => {
       joinRoom.mutate({ roomId: id });
       const sendEntrance = async () => {
         const { data: profile } = await supabase
-          .from("profiles")
+          .from("public_profiles_view")
           .select("display_name, username, user_id_number")
           .eq("user_id", user.id)
           .single();
@@ -118,7 +118,7 @@ const RoomPage = () => {
         const req = payload.new as any;
         if (req.room_id !== id || req.status !== "pending") return;
         const { data: prof } = await supabase
-          .from("profiles").select("display_name, username")
+          .from("public_profiles_view").select("display_name, username")
           .eq("user_id", req.requester_id).single();
         setIncomingTakeover({
           ...req,
@@ -139,8 +139,8 @@ const RoomPage = () => {
       }, async (payload) => {
         const tx = payload.new as any;
         const [senderRes, receiverRes, giftRes] = await Promise.all([
-          supabase.from("profiles").select("display_name, username").eq("user_id", tx.sender_id).single(),
-          supabase.from("profiles").select("display_name, username").eq("user_id", tx.receiver_id).single(),
+          supabase.from("public_profiles_view").select("display_name, username").eq("user_id", tx.sender_id).single(),
+          supabase.from("public_profiles_view").select("display_name, username").eq("user_id", tx.receiver_id).single(),
           supabase.from("gifts").select("gift_name, icon_url, category").eq("id", tx.gift_id).single(),
         ]);
         const sName = senderRes.data?.display_name ?? senderRes.data?.username ?? "User";

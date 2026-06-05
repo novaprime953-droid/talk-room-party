@@ -61,7 +61,7 @@ const RoomChat = ({ roomId }: { roomId: string }) => {
       }, async (payload) => {
         const newMsg = payload.new as any;
         const { data: profile } = await supabase
-          .from("profiles")
+          .from("public_profiles_view")
           .select("username, display_name, avatar_url, level")
           .eq("user_id", newMsg.user_id)
           .single();
