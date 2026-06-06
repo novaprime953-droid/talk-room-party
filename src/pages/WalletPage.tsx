@@ -50,6 +50,21 @@ const WalletPage = () => {
     enabled: !!user,
   });
 
+  const { data: rechargeHistory } = useQuery({
+    queryKey: ["my-recharge-history", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("recharge_requests")
+        .select("id, amount, coins_amount, payment_method, payment_reference, status, created_at, updated_at, processed_by")
+        .eq("user_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   const { data: pendingWithdrawals } = useQuery({
     queryKey: ["my-withdrawals", user?.id],
     queryFn: async () => {
@@ -240,6 +255,39 @@ const WalletPage = () => {
             ))
           ) : (
             <p className="text-center text-muted-foreground text-sm py-8">No transactions yet</p>
+          )}
+        </div>
+
+        {/* Recharge History */}
+        <h2 className="font-display font-bold text-sm text-foreground mt-6 mb-3">Recharge History</h2>
+        <div className="space-y-2">
+          {rechargeHistory && rechargeHistory.length > 0 ? (
+            rechargeHistory.map((r) => (
+              <div key={r.id} className="bg-card rounded-xl p-3 shadow-card" data-testid="recharge-history-row">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-foreground">${Number(r.amount).toFixed(2)}</span>
+                    <span className="text-[10px] text-muted-foreground">· {r.coins_amount.toLocaleString()} coins</span>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                    r.status === "approved" ? "bg-online/10 text-online"
+                    : r.status === "pending" ? "bg-warning/10 text-warning"
+                    : "bg-destructive/10 text-destructive"
+                  }`}>{r.status}</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  <span>{r.payment_method}{r.payment_reference ? ` · ${r.payment_reference}` : ""}</span>
+                  <span>
+                    {r.status === "pending"
+                      ? `Submitted ${new Date(r.created_at).toLocaleDateString()}`
+                      : `Processed ${new Date(r.updated_at).toLocaleDateString()}`}
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-muted-foreground text-sm py-4">No recharge history yet</p>
           )}
         </div>
       </div>
