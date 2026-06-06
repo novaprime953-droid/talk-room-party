@@ -31,7 +31,12 @@ const AdminRecharge = () => {
   });
 
   // Get user profiles for all requests
-  const userIds = [...new Set(requests?.map((r) => r.user_id) ?? [])];
+  const userIds = [
+    ...new Set([
+      ...(requests?.map((r) => r.user_id) ?? []),
+      ...(requests?.map((r) => r.processed_by).filter(Boolean) as string[] ?? []),
+    ]),
+  ];
   const { data: profiles } = useQuery({
     queryKey: ["recharge-profiles", userIds],
     queryFn: async () => {
@@ -187,6 +192,9 @@ const AdminRecharge = () => {
                             <div><p className="text-[10px] text-muted-foreground">Payment Method</p><p className="text-xs font-semibold text-foreground">{r.payment_method}</p></div>
                             <div><p className="text-[10px] text-muted-foreground">Payment Ref</p><p className="text-xs font-mono text-foreground">{r.payment_reference ?? "None"}</p></div>
                             <div><p className="text-[10px] text-muted-foreground">Processed By</p><p className="text-xs text-foreground">{r.processed_by ? r.processed_by.slice(0, 8) + "..." : "Not yet"}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground">Approver</p><p className="text-xs text-foreground">{r.processed_by ? (getProfile(r.processed_by)?.display_name ?? getProfile(r.processed_by)?.username ?? "Unknown") : "—"}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground">Decision</p><p className={`text-xs font-bold ${r.status === "approved" ? "text-online" : r.status === "rejected" ? "text-destructive" : "text-warning"}`}>{r.status === "pending" ? "Awaiting" : r.status.toUpperCase()}</p></div>
+                            <div><p className="text-[10px] text-muted-foreground">Processed At</p><p className="text-xs text-foreground">{r.status !== "pending" ? new Date(r.updated_at).toLocaleString() : "—"}</p></div>
                             <div><p className="text-[10px] text-muted-foreground">Created</p><p className="text-xs text-foreground">{new Date(r.created_at).toLocaleString()}</p></div>
                             <div><p className="text-[10px] text-muted-foreground">Updated</p><p className="text-xs text-foreground">{new Date(r.updated_at).toLocaleString()}</p></div>
                             <div><p className="text-[10px] text-muted-foreground">Rate</p><p className="text-xs text-foreground">{(r.coins_amount / Number(r.amount)).toFixed(0)} coins/$</p></div>
