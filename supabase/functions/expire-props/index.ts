@@ -12,6 +12,15 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -57,8 +66,9 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: any) {
+    console.error("[expire-props] error:", err);
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
