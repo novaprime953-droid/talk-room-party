@@ -1534,6 +1534,35 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_room_passwords: {
+        Row: {
+          created_at: string
+          password_hash: string
+          room_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          password_hash: string
+          room_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          password_hash?: string
+          room_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_room_passwords_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: true
+            referencedRelation: "voice_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voice_rooms: {
         Row: {
           background_url: string | null
@@ -1547,7 +1576,6 @@ export type Database = {
           is_live: boolean
           listener_count: number
           max_seats: number
-          password_hash: string | null
           privacy_type: string
           room_name: string
           status: string
@@ -1565,7 +1593,6 @@ export type Database = {
           is_live?: boolean
           listener_count?: number
           max_seats?: number
-          password_hash?: string | null
           privacy_type?: string
           room_name: string
           status?: string
@@ -1583,7 +1610,6 @@ export type Database = {
           is_live?: boolean
           listener_count?: number
           max_seats?: number
-          password_hash?: string | null
           privacy_type?: string
           room_name?: string
           status?: string
@@ -1774,6 +1800,7 @@ export type Database = {
       }
     }
     Functions: {
+      approve_recharge: { Args: { p_request_id: string }; Returns: Json }
       claim_daily_login: { Args: { p_user_id: string }; Returns: Json }
       claim_seat: {
         Args: { p_room_id: string; p_seat_index: number }
@@ -1810,6 +1837,7 @@ export type Database = {
         Args: { p_cost: number; p_user_id: string; p_vip_level: number }
         Returns: Json
       }
+      reject_recharge: { Args: { p_request_id: string }; Returns: Json }
       request_seat_takeover: {
         Args: { p_room_id: string; p_seat_index: number }
         Returns: Json
@@ -1837,6 +1865,10 @@ export type Database = {
         }
         Returns: Json
       }
+      set_room_password: {
+        Args: { p_password_hash: string; p_room_id: string }
+        Returns: Json
+      }
       start_game: {
         Args: {
           p_coins_required: number
@@ -1844,6 +1876,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: Json
+      }
+      verify_room_password: {
+        Args: { p_password_hash: string; p_room_id: string }
+        Returns: boolean
       }
     }
     Enums: {
