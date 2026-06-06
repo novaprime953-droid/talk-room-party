@@ -27,33 +27,14 @@ const SellerRecharges = () => {
     },
   });
 
-  const processRequest = async (id: string, userId: string, coinsAmount: number, status: "approved" | "rejected") => {
-    const { error: updateError } = await supabase.from("recharge_requests")
-      .update({ status, processed_by: user!.id })
-      .eq("id", id);
-    if (updateError) { toast.error(updateError.message); return; }
-
+  const processRequest = async (id: string, _userId: string, _coinsAmount: number, status: "approved" | "rejected") => {
     if (status === "approved") {
-      // Add coins to user
-      await supabase.from("profiles")
-        .update({ coins_balance: supabase.rpc as any })
-        .eq("user_id", userId);
-      
-      // Use RPC to safely add coins
-      const { data: profile } = await supabase.from("profiles").select("coins_balance").eq("user_id", userId).single();
-      const newBalance = (profile?.coins_balance ?? 0) + coinsAmount;
-      await supabase.from("profiles").update({ coins_balance: newBalance }).eq("user_id", userId);
-
-      // Record transaction
-      await supabase.from("coin_transactions").insert({
-        user_id: userId,
-        amount: coinsAmount,
-        type: "recharge",
-        description: `Recharge approved: ${coinsAmount.toLocaleString()} coins`,
-        balance_after: newBalance,
-      });
+      const { error } = await supabase.rpc("approve_recharge", { p_request_id: id });
+      if (error) { toast.error(error.message); return; }
+    } else {
+      const { error } = await supabase.rpc("reject_recharge", { p_request_id: id });
+      if (error) { toast.error(error.message); return; }
     }
-
     toast.success(`Request ${status}`);
     qc.invalidateQueries({ queryKey: ["seller-recharge-requests"] });
   };
