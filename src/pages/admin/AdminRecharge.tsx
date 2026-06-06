@@ -47,28 +47,14 @@ const AdminRecharge = () => {
 
   const getProfile = (uid: string) => profiles?.find((p) => p.user_id === uid);
 
-  const updateStatus = async (id: string, status: string, userId: string, coinsAmount: number) => {
-    const { error } = await supabase.from("recharge_requests").update({
-      status,
-      processed_by: user!.id,
-    }).eq("id", id);
-    if (error) { toast.error(error.message); return; }
-
-    // If approved, add coins to user
+  const updateStatus = async (id: string, status: string, _userId: string, _coinsAmount: number) => {
     if (status === "approved") {
-      await supabase.from("profiles").update({
-        coins_balance: (getProfile(userId)?.coins_balance ?? 0) + coinsAmount,
-      }).eq("user_id", userId);
-
-      await supabase.from("coin_transactions").insert({
-        user_id: userId,
-        amount: coinsAmount,
-        type: "recharge",
-        description: `Recharge approved: ${coinsAmount.toLocaleString()} coins`,
-        balance_after: (getProfile(userId)?.coins_balance ?? 0) + coinsAmount,
-      } as any);
+      const { error } = await supabase.rpc("approve_recharge", { p_request_id: id });
+      if (error) { toast.error(error.message); return; }
+    } else if (status === "rejected") {
+      const { error } = await supabase.rpc("reject_recharge", { p_request_id: id });
+      if (error) { toast.error(error.message); return; }
     }
-
     toast.success(`Request ${status}`);
     refetch();
   };
