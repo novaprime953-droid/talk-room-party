@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, User, Save, Bell, BellOff, Volume2, VolumeX,
   Gift, Globe, Shield, Wallet, Crown, LogOut, ChevronRight,
-  Mic, Sparkles, Eye, EyeOff, Smartphone, Moon, Sun,
+  Mic, Sparkles, Eye, EyeOff, Smartphone, Moon, Sun, FileText,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
@@ -222,6 +222,7 @@ const SettingsPage = () => {
             </div>
           } />
           <SettingRow icon={Crown} label="VIP Membership" onClick={() => navigate("/store")} />
+          <SettingRow icon={FileText} label="Policies" onClick={() => navigate("/policies")} right={<ChevronRight className="w-4 h-4 text-muted-foreground" />} />
           <SettingRow icon={Globe} label="Language" right={<span className="text-xs text-muted-foreground">English</span>} />
         </div>
       </div>
