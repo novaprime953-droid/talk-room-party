@@ -777,6 +777,60 @@ export type Database = {
         }
         Relationships: []
       }
+      policies: {
+        Row: {
+          category: Database["public"]["Enums"]["policy_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          image_path: string | null
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["policy_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["policy_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "policies_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       post_comments: {
         Row: {
           content: string
@@ -1893,6 +1947,15 @@ export type Database = {
         | "business_dev"
         | "agency_owner"
         | "coins_seller"
+      policy_category:
+        | "agency"
+        | "host"
+        | "admin"
+        | "bd"
+        | "super_admin"
+        | "salary"
+        | "commission"
+        | "withdrawal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2030,6 +2093,16 @@ export const Constants = {
         "business_dev",
         "agency_owner",
         "coins_seller",
+      ],
+      policy_category: [
+        "agency",
+        "host",
+        "admin",
+        "bd",
+        "super_admin",
+        "salary",
+        "commission",
+        "withdrawal",
       ],
     },
   },
