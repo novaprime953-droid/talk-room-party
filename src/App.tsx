@@ -77,6 +77,8 @@ import OwnerProps from "./pages/owner/OwnerProps";
 import OwnerSocial from "./pages/owner/OwnerSocial";
 import OwnerUserIds from "./pages/owner/OwnerUserIds";
 import OwnerBanners from "./pages/owner/OwnerBanners";
+import OwnerPolicies from "./pages/owner/OwnerPolicies";
+import PoliciesPage from "./pages/PoliciesPage";
 
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
@@ -181,6 +183,7 @@ const AppRoutes = () => {
         <Route path="/level" element={<ProtectedRoute><div className="max-w-lg mx-auto"><LevelPage /></div></ProtectedRoute>} />
         <Route path="/vip" element={<ProtectedRoute><div className="max-w-lg mx-auto"><VIPPage /></div></ProtectedRoute>} />
         <Route path="/agency-center" element={<ProtectedRoute><div className="max-w-lg mx-auto"><AgencyCenterPage /></div></ProtectedRoute>} />
+        <Route path="/policies" element={<ProtectedRoute><div className="max-w-lg mx-auto"><PoliciesPage /></div></ProtectedRoute>} />
 
         {/* Admin routes (kept for backwards compat, redirects admins) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -244,6 +247,7 @@ const AppRoutes = () => {
         <Route path="/owner/social" element={<OwnerRoute><OwnerSocial /></OwnerRoute>} />
         <Route path="/owner/user-ids" element={<OwnerRoute><OwnerUserIds /></OwnerRoute>} />
         <Route path="/owner/banners" element={<OwnerRoute><OwnerBanners /></OwnerRoute>} />
+        <Route path="/owner/policies" element={<OwnerRoute><OwnerPolicies /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
