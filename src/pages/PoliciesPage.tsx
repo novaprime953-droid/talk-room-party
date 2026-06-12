@@ -47,7 +47,7 @@ const PoliciesPage = () => {
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <EmptyState message="No policies in this category yet." />
+          <EmptyState title="No Policies Yet" subtitle="No policies in this category yet." />
         ) : (
           <div className="space-y-4 mt-2">
             {filtered.map((p, i) => (
