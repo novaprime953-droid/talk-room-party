@@ -48,6 +48,7 @@ const navSections = [
       { label: "Banners", icon: ImageIcon, path: "/owner/banners" },
       { label: "Reports", icon: FileText, path: "/owner/reports" },
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
+      { label: "Policies", icon: FileText, path: "/owner/policies" },
     ],
   },
   {
