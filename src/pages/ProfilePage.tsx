@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useAdmin";
 import { toast } from "sonner";
 import FramedAvatar from "@/components/FramedAvatar";
+import UserBadges from "@/components/UserBadges";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -134,6 +135,7 @@ const ProfilePage = () => {
               </h1>
               <span className="text-xs">🇵🇰</span>
             </div>
+            <UserBadges userId={user?.id} size={22} className="mt-1.5" />
             <button onClick={copyId} className="flex items-center gap-1.5 mt-1 group">
               <span className="text-xs text-muted-foreground">UID:{profile?.user_id_number ?? "—"}</span>
               <Copy className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />

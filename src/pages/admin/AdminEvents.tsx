@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, Plus, Gift, Coins } from "lucide-react";
+import { Calendar, Plus, Gift, Coins, ImageIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,8 @@ const AdminEvents = () => {
   const [eventType, setEventType] = useState("general");
   const [rewardCoins, setRewardCoins] = useState("");
   const [rewardDescription, setRewardDescription] = useState("");
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: events, refetch } = useQuery({
     queryKey: ["admin-events"],
@@ -31,15 +33,29 @@ const AdminEvents = () => {
   const createEvent = async () => {
     if (!title || !startDate || !endDate) { toast.error("Fill required fields"); return; }
     const rewards = rewardCoins ? { coins: parseInt(rewardCoins), description: rewardDescription } : null;
+    let banner_url: string | null = null;
+    if (bannerFile) {
+      setUploading(true);
+      const ext = bannerFile.name.split(".").pop() ?? "jpg";
+      const key = `events/${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("post-media")
+        .upload(key, bannerFile, { upsert: true, contentType: bannerFile.type });
+      setUploading(false);
+      if (upErr) { toast.error(upErr.message); return; }
+      const { data: pub } = supabase.storage.from("post-media").getPublicUrl(key);
+      banner_url = pub.publicUrl;
+    }
     const { error } = await supabase.from("events").insert({
       title, description, start_date: startDate, end_date: endDate,
       created_by: user!.id, event_type: eventType, rewards: rewards as any,
+      banner_url,
     });
     if (error) toast.error(error.message);
     else {
       toast.success("Event created");
       setShowCreate(false); setTitle(""); setDescription("");
-      setRewardCoins(""); setRewardDescription("");
+      setRewardCoins(""); setRewardDescription(""); setBannerFile(null);
       refetch();
     }
   };
@@ -90,7 +106,21 @@ const AdminEvents = () => {
               <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Event title" />
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" rows={2}
                 className="w-full bg-muted/30 rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none resize-none" />
-              
+
+              <div>
+                <label className="text-[10px] text-muted-foreground font-bold block mb-1 flex items-center gap-1">
+                  <ImageIcon className="w-3 h-3" /> Banner Image (shown on event card)
+                </label>
+                <div className="flex items-center gap-2">
+                  <input type="file" accept="image/*"
+                    onChange={(e) => setBannerFile(e.target.files?.[0] ?? null)}
+                    className="text-xs text-muted-foreground flex-1" />
+                  {bannerFile && (
+                    <img src={URL.createObjectURL(bannerFile)} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className="text-[10px] text-muted-foreground font-bold block mb-1">Type</label>
                 <div className="flex gap-2 flex-wrap">
@@ -131,9 +161,9 @@ const AdminEvents = () => {
                 </div>
               </div>
 
-              <motion.button whileTap={{ scale: 0.97 }} onClick={createEvent}
+              <motion.button whileTap={{ scale: 0.97 }} onClick={createEvent} disabled={uploading}
                 className="gradient-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-bold w-full">
-                Create Event
+                {uploading ? <span className="inline-flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</span> : "Create Event"}
               </motion.button>
             </div>
           </motion.div>
@@ -143,6 +173,11 @@ const AdminEvents = () => {
       <div className="space-y-3">
         {events?.map((e) => (
           <div key={e.id} className="bg-card rounded-2xl p-4 shadow-card">
+            {e.banner_url && (
+              <div className="rounded-xl overflow-hidden mb-3 h-32">
+                <img src={e.banner_url} alt={e.title} className="w-full h-full object-cover" />
+              </div>
+            )}
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h3 className="font-bold text-sm text-foreground">{e.title}</h3>

@@ -129,6 +129,11 @@ const EventsPage = () => {
               {events.map((event) => (
                 <motion.div key={event.id} initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
                   className="bg-card rounded-2xl p-4 shadow-card">
+                  {event.banner_url && (
+                    <div className="rounded-xl overflow-hidden mb-3 h-36 -mt-1">
+                      <img src={event.banner_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                  )}
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="font-display font-bold text-sm text-foreground flex-1 pr-2">{event.title}</h3>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${getStatusColor(event.status)}`}>
