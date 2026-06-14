@@ -78,6 +78,7 @@ import OwnerSocial from "./pages/owner/OwnerSocial";
 import OwnerUserIds from "./pages/owner/OwnerUserIds";
 import OwnerBanners from "./pages/owner/OwnerBanners";
 import OwnerPolicies from "./pages/owner/OwnerPolicies";
+import OwnerBadges from "./pages/owner/OwnerBadges";
 import PoliciesPage from "./pages/PoliciesPage";
 
 import StorePage from "./pages/StorePage";
@@ -248,6 +249,7 @@ const AppRoutes = () => {
         <Route path="/owner/user-ids" element={<OwnerRoute><OwnerUserIds /></OwnerRoute>} />
         <Route path="/owner/banners" element={<OwnerRoute><OwnerBanners /></OwnerRoute>} />
         <Route path="/owner/policies" element={<OwnerRoute><OwnerPolicies /></OwnerRoute>} />
+        <Route path="/owner/badges" element={<OwnerRoute><OwnerBadges /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
