@@ -53,6 +53,42 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          auto_assign: boolean
+          created_at: string
+          image_path: string
+          is_active: boolean
+          key: string
+          name: string
+          role: Database["public"]["Enums"]["app_role"] | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          auto_assign?: boolean
+          created_at?: string
+          image_path: string
+          is_active?: boolean
+          key: string
+          name: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_assign?: boolean
+          created_at?: string
+          image_path?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           created_at: string
@@ -1491,6 +1527,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_key: string
+          granted_at: string
+          granted_by: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_key: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_key?: string
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_key_fkey"
+            columns: ["badge_key"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       user_medals: {
         Row: {
           id: string
@@ -1874,6 +1942,14 @@ export type Database = {
         Returns: boolean
       }
       leave_seat: { Args: { p_room_id: string }; Returns: Json }
+      owner_grant_badge: {
+        Args: { p_badge_key: string; p_user_id: string }
+        Returns: Json
+      }
+      owner_revoke_badge: {
+        Args: { p_badge_key: string; p_user_id: string }
+        Returns: Json
+      }
       owner_send_coins: {
         Args: {
           p_amount: number
@@ -1931,6 +2007,7 @@ export type Database = {
         }
         Returns: Json
       }
+      sync_role_badges: { Args: { p_user_id: string }; Returns: undefined }
       verify_room_password: {
         Args: { p_password_hash: string; p_room_id: string }
         Returns: boolean
