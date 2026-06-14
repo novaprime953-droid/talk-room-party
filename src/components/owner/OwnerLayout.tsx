@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Crown, LayoutDashboard, Users, Shield, Settings, BarChart3, DollarSign,
   Menu, X, ArrowLeft, Building, Mic, Target, Coins, DoorOpen, Gift,
-  CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone,
+  CreditCard, ArrowUpRight, Bell, FileText, Trophy, Calendar, Megaphone, Award,
   Activity, Swords, LogOut, Gamepad2, Sparkles, Hash, MessageSquare, ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -49,6 +49,7 @@ const navSections = [
       { label: "Reports", icon: FileText, path: "/owner/reports" },
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
       { label: "Policies", icon: FileText, path: "/owner/policies" },
+      { label: "Badges", icon: Award, path: "/owner/badges" },
     ],
   },
   {
