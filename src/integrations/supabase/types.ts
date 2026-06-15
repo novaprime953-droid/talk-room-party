@@ -1093,6 +1093,9 @@ export type Database = {
           created_at: string
           display_name: string | null
           email: string | null
+          equipped_badge_key: string | null
+          equipped_frame_user_prop_id: string | null
+          equipped_title_id: string | null
           id: string
           is_online: boolean
           last_seen: string | null
@@ -1115,6 +1118,9 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string | null
+          equipped_badge_key?: string | null
+          equipped_frame_user_prop_id?: string | null
+          equipped_title_id?: string | null
           id?: string
           is_online?: boolean
           last_seen?: string | null
@@ -1137,6 +1143,9 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           email?: string | null
+          equipped_badge_key?: string | null
+          equipped_frame_user_prop_id?: string | null
+          equipped_title_id?: string | null
           id?: string
           is_online?: boolean
           last_seen?: string | null
@@ -1527,6 +1536,42 @@ export type Database = {
         }
         Relationships: []
       }
+      titles: {
+        Row: {
+          auto_assign: boolean
+          created_at: string
+          id: string
+          image_url: string
+          is_active: boolean
+          name: string
+          role: Database["public"]["Enums"]["app_role"] | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          auto_assign?: boolean
+          created_at?: string
+          id?: string
+          image_url: string
+          is_active?: boolean
+          name: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_assign?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          name?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_badges: {
         Row: {
           badge_key: string
@@ -1655,6 +1700,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_titles: {
+        Row: {
+          granted_at: string
+          granted_by: string | null
+          id: string
+          title_id: string
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          title_id: string
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          title_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_titles_title_id_fkey"
+            columns: ["title_id"]
+            isOneToOne: false
+            referencedRelation: "titles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       voice_room_passwords: {
         Row: {
@@ -1928,6 +2005,9 @@ export type Database = {
         Args: { p_room_id: string; p_seat_index: number }
         Returns: Json
       }
+      equip_badge: { Args: { p_badge_key: string }; Returns: Json }
+      equip_frame_prop: { Args: { p_user_prop_id: string }; Returns: Json }
+      equip_title: { Args: { p_title_id: string }; Returns: Json }
       grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
       grant_xp: {
         Args: { p_amount: number; p_source?: string; p_user_id: string }
@@ -1946,8 +2026,16 @@ export type Database = {
         Args: { p_badge_key: string; p_user_id: string }
         Returns: Json
       }
+      owner_grant_title: {
+        Args: { p_title_id: string; p_user_id: string }
+        Returns: Json
+      }
       owner_revoke_badge: {
         Args: { p_badge_key: string; p_user_id: string }
+        Returns: Json
+      }
+      owner_revoke_title: {
+        Args: { p_title_id: string; p_user_id: string }
         Returns: Json
       }
       owner_send_coins: {
