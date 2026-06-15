@@ -50,6 +50,7 @@ const navSections = [
       { label: "Notifications", icon: Bell, path: "/owner/notifications" },
       { label: "Policies", icon: FileText, path: "/owner/policies" },
       { label: "Badges", icon: Award, path: "/owner/badges" },
+      { label: "Titles", icon: Award, path: "/owner/titles" },
     ],
   },
   {
