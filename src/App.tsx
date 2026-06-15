@@ -79,7 +79,9 @@ import OwnerUserIds from "./pages/owner/OwnerUserIds";
 import OwnerBanners from "./pages/owner/OwnerBanners";
 import OwnerPolicies from "./pages/owner/OwnerPolicies";
 import OwnerBadges from "./pages/owner/OwnerBadges";
+import OwnerTitles from "./pages/owner/OwnerTitles";
 import PoliciesPage from "./pages/PoliciesPage";
+import PublicProfilePage from "./pages/PublicProfilePage";
 
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
@@ -171,6 +173,7 @@ const AppRoutes = () => {
         <Route path="/create" element={<ProtectedRoute><div className="max-w-lg mx-auto"><CreateRoomPage /></div></ProtectedRoute>} />
         <Route path="/room/:id" element={<ProtectedRoute><div className="max-w-lg mx-auto"><RoomPage /></div></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><div className="max-w-lg mx-auto"><ProfilePage /></div></ProtectedRoute>} />
+        <Route path="/u/:userId" element={<ProtectedRoute><div className="max-w-lg mx-auto"><PublicProfilePage /></div></ProtectedRoute>} />
         <Route path="/leaderboard" element={<ProtectedRoute><div className="max-w-lg mx-auto"><LeaderboardPage /></div></ProtectedRoute>} />
         <Route path="/wallet" element={<ProtectedRoute><div className="max-w-lg mx-auto"><WalletPage /></div></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><div className="max-w-lg mx-auto"><NotificationsPage /></div></ProtectedRoute>} />
@@ -250,6 +253,7 @@ const AppRoutes = () => {
         <Route path="/owner/banners" element={<OwnerRoute><OwnerBanners /></OwnerRoute>} />
         <Route path="/owner/policies" element={<OwnerRoute><OwnerPolicies /></OwnerRoute>} />
         <Route path="/owner/badges" element={<OwnerRoute><OwnerBadges /></OwnerRoute>} />
+        <Route path="/owner/titles" element={<OwnerRoute><OwnerTitles /></OwnerRoute>} />
 
         {/* Host Center routes */}
         <Route path="/host" element={<HostRoute><HostDashboard /></HostRoute>} />
