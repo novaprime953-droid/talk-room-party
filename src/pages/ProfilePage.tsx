@@ -73,7 +73,7 @@ const ProfilePage = () => {
   const mainButtons = [
     { icon: Award, label: "Medal of Honor", color: "text-purple-400", bg: "bg-purple-500/20", path: "/medals" },
     { icon: ShoppingBag, label: "Shop", color: "text-emerald-400", bg: "bg-emerald-500/20", path: "/store" },
-    { icon: Sparkles, label: "Props", color: "text-sky-400", bg: "bg-sky-500/20", path: "/my-props" },
+    { icon: Sparkles, label: "My Bag", color: "text-sky-400", bg: "bg-sky-500/20", path: "/my-props" },
     { icon: ClipboardList, label: "Task", color: "text-orange-400", bg: "bg-orange-500/20", path: "/events" },
     { icon: Mic, label: "Host Center", color: "text-pink-400", bg: "bg-pink-500/20", path: "/host" },
   ];
@@ -113,7 +113,7 @@ const ProfilePage = () => {
       <div className="relative pt-8 pb-4 px-4">
         {/* Avatar + Info */}
         <div className="flex items-start gap-4">
-          <div className="relative">
+          <div className="relative cursor-pointer" onClick={() => profile?.user_id_number && navigate(`/u/${profile.user_id_number}`)}>
             <FramedAvatar
               src={profile?.avatar_url}
               name={profile?.display_name ?? profile?.username}
