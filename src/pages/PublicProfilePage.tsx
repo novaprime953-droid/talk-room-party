@@ -105,7 +105,8 @@ const PublicProfilePage = () => {
     );
   }
 
-  const equippedTitle = titles?.find((t) => t.id === (profile as any).equipped_title_id) ?? titles?.[0];
+  const p: any = profile;
+  const equippedTitle = titles?.find((t) => t.id === p.equipped_title_id) ?? titles?.[0];
   const copyId = () => {
     navigator.clipboard.writeText(String(profile.user_id_number ?? ""));
     toast.success("ID copied");
@@ -117,8 +118,8 @@ const PublicProfilePage = () => {
       <div
         className="relative h-56 overflow-hidden"
         style={{
-          background: profile.cover_url
-            ? `url(${profile.cover_url}) center/cover`
+          background: p.cover_url
+            ? `url(${p.cover_url}) center/cover`
             : "linear-gradient(135deg, hsl(265 40% 18%), hsl(280 60% 22%))",
         }}
       >
@@ -139,9 +140,9 @@ const PublicProfilePage = () => {
         />
         <div className="mt-3 flex items-center gap-2 flex-wrap">
           <h1 className="font-display font-bold text-2xl text-foreground">{profile.display_name ?? profile.username}</h1>
-          {profile.gender && (
+          {p.gender && (
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/30 text-blue-200">
-              {profile.gender === "female" ? "♀" : "♂"}{profile.age ? ` ${profile.age}` : ""}
+              {p.gender === "female" ? "♀" : "♂"}{p.age ? ` ${p.age}` : ""}
             </span>
           )}
         </div>
@@ -168,7 +169,7 @@ const PublicProfilePage = () => {
             { label: "Friends", value: stats?.followers ?? 0 },
             { label: "Following", value: stats?.following ?? 0 },
             { label: "Follower", value: stats?.followers ?? 0 },
-            { label: "Visitors", value: profile.profile_views ?? 0 },
+            { label: "Visitors", value: p.profile_views ?? 0 },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="font-display font-bold text-foreground">{s.value}</p>
@@ -195,7 +196,7 @@ const PublicProfilePage = () => {
             <HonorGrid items={(ownedFrames ?? []).map((f: any) => ({ id: f.id, name: f.props.name, image_url: f.props.image_url, equipped: f.is_equipped }))} emptyLabel="No frames yet" big />
           </TabsContent>
           <TabsContent value="title" className="mt-4">
-            <HonorGrid items={(titles ?? []).map((t) => ({ id: t.id, name: t.name, image_url: t.image_url, equipped: t.id === (profile as any).equipped_title_id }))} emptyLabel="No titles yet" rect />
+            <HonorGrid items={(titles ?? []).map((t) => ({ id: t.id, name: t.name, image_url: t.image_url, equipped: t.id === p.equipped_title_id }))} emptyLabel="No titles yet" rect />
           </TabsContent>
           <TabsContent value="gifts" className="mt-4">
             <HonorGrid items={(gifts ?? []).map((g: any) => ({ id: g.gift_name, name: `${g.gift_name} x${g.count}`, image_url: g.image_url }))} emptyLabel="No gifts received" />
