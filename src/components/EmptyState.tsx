@@ -1,12 +1,12 @@
 import { FileX } from "lucide-react";
-import type { LucideIcon, ReactNode } from "lucide-react";
-import type { ReactNode as RN } from "react";
+import type { LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface EmptyStateProps {
   icon?: LucideIcon;
   title?: string;
   subtitle?: string;
-  action?: RN;
+  action?: ReactNode;
 }
 
 const EmptyState = ({
