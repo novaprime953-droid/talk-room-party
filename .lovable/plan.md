@@ -1,53 +1,75 @@
-## Goal
-Harden room seat management with backend enforcement, moderator-visible event logs, realtime occupancy, takeover requests, and tighter join/leave UX.
+# Sunset Blaze Overhaul — Phased Plan
 
-## 1. Database (single migration)
+Full-overhaul pass across profile, home, store/wallet, admin — plus 4 net-new feature systems. Ship in 5 phases so each turn stays reviewable.
 
-**`seat_events` table** — moderator audit log
-- `room_id`, `user_id`, `action` (`join_attempt`, `join_success`, `leave`, `kicked`, `takeover_requested`, `takeover_accepted`, `takeover_denied`)
-- `seat_index`, `target_user_id` (nullable), `success` bool, `failure_reason` text, `metadata` jsonb
-- RLS: insert by anyone for own actions; SELECT restricted to room host + admins/moderators
-- Realtime enabled
+## Design direction (locked, applied every phase)
 
-**`seat_takeover_requests` table**
-- `room_id`, `seat_index`, `requester_id`, `current_owner_id`, `status` (`pending`/`accepted`/`denied`/`expired`), `expires_at` (now()+60s)
-- RLS: requester + current_owner + host can SELECT/UPDATE; requester can INSERT
-- Realtime enabled
+- **Palette (HSL tokens in `index.css`)**
+  - `--background` deep plum `260 40% 6%`
+  - `--card` `260 30% 10%`
+  - `--primary` sunset orange `18 100% 60%` (#ff6b35)
+  - `--secondary` amber `35 93% 54%` (#f7931e)
+  - `--accent` magenta `330 78% 58%` (#e84393)
+  - `--vip` violet `252 76% 66%` (#6c5ce7)
+  - `--gradient-sunset` `linear-gradient(135deg, #ff6b35, #e84393, #6c5ce7)`
+  - `--gradient-ember` `linear-gradient(135deg, #ff6b35, #f7931e)`
+  - `--glow-primary` `0 0 40px hsl(18 100% 60% / .45)`
+- **Type**: keep display font; body switches to Figtree (via `@fontsource/figtree`) for readability.
+- **Motion**: Framer-Motion micro-interactions — 200 ms scale on tap, shimmer on VIP surfaces, floating ember particles behind hero areas.
+- **Backgrounds**: animated radial-gradient orb layer (`SunsetOrbs` component) reused on Profile, Home hero, Wallet, Auth.
+- **Icon set**: Lucide, 1.75 stroke, gradient-filled where headline.
 
-**RPC `claim_seat(p_room_id, p_seat_index)`** — SECURITY DEFINER, atomic
-- Lock `room_participants` for room
-- Validate: user is participant, seat in `[0, max_seats-1]`, seat not occupied, user not already on another seat
-- On failure → insert `seat_events` row with `success=false` + `failure_reason` (`already_seated`, `seat_taken`, `not_in_room`, `invalid_index`) and return `jsonb {success:false, error_code, message, current_seat_index?}`
-- On success → set `seat_index`, log `join_success`, return `{success:true, seat_index}`
+## Phase 1 — Design system + shared shell *(this turn if approved)*
 
-**RPC `leave_seat(p_room_id)`** — atomic, logs `leave` event, returns `{success:true}`
+1. Rewrite `index.css` tokens + add `.gradient-sunset`, `.gradient-ember`, `.glow-ring`, `.glass-card`, `.shimmer` utilities.
+2. Extend `tailwind.config.ts` with new colors, shadows, keyframes (`float`, `shimmer`, `ember`, `orb-drift`).
+3. New shared components:
+   - `SunsetOrbs.tsx` (animated background)
+   - `SectionHeader.tsx` (icon + gradient title + action)
+   - `StatCard.tsx`, `IconTile.tsx`, `GlassPanel.tsx`
+   - `PageHero.tsx` (curved gradient header with avatar/stats slot)
+4. Install `@fontsource/figtree`, wire in `main.tsx` + tailwind.
+5. Refresh `BottomNav` (glass blur, gradient active pill), `SplashPage`, `AuthPage`, `EmptyState`.
 
-**RPC `request_seat_takeover(p_room_id, p_seat_index)`**
-- Validates seat occupied by another user, no pending request, inserts row, logs `takeover_requested`
+## Phase 2 — Profile & Public Profile polish
 
-**RPC `respond_seat_takeover(p_request_id, p_accept)`**
-- Owner-only; if accept → atomic swap (clear owner seat, set requester seat), log `takeover_accepted`; else `takeover_denied`
+- `ProfilePage`: curved gradient hero, framed avatar, ID chip w/ copy, level+VIP dual ring, wallet quick-tiles, honor row (medals/frames/titles/gifts) using `IconTile`.
+- `PublicProfilePage`: cover image with parallax, follow/message CTAs (wired to Phase 3/4), gift-wall grid, mutual-follow badge.
+- `SettingsPage`: grouped `GlassPanel` cards, section icons, theme + language + privacy toggles polished.
+- New `FollowButton` component (state-aware, optimistic).
 
-## 2. Frontend `RoomPage.tsx`
+## Phase 3 — Follow / Followers / Friends
 
-- Replace direct `room_participants.update` with `supabase.rpc('claim_seat', …)` / `leave_seat` / takeover RPCs
-- Add `isSeatActionPending` state → disables seat taps and shows spinner overlay on the targeted seat
-- Toast structured errors from RPC (`error_code` → message)
-- **Leave confirm dialog** (shadcn `AlertDialog`): tap own seat → confirm → call `leave_seat` with loading state
-- **Takeover flow**: when seat occupied by another user, tap shows `AlertDialog` with "Request takeover" → calls `request_seat_takeover`
-- **Incoming takeover modal**: realtime subscribe to `seat_takeover_requests` where `current_owner_id = me AND status='pending'` → modal with Accept/Deny (60s countdown)
-- **Occupancy pill**: header shows `{occupiedSeats}/{maxSeats} seats` computed from participants, updates via existing realtime subscription
+- DB: table already exists (`followers`). Add RPCs `toggle_follow`, `get_follow_counts`, view `mutual_follows`. GRANTs + RLS.
+- Hook `useFollow.tsx` (counts, list, toggle, mutuals).
+- UI: `FollowersPage` (tabs: Followers | Following | Friends/mutual | Suggested), suggested-users algorithm (top level, not followed, active last 7d), integrated into `PublicProfilePage` and new "People" tab on Explore.
 
-## 3. `VoiceSeat.tsx`
-- New props: `isPending`, `canRequestTakeover`
-- Spinner overlay when `isPending`
-- "Request seat" label on occupied seats when `canRequestTakeover`
+## Phase 4 — Direct Messages (1:1)
 
-## 4. Out of scope
-- No moderator log viewer UI this turn (data is captured; viewer can come next)
-- No changes to mic/hand-raise flows
+- DB migration: `dm_threads`, `dm_messages` with RLS (participants only), Realtime enabled.
+- RPC `send_dm(p_receiver_id, p_content, p_media_url)` handles thread upsert + unread counter + block check.
+- Storage bucket `dm-media` (private, participant-scoped policy).
+- Pages: `MessagesPage` (inbox list, unread badges, search), `MessageThreadPage` (bubbles, typing dots via Realtime presence, gift/emoji quick-send, block/report).
+- Bottom-nav badge for unread total; entry point from `PublicProfilePage`.
+
+## Phase 5 — Search + Notifications + Store/Wallet/Admin polish
+
+- **Global Search page** `/search` — tabs Users | Rooms | Posts | Tags, recent history in `localStorage`, top-level results with framed avatars & room previews.
+- **Notifications revamp**: grouped by day, category filter chips (Gifts, System, Social, Level), mark-all-read, swipe-to-dismiss, Realtime toast dock.
+- **Store / My Bag / Wallet**: sticky category chips, preview modal with animated frame demo, coin-pack cards with best-value ribbon, transaction timeline w/ icons + filters.
+- **Admin/Owner polish**: dashboard KPI grid with sparkline, refreshed tables using `GlassPanel` + `EmptyState`, quick-action FAB.
 
 ## Technical notes
-- All RPCs run with `SET search_path = public`, use `FOR UPDATE` row locks on `room_participants` to prevent races
-- `claim_seat` failure rows in `seat_events` are still inserted (separate statement, not rolled back) so moderators see denied attempts
-- Takeover requests auto-expire via `expires_at` check in RPCs (no cron needed initially)
+
+- All colors via CSS tokens — no hex/`text-white` in components.
+- Every new table follows: `CREATE TABLE → GRANT → RLS → POLICY` in one migration.
+- DM + follow + notifications use Supabase Realtime channels inside `useEffect` with proper cleanup.
+- Framer Motion animations gated behind `prefers-reduced-motion`.
+- Numeric ID stays the primary display identifier everywhere.
+- No changes to auth, roles, economy RPCs, or existing schemas unless a phase explicitly calls it out.
+
+## What I need from you
+
+1. **Approve the plan** (all 5 phases in order).
+2. Confirm I should **start Phase 1 immediately** after approval, then pause for review before Phase 2.
+3. Any must-have addition I missed (e.g., voice notes in DMs, story-style posts, block-list page)?
