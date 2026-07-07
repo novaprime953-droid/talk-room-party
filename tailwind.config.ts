@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         display: ['Fredoka', 'sans-serif'],
-        body: ['Nunito', 'sans-serif'],
+        body: ['Figtree', 'Fredoka', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -42,6 +42,10 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+        },
+        vip: {
+          DEFAULT: "hsl(var(--vip))",
+          foreground: "hsl(var(--vip-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -71,6 +75,8 @@ export default {
         "neon-pink": "hsl(var(--neon-pink))",
       },
       borderRadius: {
+        "2xl": "calc(var(--radius) + 4px)",
+        "3xl": "calc(var(--radius) + 12px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -85,8 +91,8 @@ export default {
           to: { height: "0" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 10px hsl(330, 85%, 60%, 0.3)" },
-          "50%": { boxShadow: "0 0 25px hsl(330, 85%, 60%, 0.6)" },
+          "0%, 100%": { boxShadow: "0 0 12px hsl(18 100% 60% / 0.35)" },
+          "50%": { boxShadow: "0 0 28px hsl(18 100% 60% / 0.7)" },
         },
         "float": {
           "0%, 100%": { transform: "translateY(0)" },
@@ -96,6 +102,20 @@ export default {
           "0%, 100%": { height: "4px" },
           "50%": { height: "16px" },
         },
+        "ember": {
+          "0%": { transform: "translateY(0) scale(1)", opacity: "0" },
+          "20%": { opacity: "0.8" },
+          "100%": { transform: "translateY(-120px) scale(0.4)", opacity: "0" },
+        },
+        "orb-drift": {
+          "0%, 100%": { transform: "translate(0,0) scale(1)" },
+          "33%": { transform: "translate(20px,-30px) scale(1.05)" },
+          "66%": { transform: "translate(-25px,20px) scale(0.95)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -103,6 +123,9 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "float": "float 3s ease-in-out infinite",
         "sound-wave": "sound-wave 0.8s ease-in-out infinite",
+        "ember": "ember 4s ease-out infinite",
+        "orb-drift": "orb-drift 14s ease-in-out infinite",
+        "shimmer": "shimmer 2s ease-in-out infinite",
       },
     },
   },
