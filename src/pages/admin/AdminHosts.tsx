@@ -16,7 +16,7 @@ const AdminHosts = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hosts")
-        .select("*, profiles!hosts_user_id_fkey(username, display_name, avatar_url, email), agencies(agency_name)")
+        .select("*, profiles!hosts_user_id_fkey(username, display_name, avatar_url, email, user_id_number), agencies(agency_name)")
         .order("total_earnings", { ascending: false }).limit(50);
       if (error) throw error;
       return data;
@@ -26,9 +26,14 @@ const AdminHosts = () => {
   const { data: searchResults } = useQuery({
     queryKey: ["host-add-search", hostSearch],
     queryFn: async () => {
+      const trimmed = hostSearch.trim();
+      const isNum = /^\d+$/.test(trimmed);
+      const filter = isNum
+        ? `user_id_number.eq.${trimmed},username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%`
+        : `username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%`;
       const { data, error } = await supabase.from("profiles")
-        .select("user_id, username, display_name, avatar_url")
-        .or(`username.ilike.%${hostSearch}%,display_name.ilike.%${hostSearch}%`).limit(10);
+        .select("user_id, username, display_name, avatar_url, user_id_number")
+        .or(filter).limit(10);
       if (error) throw error;
       return data;
     },
@@ -58,7 +63,7 @@ const AdminHosts = () => {
       {showAdd && (
         <div className="bg-card rounded-2xl p-4 shadow-card mb-6">
           <h3 className="font-semibold text-foreground mb-3">Add New Host</h3>
-          <Input placeholder="Search user by username..." value={hostSearch} onChange={(e) => setHostSearch(e.target.value)} />
+          <Input placeholder="Search user by numeric ID or username..." value={hostSearch} onChange={(e) => setHostSearch(e.target.value)} />
           {searchResults && searchResults.length > 0 && (
             <div className="divide-y divide-border/30 rounded-xl border border-border/50 overflow-hidden mt-3">
               {searchResults.map((p) => (
@@ -67,7 +72,10 @@ const AdminHosts = () => {
                     <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center overflow-hidden">
                       {p.avatar_url ? <img src={p.avatar_url} alt="" className="w-full h-full object-cover" /> : <span className="text-[10px] font-bold">{(p.display_name ?? "U")[0]}</span>}
                     </div>
-                    <p className="text-sm font-semibold text-foreground">{p.display_name ?? p.username}</p>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{p.display_name ?? p.username}</p>
+                      <p className="text-[10px] text-muted-foreground">ID: {p.user_id_number ?? "—"}</p>
+                    </div>
                   </div>
                   <button onClick={() => addHost(p.user_id, p.display_name ?? p.username ?? "User")}
                     className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary text-primary-foreground text-xs font-bold">
@@ -103,7 +111,7 @@ const AdminHosts = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-foreground">{h.profiles?.display_name ?? h.profiles?.username}</p>
-                        <p className="text-[10px] text-muted-foreground">{h.profiles?.email}</p>
+                        <p className="text-[10px] text-muted-foreground">ID: {h.profiles?.user_id_number ?? "—"} · {h.profiles?.email}</p>
                       </div>
                     </div>
                   </td>
