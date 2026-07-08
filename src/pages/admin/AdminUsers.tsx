@@ -99,7 +99,7 @@ const AdminUsers = () => {
       <div className="flex items-center gap-2 bg-card rounded-2xl px-4 py-2.5 mb-6 border border-border/50">
         <Search className="w-4 h-4 text-muted-foreground" />
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by username, name, or email..."
+          placeholder="Search by numeric ID, username, name, or email..."
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none" />
       </div>
 
