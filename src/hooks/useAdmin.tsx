@@ -52,7 +52,13 @@ export const useAdminUsers = (search?: string) => {
     queryFn: async () => {
       let query = supabase.from('profiles').select('*, user_roles(role)').order('created_at', { ascending: false }).limit(50);
       if (search) {
-        query = query.or(`username.ilike.%${search}%,display_name.ilike.%${search}%,email.ilike.%${search}%`);
+        const trimmed = search.trim();
+        const isNumeric = /^\d+$/.test(trimmed);
+        if (isNumeric) {
+          query = query.or(`user_id_number.eq.${trimmed},username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`);
+        } else {
+          query = query.or(`username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,email.ilike.%${trimmed}%`);
+        }
       }
       const { data, error } = await query;
       if (error) throw error;
