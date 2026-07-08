@@ -11,6 +11,7 @@ import { useUserBadges } from "@/hooks/useBadges";
 import { useUserTitles } from "@/hooks/useTitles";
 import { useEquippedFrameUrl } from "@/hooks/useTitles";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import SunsetOrbs from "@/components/SunsetOrbs";
 
 const PublicProfilePage = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -116,16 +117,17 @@ const PublicProfilePage = () => {
     <div className="min-h-screen bg-background pb-24">
       {/* Cover */}
       <div
-        className="relative h-56 overflow-hidden"
+        className="relative h-60 overflow-hidden"
         style={{
           background: p.cover_url
             ? `url(${p.cover_url}) center/cover`
-            : "linear-gradient(135deg, hsl(265 40% 18%), hsl(280 60% 22%))",
+            : "var(--gradient-sunset)",
         }}
       >
+        {!p.cover_url && <SunsetOrbs variant="hero" />}
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background/95" />
-        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-background/40 backdrop-blur flex items-center justify-center">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
+        <button onClick={() => navigate(-1)} className="absolute top-4 left-4 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center border border-white/10">
+          <ArrowLeft className="w-5 h-5 text-white" />
         </button>
       </div>
 
@@ -139,15 +141,15 @@ const PublicProfilePage = () => {
           showGlow
         />
         <div className="mt-3 flex items-center gap-2 flex-wrap">
-          <h1 className="font-display font-bold text-2xl text-foreground">{profile.display_name ?? profile.username}</h1>
+          <h1 className="font-display font-black text-2xl text-foreground">{profile.display_name ?? profile.username}</h1>
           {p.gender && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/30 text-blue-200">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/25 text-accent">
               {p.gender === "female" ? "♀" : "♂"}{p.age ? ` ${p.age}` : ""}
             </span>
           )}
         </div>
-        <button onClick={copyId} className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <span>ID: {profile.user_id_number ?? "—"}</span>
+        <button onClick={copyId} className="mt-1.5 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-muted/40 text-muted-foreground hover:text-foreground">
+          <span className="font-bold">ID: {profile.user_id_number ?? "—"}</span>
           <Copy className="w-3.5 h-3.5" />
         </button>
 
@@ -164,7 +166,7 @@ const PublicProfilePage = () => {
         {profile.bio && <p className="text-sm text-muted-foreground mt-3">{profile.bio}</p>}
 
         {/* Stats */}
-        <div className="mt-4 grid grid-cols-4 bg-card rounded-2xl border border-border/40 py-3">
+        <div className="mt-4 grid grid-cols-4 glass-card rounded-2xl py-3 shadow-card">
           {[
             { label: "Friends", value: stats?.followers ?? 0 },
             { label: "Following", value: stats?.following ?? 0 },
@@ -172,8 +174,8 @@ const PublicProfilePage = () => {
             { label: "Visitors", value: p.profile_views ?? 0 },
           ].map((s) => (
             <div key={s.label} className="text-center">
-              <p className="font-display font-bold text-foreground">{s.value}</p>
-              <p className="text-[10px] text-muted-foreground">{s.label}</p>
+              <p className="font-display font-black text-foreground">{s.value}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</p>
             </div>
           ))}
         </div>
@@ -205,14 +207,14 @@ const PublicProfilePage = () => {
       </div>
 
       {/* Action bar */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-background/95 backdrop-blur border-t border-border/40 px-4 py-3 flex gap-2 z-30">
-        <button className="flex-1 h-11 rounded-full bg-card border border-border/40 text-sm font-bold text-foreground flex items-center justify-center gap-1.5">
+      <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-background/85 backdrop-blur-xl border-t border-border/40 px-4 py-3 flex gap-2 z-30">
+        <button className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift">
           <UserPlus className="w-4 h-4" /> Follow
         </button>
-        <button className="flex-1 h-11 rounded-full bg-card border border-border/40 text-sm font-bold text-foreground flex items-center justify-center gap-1.5">
+        <button className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift">
           <MessageCircle className="w-4 h-4" /> Chat
         </button>
-        <button className="flex-1 h-11 rounded-full gradient-gold text-sm font-bold text-accent-foreground flex items-center justify-center gap-1.5">
+        <button className="flex-1 h-11 rounded-full text-sm font-black text-primary-foreground flex items-center justify-center gap-1.5 shadow-lift" style={{ background: 'var(--gradient-sunset)' }}>
           <Gift className="w-4 h-4" /> Gift
         </button>
       </div>

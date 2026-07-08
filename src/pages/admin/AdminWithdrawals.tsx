@@ -36,7 +36,7 @@ const AdminWithdrawals = () => {
     queryFn: async () => {
       if (userIds.length === 0) return [];
       const { data, error } = await supabase.from("profiles")
-        .select("user_id, username, display_name, avatar_url, coins_balance")
+        .select("user_id, username, display_name, avatar_url, coins_balance, user_id_number")
         .in("user_id", userIds);
       if (error) throw error;
       return data;
@@ -60,6 +60,8 @@ const AdminWithdrawals = () => {
     if (search) {
       const p = getProfile(r.user_id);
       const s = search.toLowerCase();
+      const isNum = /^\d+$/.test(search.trim());
+      if (isNum && p?.user_id_number && String(p.user_id_number).includes(search.trim())) return true;
       return p?.username?.toLowerCase().includes(s) || p?.display_name?.toLowerCase().includes(s) || r.payment_method.toLowerCase().includes(s);
     }
     return true;
@@ -112,7 +114,7 @@ const AdminWithdrawals = () => {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search by user or method..." className="pl-10" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input placeholder="Search by numeric ID, user or method..." className="pl-10" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex gap-1">
           {(["all", "pending", "approved", "rejected"] as const).map((f) => (
@@ -151,7 +153,7 @@ const AdminWithdrawals = () => {
                           </div>
                           <div>
                             <p className="text-xs font-semibold text-foreground">{p?.display_name ?? p?.username ?? "Unknown"}</p>
-                            <p className="text-[10px] text-muted-foreground">@{p?.username}</p>
+                            <p className="text-[10px] text-muted-foreground">ID: {p?.user_id_number ?? "—"} · @{p?.username}</p>
                           </div>
                         </div>
                       </td>

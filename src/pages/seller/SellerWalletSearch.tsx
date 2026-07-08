@@ -13,10 +13,15 @@ const SellerWalletSearch = () => {
     queryKey: ["seller-wallet-search", search],
     queryFn: async () => {
       if (search.length < 2) return [];
+      const trimmed = search.trim();
+      const isNum = /^\d+$/.test(trimmed);
+      const filter = isNum
+        ? `user_id_number.eq.${trimmed},username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,email.ilike.%${trimmed}%,phone.ilike.%${trimmed}%`
+        : `username.ilike.%${trimmed}%,display_name.ilike.%${trimmed}%,email.ilike.%${trimmed}%,phone.ilike.%${trimmed}%`;
       const { data, error } = await supabase
         .from("profiles")
-        .select("user_id, username, display_name, avatar_url, coins_balance, level, phone, email, created_at")
-        .or(`username.ilike.%${search}%,display_name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`)
+        .select("user_id, username, display_name, avatar_url, coins_balance, level, phone, email, created_at, user_id_number")
+        .or(filter)
         .limit(10);
       if (error) throw error;
       return data;
@@ -76,7 +81,7 @@ const SellerWalletSearch = () => {
         <Input
           value={search}
           onChange={(e) => { setSearch(e.target.value); setSelectedUser(null); }}
-          placeholder="Search by username, email, phone..."
+          placeholder="Search by numeric ID, username, email, phone..."
           className="pl-9"
         />
       </div>
@@ -99,7 +104,7 @@ const SellerWalletSearch = () => {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-bold text-foreground">{u.display_name ?? u.username}</p>
-                <p className="text-[10px] text-muted-foreground">@{u.username} • Lv.{u.level}</p>
+                <p className="text-[10px] text-muted-foreground">ID: {u.user_id_number ?? "—"} · @{u.username} • Lv.{u.level}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-bold text-accent">{u.coins_balance.toLocaleString()}</p>
@@ -125,7 +130,7 @@ const SellerWalletSearch = () => {
               </div>
               <div className="flex-1">
                 <h3 className="font-display font-bold text-lg text-foreground">{selectedUser.display_name ?? selectedUser.username}</h3>
-                <p className="text-xs text-muted-foreground">@{selectedUser.username} • Lv.{selectedUser.level}</p>
+                <p className="text-xs text-muted-foreground">ID: {selectedUser.user_id_number ?? "—"} · @{selectedUser.username} • Lv.{selectedUser.level}</p>
                 {selectedUser.email && <p className="text-[10px] text-muted-foreground">{selectedUser.email}</p>}
                 {selectedUser.phone && <p className="text-[10px] text-muted-foreground">{selectedUser.phone}</p>}
               </div>

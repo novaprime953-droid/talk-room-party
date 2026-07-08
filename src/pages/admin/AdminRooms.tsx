@@ -21,7 +21,7 @@ const AdminRooms = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("voice_rooms")
-        .select("*, profiles!voice_rooms_host_id_fkey(username, display_name, avatar_url)")
+        .select("*, profiles!voice_rooms_host_id_fkey(username, display_name, avatar_url, user_id_number)")
         .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
@@ -95,6 +95,9 @@ const AdminRooms = () => {
     if (filter === "closed" && r.status !== "closed") return false;
     if (search) {
       const s = search.toLowerCase();
+      const trimmed = search.trim();
+      const isNum = /^\d+$/.test(trimmed);
+      if (isNum && r.profiles?.user_id_number && String(r.profiles.user_id_number).includes(trimmed)) return true;
       return r.room_name.toLowerCase().includes(s) || r.profiles?.display_name?.toLowerCase().includes(s) || r.profiles?.username?.toLowerCase().includes(s) || r.category.toLowerCase().includes(s);
     }
     return true;
@@ -136,7 +139,7 @@ const AdminRooms = () => {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search rooms, hosts..." className="pl-10" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Input placeholder="Search rooms, hosts, host ID..." className="pl-10" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="flex gap-1">
           {(["all", "live", "locked", "closed"] as const).map((f) => (
@@ -173,7 +176,10 @@ const AdminRooms = () => {
                           <p className="font-semibold text-foreground">{r.room_name}</p>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-foreground text-xs">{r.profiles?.display_name ?? r.profiles?.username}</td>
+                      <td className="px-4 py-3 text-foreground text-xs">
+                        <div>{r.profiles?.display_name ?? r.profiles?.username}</div>
+                        <div className="text-[10px] text-muted-foreground">ID: {r.profiles?.user_id_number ?? "—"}</div>
+                      </td>
                       <td className="px-4 py-3"><span className="text-[10px] px-2 py-0.5 rounded-full bg-muted/30 text-muted-foreground font-bold">{r.category}</span></td>
                       <td className="px-4 py-3">
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${r.is_live ? "bg-destructive/10 text-destructive" : isLocked ? "bg-warning/10 text-warning" : "bg-online/10 text-online"}`}>

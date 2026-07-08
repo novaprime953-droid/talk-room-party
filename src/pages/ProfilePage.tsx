@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import {
   Shield, Crown, Users, Heart, Copy, ChevronRight,
   ShoppingBag, Sparkles, Mic, Settings, MessageSquare,
-  Award, ClipboardList, BarChart3, Banknote, Wallet,
+  Award, ClipboardList, BarChart3, Banknote, Wallet, Gem, Trophy, Flame,
 } from "lucide-react";
 import { useEquippedProps } from "@/hooks/useProps";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,10 @@ import FramedAvatar from "@/components/FramedAvatar";
 import UserBadges from "@/components/UserBadges";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import SunsetOrbs from "@/components/SunsetOrbs";
+import StatCard from "@/components/ui/StatCard";
+import IconTile from "@/components/ui/IconTile";
+import GlassPanel from "@/components/ui/GlassPanel";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -71,20 +75,20 @@ const ProfilePage = () => {
 
   // Main button grid
   const mainButtons = [
-    { icon: Award, label: "Medal of Honor", color: "text-purple-400", bg: "bg-purple-500/20", path: "/medals" },
-    { icon: ShoppingBag, label: "Shop", color: "text-emerald-400", bg: "bg-emerald-500/20", path: "/store" },
-    { icon: Sparkles, label: "My Bag", color: "text-sky-400", bg: "bg-sky-500/20", path: "/my-props" },
-    { icon: ClipboardList, label: "Task", color: "text-orange-400", bg: "bg-orange-500/20", path: "/events" },
-    { icon: Mic, label: "Host Center", color: "text-pink-400", bg: "bg-pink-500/20", path: "/host" },
+    { icon: Award, label: "Medals", tone: "vip" as const, path: "/medals" },
+    { icon: ShoppingBag, label: "Shop", tone: "primary" as const, path: "/store" },
+    { icon: Sparkles, label: "My Bag", tone: "gold" as const, path: "/my-props" },
+    { icon: ClipboardList, label: "Tasks", tone: "accent" as const, path: "/events" },
+    { icon: Mic, label: "Host", tone: "primary" as const, path: "/host" },
   ];
 
   // Second section
   const secondButtons = [
-    { icon: Users, label: "Family", color: "text-blue-400", bg: "bg-blue-500/20", path: "/family" },
-    { icon: Heart, label: "CP Nest", color: "text-pink-400", bg: "bg-pink-500/20", path: "/social" },
-    { icon: BarChart3, label: "Reward Records", color: "text-emerald-400", bg: "bg-emerald-500/20", path: "/wallet" },
-    { icon: MessageSquare, label: "Feedback", color: "text-red-400", bg: "bg-red-500/20", path: "/notifications" },
-    { icon: Settings, label: "Setting", color: "text-muted-foreground", bg: "bg-muted/30", path: "/settings" },
+    { icon: Users, label: "Family", tone: "vip" as const, path: "/family" },
+    { icon: Heart, label: "CP Nest", tone: "accent" as const, path: "/social" },
+    { icon: BarChart3, label: "Records", tone: "primary" as const, path: "/wallet" },
+    { icon: MessageSquare, label: "Inbox", tone: "gold" as const, path: "/notifications" },
+    { icon: Settings, label: "Setting", tone: "muted" as const, path: "/settings" },
   ];
 
   // Role-based panels
@@ -108,11 +112,11 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Profile Header */}
-      <div className="relative pt-8 pb-4 px-4">
-        {/* Avatar + Info */}
-        <div className="flex items-start gap-4">
+    <div className="min-h-screen bg-background pb-28">
+      {/* Sunset Hero */}
+      <div className="relative overflow-hidden text-primary-foreground rounded-b-[2.5rem] pt-8 pb-24 px-4" style={{ background: 'var(--gradient-sunset)' }}>
+        <SunsetOrbs variant="hero" />
+        <div className="relative z-10 flex items-start gap-4">
           <div className="relative cursor-pointer" onClick={() => profile?.user_id_number && navigate(`/u/${profile.user_id_number}`)}>
             <FramedAvatar
               src={profile?.avatar_url}
@@ -122,150 +126,98 @@ const ProfilePage = () => {
               showGlow
             />
             {vipLevel > 0 && (
-              <div className="absolute -top-1 -left-1 px-1.5 py-0.5 rounded text-[8px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow">
+              <div className="absolute -top-1 -left-1 px-2 py-0.5 rounded-full text-[9px] font-black bg-white text-primary shadow-lift">
                 VIP{vipLevel}
               </div>
             )}
           </div>
-
-          <div className="flex-1 pt-2">
-            <div className="flex items-center gap-2">
-              <h1 className="font-display font-bold text-lg text-foreground">
+          <div className="flex-1 pt-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="font-display font-black text-xl leading-tight">
                 {profile?.display_name ?? profile?.username ?? "User"}
               </h1>
-              <span className="text-xs">🇵🇰</span>
+              <span className="text-sm">🇵🇰</span>
             </div>
-            <UserBadges userId={user?.id} size={22} className="mt-1.5" />
-            <button onClick={copyId} className="flex items-center gap-1.5 mt-1 group">
-              <span className="text-xs text-muted-foreground">UID:{profile?.user_id_number ?? "—"}</span>
-              <Copy className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors" />
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-primary/20 text-primary">
-                Lv.{profile?.level ?? 1}
-              </span>
+            <div className="mt-1.5"><UserBadges userId={user?.id} size={20} /></div>
+            <button onClick={copyId} className="flex items-center gap-1.5 mt-2 group bg-black/25 backdrop-blur px-2.5 py-1 rounded-full">
+              <span className="text-[11px] font-bold">UID: {profile?.user_id_number ?? "—"}</span>
+              <Copy className="w-3 h-3 opacity-70 group-hover:opacity-100" />
+              <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black bg-white text-primary">Lv.{profile?.level ?? 1}</span>
             </button>
           </div>
         </div>
 
-        {/* Stats Row */}
-        <div className="flex items-center justify-around mt-5">
+        <div className="relative z-10 mt-5 grid grid-cols-3 gap-2">
           {[
             { label: "Follow", value: formatNumber(socialStats?.following ?? 0) },
             { label: "Fans", value: formatNumber(socialStats?.followers ?? 0) },
             { label: "Charm", value: formatNumber(socialStats?.charm ?? 0) },
-          ].map((stat, i) => (
-            <div key={stat.label} className="flex-1 text-center relative">
-              <p className="font-display font-bold text-lg text-foreground">{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground">{stat.label}</p>
-              {i < 2 && <div className="absolute right-0 top-1 bottom-1 w-px bg-border/50" />}
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-2xl bg-black/25 backdrop-blur px-3 py-2 text-center">
+              <p className="font-display font-black text-lg leading-tight">{stat.value}</p>
+              <p className="text-[10px] uppercase tracking-wider opacity-80">{stat.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Wallet Card */}
-      <div className="px-4 mb-3">
-        <motion.button
-          whileTap={{ scale: 0.98 }}
+      {/* Wallet + VIP + Level tiles pulled up under hero */}
+      <div className="px-4 -mt-14 relative z-10 space-y-3">
+        <StatCard
+          icon={Wallet}
+          label="Wallet Balance"
+          value={(profile?.coins_balance ?? 0).toLocaleString()}
+          hint="Tap to recharge or withdraw"
+          tone="gold"
           onClick={() => navigate("/wallet")}
-          className="w-full rounded-2xl p-4 flex items-center justify-between"
-          style={{ background: 'linear-gradient(135deg, hsl(250 18% 18%), hsl(250 18% 14%))' }}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-accent" />
-            </div>
-            <div className="text-left">
-              <p className="text-xs text-muted-foreground">Balance</p>
-              <p className="font-display font-bold text-foreground">{profile?.coins_balance?.toLocaleString() ?? 0}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-display font-bold text-lg text-accent">Wallet</span>
-            <ChevronRight className="w-5 h-5 text-accent" />
-          </div>
-        </motion.button>
-      </div>
-
-      {/* VIP + Level Cards */}
-      <div className="px-4 mb-4 flex gap-2">
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => navigate("/vip")}
-          className="flex-1 rounded-2xl p-3 relative overflow-hidden text-left"
-          style={{ background: 'linear-gradient(135deg, hsl(30 80% 25%), hsl(45 100% 20%))' }}
-        >
-          <p className="text-[10px] text-amber-300/80 font-bold">VIP</p>
-          <p className="font-display font-bold text-lg text-amber-300">VIP{vipLevel}</p>
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.97 }}
-          onClick={() => navigate("/level")}
-          className="flex-1 rounded-2xl p-3 relative overflow-hidden text-left"
-          style={{ background: 'linear-gradient(135deg, hsl(140 40% 20%), hsl(160 60% 25%))' }}
-        >
-          <p className="text-[10px] text-emerald-300/80 font-bold">Level</p>
-          <p className="font-display font-bold text-lg text-emerald-300">Lv.{wealthLevel}</p>
-        </motion.button>
-      </div>
-
-      {/* Main Button Grid */}
-      <div className="mx-4 mb-3 bg-card rounded-2xl border border-border/50 p-4">
-        <div className="grid grid-cols-4 gap-4">
-          {mainButtons.map((btn) => (
-            <motion.button
-              key={btn.label}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => navigate(btn.path)}
-              className="flex flex-col items-center gap-1.5"
-            >
-              <div className={`w-11 h-11 rounded-xl ${btn.bg} flex items-center justify-center`}>
-                <btn.icon className={`w-5 h-5 ${btn.color}`} />
-              </div>
-              <span className="text-[10px] font-semibold text-foreground leading-tight text-center">{btn.label}</span>
-            </motion.button>
-          ))}
+        />
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard icon={Gem} label="VIP" value={`VIP ${vipLevel}`} hint="Unlock perks" tone="vip" onClick={() => navigate("/vip")} />
+          <StatCard icon={Trophy} label="Level" value={`Lv.${wealthLevel}`} hint="Grow with XP" tone="primary" onClick={() => navigate("/level")} />
         </div>
       </div>
 
-      {/* Second Section */}
-      <div className="mx-4 mb-3 bg-card rounded-2xl border border-border/50 p-4">
-        <div className="grid grid-cols-4 gap-4">
-          {secondButtons.map((btn) => (
-            <motion.button
-              key={btn.label}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => navigate(btn.path)}
-              className="flex flex-col items-center gap-1.5"
-            >
-              <div className={`w-11 h-11 rounded-xl ${btn.bg} flex items-center justify-center`}>
-                <btn.icon className={`w-5 h-5 ${btn.color}`} />
-              </div>
-              <span className="text-[10px] font-semibold text-foreground leading-tight text-center">{btn.label}</span>
-            </motion.button>
-          ))}
-        </div>
+      {/* Quick actions */}
+      <div className="px-4 mt-4">
+        <GlassPanel>
+          <div className="grid grid-cols-5 gap-2">
+            {mainButtons.map((btn) => (
+              <IconTile key={btn.label} icon={btn.icon} label={btn.label} tone={btn.tone} onClick={() => navigate(btn.path)} />
+            ))}
+          </div>
+        </GlassPanel>
       </div>
 
-      {/* Role-Based Panels */}
+      <div className="px-4 mt-3">
+        <GlassPanel>
+          <div className="grid grid-cols-5 gap-2">
+            {secondButtons.map((btn) => (
+              <IconTile key={btn.label} icon={btn.icon} label={btn.label} tone={btn.tone} onClick={() => navigate(btn.path)} />
+            ))}
+          </div>
+        </GlassPanel>
+      </div>
+
+      {/* Role Panels */}
       {panelItems.length > 0 && (
-        <div className="mx-4 mb-4">
-          <p className="text-[10px] font-bold text-muted-foreground px-1 mb-2 uppercase tracking-wider">My Panels</p>
-          <div className="bg-card rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/30">
+        <div className="px-4 mt-4">
+          <p className="text-[10px] font-black text-muted-foreground px-1 mb-2 uppercase tracking-widest flex items-center gap-1"><Flame className="w-3 h-3 text-primary" /> My Panels</p>
+          <GlassPanel padded={false} glow="primary" className="overflow-hidden divide-y divide-border/30">
             {panelItems.map((item) => (
               <motion.button
                 key={item.label}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => navigate(item.path)}
-                className="w-full flex items-center gap-3 px-4 py-3"
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-primary/5 transition-colors"
               >
                 <div className={`w-9 h-9 rounded-xl ${item.bg} flex items-center justify-center`}>
-                  <item.icon className={`w-4.5 h-4.5 ${item.color}`} />
+                  <item.icon className={`w-4 h-4 ${item.color}`} />
                 </div>
-                <span className="flex-1 text-left text-sm font-semibold text-foreground">{item.label}</span>
+                <span className="flex-1 text-left text-sm font-bold text-foreground">{item.label}</span>
                 <ChevronRight className="w-4 h-4 text-muted-foreground" />
               </motion.button>
             ))}
-          </div>
+          </GlassPanel>
         </div>
       )}
     </div>
