@@ -12,6 +12,7 @@ import { useUserTitles } from "@/hooks/useTitles";
 import { useEquippedFrameUrl } from "@/hooks/useTitles";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import SunsetOrbs from "@/components/SunsetOrbs";
+import FollowButton from "@/components/FollowButton";
 
 const PublicProfilePage = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -168,15 +169,20 @@ const PublicProfilePage = () => {
         {/* Stats */}
         <div className="mt-4 grid grid-cols-4 glass-card rounded-2xl py-3 shadow-card">
           {[
-            { label: "Friends", value: stats?.followers ?? 0 },
-            { label: "Following", value: stats?.following ?? 0 },
-            { label: "Follower", value: stats?.followers ?? 0 },
-            { label: "Visitors", value: p.profile_views ?? 0 },
+            { label: "Followers", value: stats?.followers ?? 0, tab: "followers" },
+            { label: "Following", value: stats?.following ?? 0, tab: "following" },
+            { label: "Friends", value: stats?.followers ?? 0, tab: "friends" },
+            { label: "Visitors", value: p.profile_views ?? 0, tab: null },
           ].map((s) => (
-            <div key={s.label} className="text-center">
+            <button
+              key={s.label}
+              onClick={() => s.tab && navigate(`/followers/${uid}?tab=${s.tab}`)}
+              className="text-center hover:opacity-80 transition"
+              disabled={!s.tab}
+            >
               <p className="font-display font-black text-foreground">{s.value}</p>
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -208,9 +214,7 @@ const PublicProfilePage = () => {
 
       {/* Action bar */}
       <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-background/85 backdrop-blur-xl border-t border-border/40 px-4 py-3 flex gap-2 z-30">
-        <button className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift">
-          <UserPlus className="w-4 h-4" /> Follow
-        </button>
+        <FollowButton targetId={uid} variant="solid" />
         <button className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift">
           <MessageCircle className="w-4 h-4" /> Chat
         </button>
