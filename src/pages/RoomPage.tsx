@@ -32,6 +32,13 @@ import { Loader2 } from "lucide-react";
 
 type BottomPanel = "chat" | "gifts" | "rankings" | null;
 
+const ROOM_THEMES = [
+  { name: "Sunset", url: "https://images.unsplash.com/photo-1495197359483-d092478c170a?w=1200&q=80" },
+  { name: "Neon", url: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=1200&q=80" },
+  { name: "Galaxy", url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200&q=80" },
+  { name: "Beach", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80" },
+];
+
 const RoomPage = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
