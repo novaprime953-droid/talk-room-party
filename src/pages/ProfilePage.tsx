@@ -149,14 +149,18 @@ const ProfilePage = () => {
 
         <div className="relative z-10 mt-5 grid grid-cols-3 gap-2">
           {[
-            { label: "Follow", value: formatNumber(socialStats?.following ?? 0) },
-            { label: "Fans", value: formatNumber(socialStats?.followers ?? 0) },
-            { label: "Charm", value: formatNumber(socialStats?.charm ?? 0) },
+            { label: "Following", value: formatNumber(socialStats?.following ?? 0), tab: "following" },
+            { label: "Fans", value: formatNumber(socialStats?.followers ?? 0), tab: "followers" },
+            { label: "Charm", value: formatNumber(socialStats?.charm ?? 0), tab: null as string | null },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-2xl bg-black/25 backdrop-blur px-3 py-2 text-center">
+            <button
+              key={stat.label}
+              onClick={() => stat.tab && navigate(`/followers?tab=${stat.tab}`)}
+              className="rounded-2xl bg-black/25 backdrop-blur px-3 py-2 text-center hover:bg-black/40 transition"
+            >
               <p className="font-display font-black text-lg leading-tight">{stat.value}</p>
               <p className="text-[10px] uppercase tracking-wider opacity-80">{stat.label}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>
