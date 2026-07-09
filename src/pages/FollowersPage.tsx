@@ -73,7 +73,7 @@ const UserList = ({ userId, kind }: { userId?: string; kind: FollowListKind }) =
     return <div className="py-10 text-center text-sm text-muted-foreground">Loading…</div>;
   }
   if (!data?.length) {
-    return <EmptyState title="No one here yet" description={kind === "suggested" ? "Come back later for new suggestions" : "Start connecting to see them here"} />;
+    return <EmptyState title="No one here yet" subtitle={kind === "suggested" ? "Come back later for new suggestions" : "Start connecting to see them here"} />;
   }
   return (
     <div className="space-y-2">
