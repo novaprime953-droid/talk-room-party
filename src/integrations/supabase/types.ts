@@ -2008,6 +2008,7 @@ export type Database = {
       equip_badge: { Args: { p_badge_key: string }; Returns: Json }
       equip_frame_prop: { Args: { p_user_prop_id: string }; Returns: Json }
       equip_title: { Args: { p_title_id: string }; Returns: Json }
+      get_follow_counts: { Args: { p_user_id: string }; Returns: Json }
       grant_newbie_props: { Args: { p_user_id: string }; Returns: undefined }
       grant_xp: {
         Args: { p_amount: number; p_source?: string; p_user_id: string }
@@ -2096,6 +2097,7 @@ export type Database = {
         Returns: Json
       }
       sync_role_badges: { Args: { p_user_id: string }; Returns: undefined }
+      toggle_follow: { Args: { p_target_id: string }; Returns: Json }
       verify_room_password: {
         Args: { p_password_hash: string; p_room_id: string }
         Returns: boolean

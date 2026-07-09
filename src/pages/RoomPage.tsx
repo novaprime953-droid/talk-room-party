@@ -5,6 +5,7 @@ import {
   Users, LogOut, Trophy, Share2, Crown, Lock, UserPlus,
   Settings, Music, Smile, DoorOpen, Volume2, MoreVertical,
   Megaphone, Flag, Rocket, Armchair,
+  Swords, Palette,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import roomBgCastle from "@/assets/room-bg-castle.jpg";
@@ -30,6 +31,13 @@ import {
 import { Loader2 } from "lucide-react";
 
 type BottomPanel = "chat" | "gifts" | "rankings" | null;
+
+const ROOM_THEMES = [
+  { name: "Sunset", url: "https://images.unsplash.com/photo-1495197359483-d092478c170a?w=1200&q=80" },
+  { name: "Neon", url: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=1200&q=80" },
+  { name: "Galaxy", url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200&q=80" },
+  { name: "Beach", url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80" },
+];
 
 const RoomPage = () => {
   const navigate = useNavigate();
@@ -77,14 +85,24 @@ const RoomPage = () => {
           .eq("is_equipped", true)
           .eq("status", "active");
         const vehicle = (vehicleProp as any[])?.find((p) => p.props?.category === "vehicle");
+        // Fetch role for entrance FX
+        const { data: roleRow } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .in("role", ["owner", "super_admin", "admin", "manager"])
+          .maybeSingle();
         let msg = `${name} entered the room`;
         if (vehicle) {
           msg = `🚗 ${name} entered with ${vehicle.props.name}`;
+        }
+        if (vehicle || roleRow?.role === "owner" || roleRow?.role) {
           (window as any).__triggerEntrance?.({
             id: crypto.randomUUID(),
             username: name,
-            vehicleName: vehicle.props.name,
-            vehicleEmoji: "🚗",
+            vehicleName: vehicle?.props?.name,
+            vehicleEmoji: vehicle ? "🚗" : undefined,
+            role: roleRow?.role,
           });
         }
         await supabase.from("room_messages").insert({
@@ -489,6 +507,17 @@ const RoomPage = () => {
               { icon: MicOff, label: "Mute All" },
               { icon: Lock, label: "Lock Empty Seats" },
               { icon: UserPlus, label: "Assign Co-Host" },
+              { icon: Swords, label: showPK ? "End PK Battle" : "Start PK Battle", action: () => { setShowPK(!showPK); setShowHostMenu(false); } },
+              ...ROOM_THEMES.map((t) => ({
+                icon: Palette,
+                label: `Theme: ${t.name}`,
+                action: async () => {
+                  if (!id) return;
+                  await supabase.from("voice_rooms").update({ background_url: t.url }).eq("id", id);
+                  toast.success(`Theme set to ${t.name}`);
+                  setShowHostMenu(false);
+                },
+              })),
               { icon: Settings, label: "Change Background", action: async () => {
                 const url = prompt("Enter background image URL:");
                 if (url && id) {
