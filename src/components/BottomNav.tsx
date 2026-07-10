@@ -1,18 +1,20 @@
 import { Home, Compass, Radio, MessageCircle, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useDMUnreadTotal } from "@/hooks/useDMs";
 
 const tabs = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Compass, label: "Explore", path: "/explore" },
   { icon: Radio, label: "Go Live", path: "/create", isCenter: true },
-  { icon: MessageCircle, label: "Chats", path: "/social" },
+  { icon: MessageCircle, label: "Chats", path: "/messages" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { data: unreadDM } = useDMUnreadTotal();
 
   const hiddenPrefixes = ["/room/", "/admin", "/owner", "/agency", "/bizdev", "/host", "/seller"];
   if (hiddenPrefixes.some((p) => location.pathname.startsWith(p))) return null;
@@ -56,6 +58,11 @@ const BottomNav = () => {
                 }`}
                 strokeWidth={isActive ? 2.4 : 2}
               />
+              {tab.path === "/messages" && (unreadDM ?? 0) > 0 && (
+                <span className="absolute top-0 right-2 min-w-[16px] h-[16px] px-1 rounded-full text-[9px] font-black text-primary-foreground flex items-center justify-center" style={{ background: "var(--gradient-sunset)" }}>
+                  {unreadDM! > 99 ? "99+" : unreadDM}
+                </span>
+              )}
               <span
                 className={`text-[10px] font-semibold transition-colors ${
                   isActive ? "text-primary" : "text-muted-foreground/80"
