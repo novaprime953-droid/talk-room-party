@@ -322,6 +322,149 @@ export type Database = {
         }
         Relationships: []
       }
+      dm_messages: {
+        Row: {
+          content: string | null
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          media_type: string
+          media_url: string | null
+          read_at: string | null
+          receiver_id: string
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          media_type?: string
+          media_url?: string | null
+          read_at?: string | null
+          receiver_id: string
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          media_type?: string
+          media_url?: string | null
+          read_at?: string | null
+          receiver_id?: string
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_messages_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dm_threads: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          last_message_preview: string | null
+          last_sender_id: string | null
+          unread_a: number
+          unread_b: number
+          updated_at: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          last_sender_id?: string | null
+          unread_a?: number
+          unread_b?: number
+          updated_at?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          last_sender_id?: string | null
+          unread_a?: number
+          unread_b?: number
+          updated_at?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_threads_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_threads_user_a_fkey"
+            columns: ["user_a"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_threads_user_b_fkey"
+            columns: ["user_b"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "dm_threads_user_b_fkey"
+            columns: ["user_b"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       event_leaderboard: {
         Row: {
           created_at: string
@@ -1509,6 +1652,94 @@ export type Database = {
         }
         Relationships: []
       }
+      stories: {
+        Row: {
+          caption: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          media_type: string
+          media_url: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          media_type?: string
+          media_url: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          media_type?: string
+          media_url?: string
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "stories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      story_views: {
+        Row: {
+          created_at: string
+          story_id: string
+          viewer_id: string
+        }
+        Insert: {
+          created_at?: string
+          story_id: string
+          viewer_id: string
+        }
+        Update: {
+          created_at?: string
+          story_id?: string
+          viewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_views_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "story_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "story_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles_view"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       system_settings: {
         Row: {
           description: string | null
@@ -2023,6 +2254,7 @@ export type Database = {
         Returns: boolean
       }
       leave_seat: { Args: { p_room_id: string }; Returns: Json }
+      mark_thread_read: { Args: { p_thread_id: string }; Returns: Json }
       owner_grant_badge: {
         Args: { p_badge_key: string; p_user_id: string }
         Returns: Json
@@ -2048,6 +2280,10 @@ export type Database = {
         }
         Returns: Json
       }
+      post_story: {
+        Args: { p_caption?: string; p_media_type?: string; p_media_url: string }
+        Returns: Json
+      }
       purchase_prop: {
         Args: { p_prop_id: string; p_user_id: string }
         Returns: Json
@@ -2071,6 +2307,16 @@ export type Database = {
           p_description?: string
           p_seller_id: string
           p_target_id: string
+        }
+        Returns: Json
+      }
+      send_dm: {
+        Args: {
+          p_content?: string
+          p_duration?: number
+          p_media_type?: string
+          p_media_url?: string
+          p_receiver_id: string
         }
         Returns: Json
       }
@@ -2102,6 +2348,7 @@ export type Database = {
         Args: { p_password_hash: string; p_room_id: string }
         Returns: boolean
       }
+      view_story: { Args: { p_story_id: string }; Returns: Json }
     }
     Enums: {
       app_role:
