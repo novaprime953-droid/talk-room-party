@@ -215,7 +215,10 @@ const PublicProfilePage = () => {
       {/* Action bar */}
       <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-background/85 backdrop-blur-xl border-t border-border/40 px-4 py-3 flex gap-2 z-30">
         <FollowButton targetId={uid} variant="solid" />
-        <button className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift">
+        <button
+          onClick={() => uid && navigate(`/messages/${uid}`)}
+          className="flex-1 h-11 rounded-full glass-card text-sm font-bold text-foreground flex items-center justify-center gap-1.5 hover:shadow-lift"
+        >
           <MessageCircle className="w-4 h-4" /> Chat
         </button>
         <button className="flex-1 h-11 rounded-full text-sm font-black text-primary-foreground flex items-center justify-center gap-1.5 shadow-lift" style={{ background: 'var(--gradient-sunset)' }}>
