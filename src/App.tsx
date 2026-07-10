@@ -83,6 +83,8 @@ import OwnerTitles from "./pages/owner/OwnerTitles";
 import PoliciesPage from "./pages/PoliciesPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import FollowersPage from "./pages/FollowersPage";
+import MessagesPage from "./pages/MessagesPage";
+import MessageThreadPage from "./pages/MessageThreadPage";
 
 import StorePage from "./pages/StorePage";
 import MyPropsPage from "./pages/MyPropsPage";
@@ -177,6 +179,8 @@ const AppRoutes = () => {
         <Route path="/u/:userId" element={<ProtectedRoute><div className="max-w-lg mx-auto"><PublicProfilePage /></div></ProtectedRoute>} />
        <Route path="/followers" element={<ProtectedRoute><div className="max-w-lg mx-auto"><FollowersPage /></div></ProtectedRoute>} />
        <Route path="/followers/:userId" element={<ProtectedRoute><div className="max-w-lg mx-auto"><FollowersPage /></div></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MessagesPage /></div></ProtectedRoute>} />
+        <Route path="/messages/:userId" element={<ProtectedRoute><div className="max-w-lg mx-auto"><MessageThreadPage /></div></ProtectedRoute>} />
         <Route path="/leaderboard" element={<ProtectedRoute><div className="max-w-lg mx-auto"><LeaderboardPage /></div></ProtectedRoute>} />
         <Route path="/wallet" element={<ProtectedRoute><div className="max-w-lg mx-auto"><WalletPage /></div></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><div className="max-w-lg mx-auto"><NotificationsPage /></div></ProtectedRoute>} />

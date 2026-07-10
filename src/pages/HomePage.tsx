@@ -11,6 +11,7 @@ import EventsTab from "@/components/home/EventsTab";
 import BannerSlider from "@/components/home/BannerSlider";
 import LeaderboardPage from "@/pages/LeaderboardPage";
 import LiveStoriesBar from "@/components/home/LiveStoriesBar";
+import StoriesBar from "@/components/home/StoriesBar";
 
 const tabs = [
   { key: "featured", label: "Featured", icon: Sparkles },
@@ -97,7 +98,10 @@ const HomePage = () => {
 
       {/* Live Stories Bar */}
       {["featured", "party", "hot"].includes(activeTab) && (
-        <LiveStoriesBar />
+        <>
+          <StoriesBar />
+          <LiveStoriesBar />
+        </>
       )}
 
       {/* Banner */}
