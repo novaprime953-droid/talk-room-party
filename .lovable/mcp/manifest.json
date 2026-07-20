@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://vxbgnvpkcissenlqgwuv.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "talk-room-mcp",
+      "version": "0.1.0",
+      "title": "Talk Room"
+    },
+    "tools": [
+      {
+        "name": "get_me",
+        "title": "Get my profile",
+        "description": "Return the signed-in user's public profile (numeric ID, display name, level, VIP).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_wallet",
+        "title": "Get my wallet",
+        "description": "Return the signed-in user's current coin balance and VIP level.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_active_rooms",
+        "title": "List active voice rooms",
+        "description": "List currently active public voice chat rooms in Talk Room, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Max rooms to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_notifications",
+        "title": "List my notifications",
+        "description": "List the signed-in user's most recent notifications from Talk Room.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "Max notifications to return (default 20).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "unread_only": {
+              "description": "If true, return only unread notifications.",
+              "type": "boolean"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
