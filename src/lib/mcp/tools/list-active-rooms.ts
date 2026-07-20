@@ -24,8 +24,9 @@ export default defineTool({
     const sb = supabaseForUser(ctx);
     const { data, error } = await sb
       .from("voice_rooms")
-      .select("id, name, cover_url, country, is_active, host_id, created_at")
-      .eq("is_active", true)
+      .select("id, room_name, cover_image, country, category, listener_count, host_id, created_at")
+      .eq("is_live", true)
+      .eq("privacy_type", "public")
       .order("created_at", { ascending: false })
       .limit(limit ?? 20);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
