@@ -95,6 +95,7 @@ import LevelPage from "./pages/LevelPage";
 import VIPPage from "./pages/VIPPage";
 import ProfileSetupPage from "./pages/ProfileSetupPage";
 import AgencyCenterPage from "./pages/AgencyCenterPage";
+import OAuthConsent from "./pages/OAuthConsent";
 
 // Host Center pages
 import HostLayout from "./components/host/HostLayout";
@@ -161,12 +162,23 @@ const SellerRoute = ({ children }: { children: React.ReactNode }) => (
   <ProtectedRoute><CoinSellerLayout>{children}</CoinSellerLayout></ProtectedRoute>
 );
 
+const AuthGate = () => {
+  const { user } = useAuth();
+  const nextParam = new URLSearchParams(window.location.search).get("next");
+  if (user) {
+    const safeNext = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/";
+    return <Navigate to={safeNext} replace />;
+  }
+  return <AuthPage />;
+};
+
 const AppRoutes = () => {
   const { user } = useAuth();
   return (
     <div className="min-h-screen relative">
       <Routes>
-        <Route path="/auth" element={user ? <Navigate to="/" replace /> : <AuthPage />} />
+        <Route path="/auth" element={<AuthGate />} />
+        <Route path="/.lovable/oauth/consent" element={<ProtectedRoute><OAuthConsent /></ProtectedRoute>} />
 
         {/* Main app routes */}
         <Route path="/" element={<ProtectedRoute><div className="max-w-lg mx-auto"><HomePage /></div></ProtectedRoute>} />
