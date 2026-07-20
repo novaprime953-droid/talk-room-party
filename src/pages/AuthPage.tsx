@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Mic, Eye, EyeOff, Phone, Mail, ArrowLeft } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
@@ -22,6 +22,10 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextRaw = searchParams.get("next");
+  const nextPath = nextRaw && nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
+  const redirectOrigin = window.location.origin + nextPath;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +49,7 @@ const AuthPage = () => {
       } else {
         await signIn(email, password);
         toast.success("Welcome back!");
-        navigate("/");
+        navigate(nextPath);
       }
     } catch (err: any) {
       toast.error(err.message || "Authentication failed");
@@ -70,7 +74,7 @@ const AuthPage = () => {
         const { error } = await supabase.auth.verifyOtp({ phone: phoneNumber, token: otpCode, type: "sms" });
         if (error) throw error;
         toast.success("Welcome!");
-        navigate("/");
+        navigate(nextPath);
       }
     } catch (err: any) {
       toast.error(err.message || "Phone auth failed");
@@ -116,10 +120,10 @@ const AuthPage = () => {
           {/* Google */}
           <motion.button whileTap={{ scale: 0.97 }} onClick={async () => {
             try {
-              const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+              const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectOrigin });
               if (result.error) { toast.error("Google sign-in failed"); return; }
               if (result.redirected) return;
-              toast.success("Welcome!"); navigate("/");
+              toast.success("Welcome!"); navigate(nextPath);
             } catch (err: any) { toast.error(err.message || "Google sign-in failed"); }
           }}
             className="w-full py-3.5 rounded-2xl glass text-foreground font-semibold flex items-center justify-center gap-3 hover:bg-white/10 transition-all"
